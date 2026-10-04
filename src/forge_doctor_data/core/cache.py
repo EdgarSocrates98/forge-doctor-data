@@ -160,13 +160,19 @@ class ScanCache:
     def save(self) -> None:
         if not self.enabled:
             return
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        payload = {
-            "format": CACHE_FORMAT,
-            "repo": self.root.name,
-            "files": self._files,
-        }
-        self.path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        try:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            payload = {
+                "format": CACHE_FORMAT,
+                "repo": self.root.name,
+                "files": self._files,
+            }
+            self.path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        except OSError:
+            # Cache is an optimization, never a scan prerequisite. A locked,
+            # read-only, or unavailable user cache must not hide diagnostics.
+            self.enabled = False
+            self._files = {}
 
     def _load(self) -> None:
         try:

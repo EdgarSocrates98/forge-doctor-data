@@ -66,6 +66,21 @@ def test_cache_disabled_noop(tmp_path: Path):
     assert not cache.path.exists()
 
 
+def test_cache_save_degrades_when_user_cache_is_unwritable(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    blocked = tmp_path / "blocked"
+    blocked.write_text("not a directory", encoding="utf-8")
+    monkeypatch.setenv("FORGE_DOCTOR_DATA_CACHE_DIR", str(blocked))
+
+    cache = ScanCache(tmp_path)
+    cache.put(Path("a.py"), "sha", {"facts": []})
+    cache.save()
+
+    assert cache.enabled is False
+    assert cache._files == {}
+
+
 def test_cache_lives_outside_target(tmp_path: Path):
     """Cache poisoning guard: storage is the user cache dir, not the repo."""
     from forge_doctor_data.core.cache import cache_root

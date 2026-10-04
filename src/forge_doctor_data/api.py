@@ -20,13 +20,17 @@ Quick start::
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING
 
 from forge_doctor_data import __version__
 from forge_doctor_data.core.context import ScanOptions
 from forge_doctor_data.core.models import ScanReport
 from forge_doctor_data.core.platform_graph import DataPlatformGraph
 from forge_doctor_data.output.json_renderer import JSON_SCHEMA_VERSION as SCAN_SCHEMA_VERSION
+
+if TYPE_CHECKING:
+    from forge_doctor_data.core.migration import MigrationPlan
+    from forge_doctor_data.core.whatif import WhatIfReport
 
 __all__ = [
     "SCAN_SCHEMA_VERSION",
@@ -114,7 +118,7 @@ def capabilities_evaluate(
     return result.status.value
 
 
-def what_if(path: str | Path, changes: dict[str, str]) -> Any:
+def what_if(path: str | Path, changes: dict[str, str]) -> list[WhatIfReport]:
     """Evaluate ``WhatIfChange``s against a project. Keys like
     ``glue-version``/``databricks-runtime``; see ``core/whatif.py``."""
     from forge_doctor_data.core.context import ProjectContext
@@ -124,7 +128,7 @@ def what_if(path: str | Path, changes: dict[str, str]) -> Any:
     return [evaluate_change(ctx, parse_change(f"{k}={v}")) for k, v in changes.items()]
 
 
-def migrate_plans(path: str | Path = ".") -> Any:
+def migrate_plans(path: str | Path = ".") -> list[MigrationPlan]:
     """All applicable advisory migration plans (deterministic order).
     Plan-only; never mutates the project."""
     from forge_doctor_data.core.context import ProjectContext
