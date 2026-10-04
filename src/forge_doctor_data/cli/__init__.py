@@ -40,6 +40,7 @@ from forge_doctor_data.cli import (  # noqa: F401 - import-time command registra
     platforms,
     plugins,
     policy,
+    project,
     quality,
     redshift,
     reliability,
@@ -163,7 +164,7 @@ _PANELS: dict[str, dict[str, str]] = {
         "Quality gates & supply chain",
     ),
     "Setup & integrations": dict.fromkeys(
-        ("init", "info", "doctor", "cache", "mcp", "lsp", "export", "version", "agent"),
+        ("init", "info", "doctor", "cache", "mcp", "lsp", "export", "version", "agent", "project"),
         "Setup & integrations",
     ),
 }
