@@ -178,7 +178,25 @@ def test_cache_command(tmp_path: Path):
 def test_stats_flag(tmp_path: Path):
     (tmp_path / "a.py").write_text("x = 1\n", encoding="utf-8")
     result = runner.invoke(app, ["scan", str(tmp_path), "--stats"])
-    assert "ms" in result.output or "cache" in result.output
+    assert "files:" in result.output
+    assert "scan:" in result.output
+    assert "cache" in result.output
+
+
+def test_stats_json(tmp_path: Path):
+    (tmp_path / "a.py").write_text("x = 1\n", encoding="utf-8")
+    result = runner.invoke(app, ["scan", str(tmp_path), "--stats", "--stats-format", "json"])
+    assert result.exit_code == 0
+    payload = json.loads(result.output.strip().splitlines()[-1])
+    assert payload["files_scanned"] >= 1
+    assert payload["scan_ms"] is not None
+    assert "cache" in payload and "check_timings_ms" in payload
+
+
+def test_stats_format_invalid(tmp_path: Path):
+    (tmp_path / "a.py").write_text("x = 1\n", encoding="utf-8")
+    result = runner.invoke(app, ["scan", str(tmp_path), "--stats-format", "bogus"])
+    assert result.exit_code != 0
 
 
 def test_plugins_commands():

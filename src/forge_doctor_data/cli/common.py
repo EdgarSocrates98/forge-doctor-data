@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import contextlib
+import json as _json
 import shutil
 import subprocess
 import tempfile
 import time
+import tracemalloc
 from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -191,7 +193,15 @@ StatsOpt = Annotated[
     bool,
     typer.Option(
         "--stats",
-        help="Per-check timings + cache hit rate to stderr.",
+        help="Scan stats (files, timings, cache, memory) to stderr.",
+        rich_help_panel=_RUN,
+    ),
+]
+StatsFormatOpt = Annotated[
+    str,
+    typer.Option(
+        "--stats-format",
+        help="With --stats: text or json (both written to stderr).",
         rich_help_panel=_RUN,
     ),
 ]
@@ -261,6 +271,7 @@ class _ScanCli:
     show_root: bool = False
     cache: bool | None = None
     stats: bool = False
+    stats_format: str = "text"
     evidence_out: Path | None = None
     evidence_compact: bool = False
     record: bool = False
@@ -332,6 +343,9 @@ def _validate_scan(opts: _ScanCli) -> None:
         raise typer.Exit(INTERNAL_ERROR_EXIT)
     if opts.profile not in PROFILES:
         _stderr.print(f"[red]Unknown profile:[/red] {opts.profile} ({'|'.join(PROFILES)})")
+        raise typer.Exit(INTERNAL_ERROR_EXIT)
+    if opts.stats_format not in ("text", "json"):
+        _stderr.print(f"[red]Unknown --stats-format:[/red] {opts.stats_format} (text|json)")
         raise typer.Exit(INTERNAL_ERROR_EXIT)
     if opts.new_only and opts.baseline is None:
         _stderr.print("[red]--new-only requires --baseline.[/red]")
@@ -496,7 +510,17 @@ def _run_scan(opts: _ScanCli) -> None:
 
     console = Console(no_color=opts.no_color)
     with _stderr.status("[cyan]Analyzing project...[/cyan]", spinner="dots"):
+        tracing = opts.stats and not tracemalloc.is_tracing()
+        if tracing:
+            tracemalloc.start()
+        t0 = time.perf_counter()
         report, runner, selected, plugin_errors, ctx = _execute_scan(opts)
+        scan_ms = (time.perf_counter() - t0) * 1000
+        peak_mb = None
+        if tracing:
+            _current, peak = tracemalloc.get_traced_memory()
+            tracemalloc.stop()
+            peak_mb = peak / 1e6
 
     if opts.record:
         from forge_doctor_data.core.history import prune, record_snapshot
@@ -516,7 +540,7 @@ def _run_scan(opts: _ScanCli) -> None:
     _emit_reports(report, opts, console, selected, plugin_errors)
 
     if opts.stats:
-        _print_stats(runner, ctx)
+        _print_stats(runner, ctx, scan_ms, peak_mb, opts.stats_format)
 
     if opts.verbose:
         for failure in runner.failures:
@@ -525,19 +549,65 @@ def _run_scan(opts: _ScanCli) -> None:
     raise typer.Exit(exit_code(report, fail_on=opts.fail_on))
 
 
-def _print_stats(runner: CheckRunner, ctx: ProjectContext) -> None:
-    """--stats: per-check durations + cache hit rate on stderr."""
+def _print_stats(
+    runner: CheckRunner,
+    ctx: ProjectContext,
+    scan_ms: float | None = None,
+    peak_mb: float | None = None,
+    stats_format: str = "text",
+) -> None:
+    """--stats: local-only scan telemetry on stderr (never remote).
+
+    Covers the prompt_v1 stats surface: files scanned, scan wall time,
+    cache hit rate, incremental reuse, top check timings, and a memory
+    approximation (tracemalloc peak — Python allocations only)."""
     cache = scan_cache(ctx)
     total = cache.hits + cache.misses
+    timings = sorted(runner.timings.items(), key=lambda kv: -kv[1])[:15]
+    plan = runner.last_plan
+    if stats_format == "json":
+        typer.echo(
+            _json.dumps(
+                {
+                    "files_scanned": len(ctx.files),
+                    "scan_ms": round(scan_ms, 1) if scan_ms is not None else None,
+                    "memory_peak_mb": round(peak_mb, 1) if peak_mb is not None else None,
+                    "cache": {
+                        "hits": cache.hits,
+                        "misses": cache.misses,
+                        "hit_rate": round(cache.hits / total, 4) if total else None,
+                    },
+                    "incremental": (
+                        {
+                            "changed_files": len(plan.changed_files),
+                            "rerun": len(plan.rerun),
+                            "reused": len(runner.reused),
+                        }
+                        if plan is not None
+                        else None
+                    ),
+                    "check_timings_ms": {
+                        check_id: round(seconds * 1000, 1) for check_id, seconds in timings
+                    },
+                },
+                ensure_ascii=False,
+            ),
+            err=True,
+        )
+        return
+    _stderr.print(f"[dim]files: {len(ctx.files)} scanned[/dim]")
+    if scan_ms is not None:
+        _stderr.print(f"[dim]scan: {scan_ms:.0f} ms[/dim]")
+    if peak_mb is not None:
+        _stderr.print(f"[dim]memory: ~{peak_mb:.0f} MB peak (tracemalloc)[/dim]")
     hit_rate = f"{100 * cache.hits / total:.0f}%" if total else "n/a"
     _stderr.print(f"[dim]cache: {cache.hits} hits / {cache.misses} misses ({hit_rate})[/dim]")
-    if runner.last_plan is not None:
-        plan = runner.last_plan
+    if plan is not None:
         _stderr.print(
             f"[dim]incremental: {len(plan.changed_files)} file(s) changed, "
             f"{len(plan.rerun)} checks rerun, {len(runner.reused)} reused[/dim]"
         )
-    for check_id, seconds in sorted(runner.timings.items(), key=lambda kv: -kv[1])[:15]:
+    for check_id, seconds in timings:
         _stderr.print(f"[dim]{check_id:<10} {seconds * 1000:>7.1f} ms[/dim]")
 
 
