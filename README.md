@@ -158,8 +158,14 @@ forge-doctor-data iac                    # IaC checks (Terraform/CloudFormation)
 forge-doctor-data cache                  # incremental-analysis stats
 forge-doctor-data sbom                   # CycloneDX 1.5 of the project
 forge-doctor-data knowledge verify       # pack freshness/provenance
+forge-doctor-data knowledge audit        # fresh/stale/expired/source status
 forge-doctor-data doctor                 # environment self-check
 forge-doctor-data mcp                    # JSON-RPC stdio server for agents
+forge-doctor-data agent manifest .       # compact domains, risks, capabilities, refs
+forge-doctor-data agent context . --budget 8000
+forge-doctor-data agent delta . --since context.json
+forge-doctor-data agent evidence entity:<id> .
+forge-doctor-data collector validate evidence.json
 forge-doctor-data lsp                    # editor diagnostics (pip install .[lsp])
 forge-doctor-data version
 ```

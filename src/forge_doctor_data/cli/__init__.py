@@ -6,6 +6,7 @@ what populates the CLI. ``_snapshot`` is re-exported for the test-suite.
 
 from forge_doctor_data.cli import (  # noqa: F401 - import-time command registration
     advise,
+    agent,
     airflow,
     analytical,
     bench,
@@ -13,6 +14,7 @@ from forge_doctor_data.cli import (  # noqa: F401 - import-time command registra
     capabilities,
     catalog,
     cloud,
+    collector,
     compatibility,
     contract,
     controlm,
@@ -156,11 +158,12 @@ _PANELS: dict[str, dict[str, str]] = {
             "sbom",
             "contracts",
             "ontology",
+            "collector",
         ),
         "Quality gates & supply chain",
     ),
     "Setup & integrations": dict.fromkeys(
-        ("init", "info", "doctor", "cache", "mcp", "lsp", "export", "version"),
+        ("init", "info", "doctor", "cache", "mcp", "lsp", "export", "version", "agent"),
         "Setup & integrations",
     ),
 }

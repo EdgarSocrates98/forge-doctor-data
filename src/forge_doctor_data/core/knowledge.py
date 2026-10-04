@@ -133,6 +133,51 @@ def verify_pack(domain: str, name: str, today: date | None = None) -> list[str]:
     return issues
 
 
+def audit_packs(today: date | None = None) -> list[dict[str, Any]]:
+    """Classify every bundled pack for CI and release review.
+
+    Statuses are explicit: ``fresh``, ``stale``, ``expired``,
+    ``invalid_source``, and ``unverified``. No pack changes automatically.
+    """
+    now = today or date.today()
+    rows: list[dict[str, Any]] = []
+    for domain, name, pack in list_packs():
+        meta = pack_meta(pack)
+        issues = verify_pack(domain, name, now)
+        sources = meta["sources"]
+        status = "fresh"
+        if not sources or any(
+            not isinstance(source, str) or not source.startswith(("https://", "http://"))
+            for source in sources
+        ):
+            status = "invalid_source"
+        elif not meta["verified_at"]:
+            status = "unverified"
+        else:
+            try:
+                verified = date.fromisoformat(str(meta["verified_at"]))
+                if pack.get("expires_at") and now > date.fromisoformat(str(pack["expires_at"])):
+                    status = "expired"
+                elif now - verified > timedelta(days=STALE_DAYS):
+                    status = "stale"
+            except ValueError:
+                status = "unverified"
+        rows.append(
+            {
+                "domain": domain,
+                "name": name,
+                "status": status,
+                "issues": issues,
+                "pack_version": meta["pack_version"],
+                "verified_at": meta["verified_at"],
+                "sources": list(sources) if isinstance(sources, list) else [],
+                "deprecated": bool(pack.get("deprecated", False)),
+                "replacement": pack.get("replacement"),
+            }
+        )
+    return rows
+
+
 # ---------------------------------------------------------------------------
 # Supply-chain tooling: scaffold / semantic diff / conformance / publish
 # ---------------------------------------------------------------------------

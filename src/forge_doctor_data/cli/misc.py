@@ -787,6 +787,27 @@ def knowledge_verify() -> None:
         raise typer.Exit(1)
 
 
+@knowledge_app.command(name="audit")
+def knowledge_audit(
+    as_json: Annotated[bool, typer.Option("--json")] = False,
+) -> None:
+    """Classify packs as fresh, stale, expired, invalid_source, or unverified."""
+    from forge_doctor_data.core.knowledge import audit_packs
+
+    rows = audit_packs()
+    if as_json:
+        typer.echo(json.dumps(rows, indent=2, ensure_ascii=False))
+        if any(row["status"] != "fresh" for row in rows):
+            raise typer.Exit(1)
+        return
+    console = Console()
+    for row in rows:
+        color = "green" if row["status"] == "fresh" else "yellow"
+        console.print(f"  [{color}]{row['status']}[/{color}] {row['domain']}/{row['name']}")
+    if any(row["status"] != "fresh" for row in rows):
+        raise typer.Exit(1)
+
+
 @knowledge_app.command(name="new")
 def knowledge_new(
     domain: Annotated[str, typer.Argument(help="Pack domain (e.g. snowflake).")],
