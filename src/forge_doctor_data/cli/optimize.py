@@ -20,7 +20,7 @@ optimize_app = typer.Typer(help="Optimization candidates + multi-objective oppor
 
 def _list_candidates(path: Path, fmt: str, top: int | None) -> None:
     from forge_doctor_data.analyzers.platform_graph_builder import build_platform_graph
-    from forge_doctor_data.core.optimize import optimize
+    from forge_doctor_data.core.optimization.static import optimize
 
     ctx = ProjectContext(root=path.resolve())
     registry, _ = _build_registry(config=ctx.config)
@@ -61,7 +61,7 @@ def _list_candidates(path: Path, fmt: str, top: int | None) -> None:
 def _v2_opportunities(path: Path, artifact: Path | None, adapter: str | None) -> list[Any]:
     """Assemble the v2 inputs: graph evidence + optional runtime artifact."""
     from forge_doctor_data.analyzers.platform_graph_builder import build_platform_graph
-    from forge_doctor_data.core.optimize_v2 import opportunities
+    from forge_doctor_data.core.optimization.evidence import opportunities
     from forge_doctor_data.core.performance import (
         PerfPolicy,
         extract_signals,

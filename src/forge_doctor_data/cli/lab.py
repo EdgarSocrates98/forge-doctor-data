@@ -288,7 +288,7 @@ def _bundle_experiment(
     as_json: bool,
 ) -> None:
     """Compare two evidence bundles against declared expectations."""
-    from forge_doctor_data.core.experiments_v2 import (
+    from forge_doctor_data.core.experiments.measured import (
         ExperimentPlanV2,
         compare_bundles,
     )

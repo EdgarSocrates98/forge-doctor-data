@@ -15,7 +15,7 @@ from forge_doctor_data.core.models import (
     ScanReport,
     Severity,
 )
-from forge_doctor_data.core.optimize import optimize
+from forge_doctor_data.core.optimization.static import optimize
 from forge_doctor_data.core.platform_graph import DataPlatformGraph, Entity, EntityKind
 
 runner = CliRunner()

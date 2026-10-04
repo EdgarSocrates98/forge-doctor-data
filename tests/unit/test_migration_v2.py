@@ -12,7 +12,7 @@ from typer.testing import CliRunner
 from forge_doctor_data.cli.app import app
 from forge_doctor_data.core.context import ProjectContext
 from forge_doctor_data.core.crossmigration import plan_platform_migration
-from forge_doctor_data.core.migration_v2 import (
+from forge_doctor_data.core.migration.cross_platform import (
     Lossiness,
     MappingKind,
     ReadinessStatus,

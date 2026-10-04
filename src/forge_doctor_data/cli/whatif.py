@@ -159,7 +159,7 @@ def migrate_explain(
     import json as _json
 
     from forge_doctor_data.core.crossmigration import plan_platform_migration
-    from forge_doctor_data.core.migration_v2 import explain_concept
+    from forge_doctor_data.core.migration.cross_platform import explain_concept
 
     if not source or not target:
         _stderr.print("usage: forge-doctor-data migrate explain --from <src> --to <dst> .")

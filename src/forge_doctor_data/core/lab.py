@@ -504,7 +504,7 @@ def _behavioral_categories(
 ) -> None:
     """Signals / cost drivers / SLA status / opportunities vs truth."""
     from forge_doctor_data.core.cost_drivers import extract_drivers
-    from forge_doctor_data.core.optimize_v2 import opportunities
+    from forge_doctor_data.core.optimization.evidence import opportunities
     from forge_doctor_data.core.performance import (
         PerfPolicy,
         extract_signals,

@@ -10,7 +10,7 @@ from forge_doctor_data.core.execution_model import (
     StageKind,
     derive_metrics,
 )
-from forge_doctor_data.core.experiments_v2 import (
+from forge_doctor_data.core.experiments.measured import (
     WORKLOAD_KINDS,
     ExperimentPlanV2,
     ExperimentVerdict,

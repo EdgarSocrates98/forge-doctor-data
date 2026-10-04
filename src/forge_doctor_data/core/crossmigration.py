@@ -18,7 +18,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from forge_doctor_data.core.context import ProjectContext
-    from forge_doctor_data.core.migration_v2 import MigrationConcept, MigrationReadiness
+    from forge_doctor_data.core.migration.cross_platform import MigrationConcept, MigrationReadiness
     from forge_doctor_data.core.models import CheckResult
     from forge_doctor_data.core.sql_portability import SqlPortabilityFinding
 
@@ -409,7 +409,7 @@ def plan_platform_migration(ctx: ProjectContext, source: str, target: str) -> Pl
     plan.findings = _migr_findings(plan)
 
     # spec 234 — ontology-driven concept mapping + readiness (additive)
-    from forge_doctor_data.core.migration_v2 import (
+    from forge_doctor_data.core.migration.cross_platform import (
         assess_readiness,
         detect_runtime_sources,
         map_service,
