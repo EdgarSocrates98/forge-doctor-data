@@ -1,0 +1,70 @@
+{
+  "schema_version": "1",
+  "description": "Versioned validation corpus. Each entry vendors a repo slice plus expected outputs under expected/. origin=synthetic entries were authored in-repo; origin=real entries must record upstream url+commit+license. See docs/corpus.md for the review path.",
+  "entries": [
+    {
+      "name": "airflow-glue-athena",
+      "origin": "synthetic",
+      "url": null,
+      "commit": null,
+      "license": null,
+      "shape": "Airflow DAGs orchestrating Glue jobs writing to Athena-consumed tables, with runtime export"
+    },
+    {
+      "name": "databricks-delta",
+      "origin": "synthetic",
+      "url": null,
+      "commit": null,
+      "license": null,
+      "shape": "Databricks bundle + Terraform jobs + Delta compaction script"
+    },
+    {
+      "name": "dynamodb-neptune",
+      "origin": "synthetic",
+      "url": null,
+      "commit": null,
+      "license": null,
+      "shape": "DynamoDB->Neptune sync with Terraform provisioning"
+    },
+    {
+      "name": "dynamodb-streams-lambda",
+      "origin": "synthetic",
+      "url": null,
+      "commit": null,
+      "license": null,
+      "shape": "DynamoDB Streams fan-out to Lambda via Terraform"
+    },
+    {
+      "name": "emr-iceberg",
+      "origin": "synthetic",
+      "url": null,
+      "commit": null,
+      "license": null,
+      "shape": "EMR cluster running Spark jobs on Iceberg tables"
+    },
+    {
+      "name": "glue-4-to-5",
+      "origin": "synthetic",
+      "url": null,
+      "commit": null,
+      "license": null,
+      "shape": "Glue 4.0 jobs pre-migration to 5.0 (EOL/runtime checks)"
+    },
+    {
+      "name": "kafka-spark-iceberg",
+      "origin": "synthetic",
+      "url": null,
+      "commit": null,
+      "license": null,
+      "shape": "Kafka -> Spark Structured Streaming -> Iceberg with runtime export"
+    },
+    {
+      "name": "lf-cross-account",
+      "origin": "synthetic",
+      "url": null,
+      "commit": null,
+      "license": null,
+      "shape": "Lake Formation cross-account grants in Terraform"
+    }
+  ]
+}
