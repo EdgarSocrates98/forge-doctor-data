@@ -403,13 +403,15 @@ class HandoffBundle(ContractModel):
             tool_version=tool.get("version", ""),
             project=dict(d.get("project", {})),
             summary=dict(d.get("summary", {})),
-            findings=tuple(Finding.from_dict(f) for f in d.get("results", d.get("findings", ()))),
+            findings=tuple(
+                Finding.from_dict(f) for f in d.get("results") or d.get("findings") or ()
+            ),
             entities=tuple(
-                Entity.from_dict(e) for e in graph.get("entities", d.get("entities", ()))
+                Entity.from_dict(e) for e in graph.get("entities") or d.get("entities") or ()
             ),
             relationships=tuple(
                 Relationship.from_dict(r)
-                for r in graph.get("relationships", d.get("relationships", ()))
+                for r in graph.get("relationships") or d.get("relationships") or ()
             ),
             capabilities=caps,
             plans=tuple(RemediationPlan.from_dict(p) for p in d.get("plans", ())),
