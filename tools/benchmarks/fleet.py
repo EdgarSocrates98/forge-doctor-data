@@ -113,6 +113,16 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--root", type=Path, default=Path(".pytest_tmp/fleet"))
     parser.add_argument("--out", type=Path, default=None, help="write JSON results")
+    parser.add_argument(
+        "--budget",
+        type=Path,
+        default=None,
+        help=(
+            'JSON budget, e.g. {"cold_ms_p50_max": 800, '
+            '"ms_per_repo_wall_max": 1500}. A breached key fails the run; '
+            "absent keys report 'unknown' and are not gated."
+        ),
+    )
     parser.add_argument("--json", action="store_true", help="print JSON to stdout")
     args = parser.parse_args()
 
@@ -135,6 +145,51 @@ def main() -> None:
                 f"peak={r.peak_mb:>6.1f}MB wall={r.wall_s:>6.1f}s",
                 file=sys.stderr,
             )
+    if args.budget is not None:
+        sys.exit(_check_budget(results, args.budget))
+
+
+def _check_budget(results: list[SizeResult], budget_path: Path) -> int:
+    """Gate measured curves against a JSON budget file.
+
+    Reports per-key PASS/FAIL/unknown; a key absent from the budget is
+    'unknown' (per docs/performance-budgets.md - no invented budgets).
+    Exit 1 if any measured size breaches.
+    """
+    budget = json.loads(budget_path.read_text(encoding="utf-8"))
+    worst = 0
+    for r in results:
+        measured = {
+            "cold_ms_p50_max": r.cold_ms_p50,
+            "cold_ms_mean_max": r.cold_ms_mean,
+            "warm_ms_mean_max": r.warm_ms_mean,
+            "ms_per_repo_wall_max": (r.wall_s * 1000) / r.repos if r.repos else 0.0,
+            "peak_mb_max": r.peak_mb,
+        }
+        for key, value in measured.items():
+            limit = budget.get(key)
+            if limit is None:
+                continue
+            ok = value <= limit
+            worst = worst or (not ok)
+            print(
+                f"budget n={r.repos} {key}: {value:.1f} {'<=' if ok else '>'} "
+                f"{limit} -> {'PASS' if ok else 'FAIL'}",
+                file=sys.stderr,
+            )
+    absent = [k for k in _BUDGET_KEYS if k not in budget]
+    for key in absent:
+        print(f"budget {key}: unknown (not in budget file)", file=sys.stderr)
+    return int(worst)
+
+
+_BUDGET_KEYS = (
+    "cold_ms_p50_max",
+    "cold_ms_mean_max",
+    "warm_ms_mean_max",
+    "ms_per_repo_wall_max",
+    "peak_mb_max",
+)
 
 
 if __name__ == "__main__":
