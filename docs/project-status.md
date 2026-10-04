@@ -6,7 +6,7 @@ Package version: `0.9.0`
 
 ## Surface
 
-- CLI commands: 187
+- CLI commands: 221
 - Built-in checks: 342 across 42 categories
 - Contracts: 10
 - MCP tools: 13
@@ -93,6 +93,40 @@ Package version: `0.9.0`
 - `incident inspect`
 - `info`
 - `init`
+- `inspect airflow`
+- `inspect analytical`
+- `inspect athena`
+- `inspect bigquery`
+- `inspect catalog`
+- `inspect cloud`
+- `inspect controlm`
+- `inspect data-model`
+- `inspect databricks`
+- `inspect dbt`
+- `inspect delta`
+- `inspect dynamodb`
+- `inspect emr`
+- `inspect flink`
+- `inspect graph`
+- `inspect iceberg`
+- `inspect incident`
+- `inspect kafka`
+- `inspect kinesis`
+- `inspect lakeformation`
+- `inspect lambda`
+- `inspect neptune`
+- `inspect optimize`
+- `inspect parquet`
+- `inspect quality`
+- `inspect redshift`
+- `inspect search`
+- `inspect snowflake`
+- `inspect stepfunctions`
+- `inspect streaming`
+- `inspect terraform`
+- `inspect trino`
+- `inspect twin`
+- `inspect workspace`
 - `kafka findings`
 - `kafka inspect`
 - `kinesis findings`

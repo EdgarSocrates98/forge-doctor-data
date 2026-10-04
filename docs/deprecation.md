@@ -18,3 +18,15 @@ Rules:
   example in the changelog and relevant contract document.
 - Unknown and unsupported states remain explicit; deprecation never changes an
   evidence value silently.
+
+## Current transitions
+
+| Surface | Canonical form | Legacy form | Status |
+|---|---|---|---|
+| Domain inspection | `inspect <domain> [path]` | `<domain> inspect [path]` | both work; no removal announced |
+| Generational modules | `core/<concept>/` packages | `core/*_v2.py` modules | facades; removal needs a major boundary |
+
+The `inspect` aliases are generated from the live registry — a domain's
+`inspect` callback reachable with only a `path` argument is exposed
+automatically, so the canonical surface can never drift from the legacy
+one.

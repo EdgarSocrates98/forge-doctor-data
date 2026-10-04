@@ -166,6 +166,7 @@ forge-doctor-data agent context . --budget 8000
 forge-doctor-data agent delta . --since context.json
 forge-doctor-data agent evidence entity:<id> .
 forge-doctor-data collector validate evidence.json
+forge-doctor-data inspect iceberg .      # convergent: inspect <domain> (alias of `iceberg inspect`)
 forge-doctor-data project status         # generated status; --check gates doc drift
 forge-doctor-data lsp                    # editor diagnostics (pip install .[lsp])
 forge-doctor-data version

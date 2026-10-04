@@ -199,6 +199,19 @@ def test_stats_format_invalid(tmp_path: Path):
     assert result.exit_code != 0
 
 
+def test_inspect_aliases_cover_domains(tmp_path: Path):
+    """P14: `inspect <domain>` aliases every `<domain> inspect` group."""
+    from forge_doctor_data.cli.inspect import inspect_app
+
+    aliased = {c.name for c in inspect_app.registered_commands}
+    assert {"iceberg", "snowflake", "airflow", "terraform", "parquet"} <= aliased
+    (tmp_path / "a.py").write_text("x = 1\n", encoding="utf-8")
+    out = runner.invoke(app, ["inspect", "iceberg", str(tmp_path)])
+    assert out.exit_code == 0
+    direct = runner.invoke(app, ["iceberg", "inspect", str(tmp_path)])
+    assert out.output == direct.output
+
+
 def test_plugins_commands():
     assert runner.invoke(app, ["plugins", "list"]).exit_code == 0
     assert runner.invoke(app, ["plugins", "validate"]).exit_code == 0

@@ -30,6 +30,7 @@ from forge_doctor_data.cli import (  # noqa: F401 - import-time command registra
     history,
     iceberg,
     incident,
+    inspect,
     lab,
     lakeformation,
     misc,
@@ -201,6 +202,10 @@ def _apply_help_metadata() -> None:
             if base.lower().split(":", 1)[0].rstrip(". ") != doc.lower().rstrip(". "):
                 group.help = f"{base} Bare: {doc.replace('``', '')}"
 
+
+# `inspect <domain>` aliases are registered only after every domain
+# module above has populated `app.registered_groups`.
+inspect.register_domain_aliases()
 
 _apply_help_metadata()
 
