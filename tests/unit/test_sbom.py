@@ -82,3 +82,11 @@ def test_sbom_serial_is_path_independent(tmp_path: Path):
     bom_b = build_sbom(ProjectContext(root=b))
     assert bom_a["serialNumber"] == bom_b["serialNumber"]
     assert bom_a["serialNumber"].startswith("urn:uuid:")
+
+
+def test_sbom_is_deterministic(tmp_path: Path):
+    first = build_sbom(ProjectContext(root=tmp_path))
+    second = build_sbom(ProjectContext(root=tmp_path))
+
+    assert first == second
+    assert "timestamp" not in first["metadata"]

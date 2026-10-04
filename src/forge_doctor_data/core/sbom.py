@@ -15,7 +15,6 @@ from __future__ import annotations
 import re
 import tomllib
 from dataclasses import dataclass, field
-from datetime import UTC
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -156,9 +155,12 @@ def _image_components(ctx: ProjectContext) -> list[dict[str, Any]]:
 
 
 def build_sbom(ctx: ProjectContext) -> dict[str, Any]:
-    """CycloneDX 1.5 document for the scanned project."""
+    """CycloneDX 1.5 document for the scanned project.
+
+    Timestamp metadata is omitted intentionally: the inventory is a content
+    artifact and must remain byte-stable across repeated scans.
+    """
     import uuid
-    from datetime import datetime
 
     pyproject = ctx.pyproject or {}
     project_name = (
@@ -237,7 +239,6 @@ def build_sbom(ctx: ProjectContext) -> dict[str, Any]:
         ),
         "version": 1,
         "metadata": {
-            "timestamp": datetime.now(UTC).isoformat(),
             "tools": {
                 "components": [
                     {

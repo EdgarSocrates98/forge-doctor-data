@@ -1,0 +1,5 @@
+# Default ownership for review and branch-protection configuration.
+* @EdgarSocrates98
+.github/ @EdgarSocrates98
+src/forge_doctor_data/core/ @EdgarSocrates98
+src/forge_doctor_data/integrations/ @EdgarSocrates98

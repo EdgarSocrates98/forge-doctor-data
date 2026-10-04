@@ -26,13 +26,22 @@ jobs:
           python-version: "3.12"
 
       - name: Install Poetry
-        run: pipx install poetry
+        run: pipx install "poetry>=2.2"
 
       - name: Install and verify
         run: |
           poetry install --no-interaction
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            poetry run python tools/verify_release.py --tag "${GITHUB_REF_NAME}"
+          else
+            poetry run python tools/verify_release.py
+          fi
           poetry run pytest
           poetry build
+          poetry run python tools/verify_release.py --dist dist
+          python -m pip install --no-deps dist/*.whl
+          forge-doctor-data doctor .
+          forge-doctor-data sbom . --format cyclonedx --output dist/sbom.json
 
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
