@@ -46,7 +46,7 @@ dev = [
     "sqlglot>=26,<29",
     # P7: official MCP SDK - dev-only conformance validation of our
     # wire payloads against mcp.types models. Not a runtime dependency.
-    "mcp>=1.9,<2",
+    "mcp>=1.30.0,<2",
 ]
 
 [tool.poetry]
