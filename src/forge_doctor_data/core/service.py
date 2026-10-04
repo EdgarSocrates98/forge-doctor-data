@@ -136,6 +136,9 @@ class ScanService:
             trusted=rules.trusted if rules else (),
             allow=rules.allow if rules else (),
             strict=bool(rules and rules.mode == "strict"),
+            execution=rules.execution if rules else "trusted",
+            timeout_seconds=rules.timeout_seconds if rules else 30.0,
+            max_output_bytes=rules.max_output_bytes if rules else 1_000_000,
         )
         allow = rules.allow if rules else ()
         _, allow_check_ids = split_allow(allow)

@@ -286,12 +286,74 @@ def load_plugin_checks(
     trusted: tuple[str, ...] = (),
     allow: tuple[str, ...] = (),
     strict: bool = False,
+    execution: str = "trusted",
+    timeout_seconds: float = 30.0,
+    max_output_bytes: int = 1_000_000,
 ) -> tuple[list[Check], list[str]]:
     """Legacy shape used by older call sites: ``(checks, load_errors)``."""
+    if execution == "isolated":
+        return _load_isolated_plugin_checks(
+            trusted=trusted,
+            allow=allow,
+            strict=strict,
+            timeout_seconds=timeout_seconds,
+            max_output_bytes=max_output_bytes,
+        )
     loaded, _infos, errors = load_plugins(trusted=trusted, allow=allow, strict=strict)
     checks: list[Check] = []
     for item in loaded:
         item.check.__fd_source__ = item.identity.distribution  # type: ignore[attr-defined]
         item.check.__fd_identity__ = item.identity  # type: ignore[attr-defined]
         checks.append(item.check)
+    return checks, errors
+
+
+def _load_isolated_plugin_checks(
+    *,
+    trusted: tuple[str, ...],
+    allow: tuple[str, ...],
+    strict: bool,
+    timeout_seconds: float,
+    max_output_bytes: int,
+) -> tuple[list[Check], list[str]]:
+    """Describe entry points in children, then register proxy checks."""
+    from forge_doctor_data.plugins.isolation import IsolatedCheck, describe_entry_point
+
+    allow_identities, _ = split_allow(allow)
+    checks: list[Check] = []
+    errors: list[str] = []
+    for ep in iter_entry_points():
+        dist_name, dist_version = _dist_info(ep)
+        if not _ep_trusted(ep, trusted, allow_identities, strict):
+            continue
+        try:
+            rows = describe_entry_point(
+                ep.name,
+                dist_name,
+                timeout_seconds=timeout_seconds,
+                max_output_bytes=max_output_bytes,
+            )
+            for row in rows:
+                check = IsolatedCheck(
+                    entry_point=ep.name,
+                    distribution=dist_name,
+                    id=row["id"],
+                    title=row.get("title", row["id"]),
+                    category=row.get("category", "plugin"),
+                    why=row.get("why", ""),
+                    when_ok=row.get("when_ok", ""),
+                    fix=row.get("fix", ""),
+                    timeout_seconds=timeout_seconds,
+                    max_output_bytes=max_output_bytes,
+                )
+                check.__fd_source__ = dist_name or ep.name  # type: ignore[attr-defined]
+                check.__fd_identity__ = PluginIdentity(  # type: ignore[attr-defined]
+                    distribution=dist_name or ep.name,
+                    version=dist_version,
+                    api_version="2",
+                    entry_point=ep.name,
+                )
+                checks.append(check)
+        except Exception as exc:
+            errors.append(f"{ep.name}: isolated load failed: {exc}")
     return checks, errors

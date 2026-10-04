@@ -60,6 +60,11 @@ class PluginRules:
     # ``strict`` = default-deny: only ``trusted`` plugins may load, and
     # identity entries in ``allow`` no longer grant load permission.
     mode: str = "open"
+    # ``isolated`` runs plugin checks in a child process. It is process
+    # isolation, not a complete OS security sandbox.
+    execution: str = "trusted"
+    timeout_seconds: float = 30.0
+    max_output_bytes: int = 1_000_000
 
 
 @dataclass(frozen=True)
@@ -95,6 +100,9 @@ class ForgeDoctorDataConfig:
             checks_disabled=_str_list(checks_section.get("disabled")),
             allow=plugins_allow,
             mode="strict" if plugins_section.get("mode") == "strict" else "open",
+            execution=("isolated" if plugins_section.get("execution") == "isolated" else "trusted"),
+            timeout_seconds=_positive_float(plugins_section.get("timeout_seconds"), 30.0),
+            max_output_bytes=_positive_int(plugins_section.get("max_output_bytes"), 1_000_000),
         )
         # Per-category ignores: [tool.forge-doctor-data.spark] ignore = [...]
         for value in section.values():
@@ -186,6 +194,22 @@ def _str_list(value: Any) -> tuple[str, ...]:
     if not isinstance(value, list):
         return ()
     return tuple(item for item in value if isinstance(item, str))
+
+
+def _positive_float(value: Any, default: float) -> float:
+    try:
+        candidate = float(value)
+    except (TypeError, ValueError):
+        return default
+    return candidate if candidate > 0 else default
+
+
+def _positive_int(value: Any, default: int) -> int:
+    try:
+        candidate = int(value)
+    except (TypeError, ValueError):
+        return default
+    return candidate if candidate > 0 else default
 
 
 # Backwards-compatible alias; removed in 1.0.
