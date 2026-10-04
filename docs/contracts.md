@@ -82,5 +82,16 @@ tests.
 
 - Contracts describe what the engine already emits — no new runtime
   behavior is invented for the contract's sake.
-- No shared package yet: contracts live in `forge_doctor_data.core.schemas`
-  until a second Forge tool exists to pin cross-repo requirements.
+
+## Shared contract models (P16)
+
+`forge_doctor_data.contracts` is the dependency-free, JSON-native model
+layer downstream tools program against: `Entity`, `Relationship`,
+`Evidence`, `Finding`, `Capability`, `MigrationPlan`,
+`RemediationPlan`, `HandoffBundle`, `DiagnosticManifest`, and
+`ContractVersion` negotiation (`forge-contracts/1`). The engine
+converts via `core/contract_adapters.py` — dependency direction is
+always engine → contracts. These models are the seed of a standalone
+`forge-contracts` distribution; extracting a separate package is a
+publish-time decision, not an engine change (imports stay
+`forge_doctor_data.contracts` today).
