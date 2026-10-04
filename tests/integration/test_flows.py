@@ -128,9 +128,7 @@ def test_flow_b_runtime_evidence_lifecycle(tmp_path: Path) -> None:
 
     # record into history, then the series is listed
     for _ in range(3):
-        rec = runner.invoke(
-            app, ["runtime", "history", str(artifact), "--root", str(root)]
-        )
+        rec = runner.invoke(app, ["runtime", "history", str(artifact), "--root", str(root)])
         assert rec.exit_code == 0, rec.output
     series = runner.invoke(app, ["runtime", "history", "--root", str(root), "--json"])
     assert series.exit_code == 0
@@ -158,9 +156,7 @@ def test_flow_b_runtime_evidence_lifecycle(tmp_path: Path) -> None:
         ),
         encoding="utf-8",
     )
-    corr = runner.invoke(
-        app, ["runtime", "correlate", str(events), "--root", str(root)]
-    )
+    corr = runner.invoke(app, ["runtime", "correlate", str(events), "--root", str(root)])
     assert corr.exit_code in (0, 1), corr.output
     inc = runner.invoke(app, ["incident", "inspect", "--root", str(root)])
     assert inc.exit_code == 0, inc.output
@@ -188,15 +184,11 @@ def test_flow_c_workspace_fleet_portfolio(tmp_path: Path) -> None:
     ws.mkdir()
     _monorepo(ws)
 
-    discovered = runner.invoke(
-        app, ["workspace", "inspect", "--path", str(ws)]
-    )
+    discovered = runner.invoke(app, ["workspace", "inspect", "--path", str(ws)])
     assert discovered.exit_code == 0, discovered.output
 
     manifest = ws / "fleet.yml"
-    manifest.write_text(
-        "repos:\n  - path: ./repo-a\n  - path: ./repo-b\n", encoding="utf-8"
-    )
+    manifest.write_text("repos:\n  - path: ./repo-a\n  - path: ./repo-b\n", encoding="utf-8")
     for step in ("inspect", "report", "portfolio", "regressions"):
         out = runner.invoke(app, ["fleet", step, str(manifest)])
         assert out.exit_code in (0, 1), f"fleet {step}: {out.output}"
@@ -237,9 +229,7 @@ def test_flow_d_handoff_contract_consumer(tmp_path: Path) -> None:
 # --------------------------------------------------------------------------
 
 
-def test_flow_e_plugin_injection_pipeline(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_flow_e_plugin_injection_pipeline(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     from importlib.metadata import EntryPoint
 
     from forge_doctor_data.core.models import CheckResult, Severity
@@ -275,9 +265,7 @@ def test_flow_e_plugin_injection_pipeline(
     proj = tmp_path / "proj"
     proj.mkdir()
     (proj / "a.py").write_text("x = 1\n", encoding="utf-8")
-    scan = runner.invoke(
-        app, ["scan", str(proj), "-f", "json", "--profile", "demo"]
-    )
+    scan = runner.invoke(app, ["scan", str(proj), "-f", "json", "--profile", "demo"])
     # The plugin check is untrusted by default → skipped; --allow would
     # be required. Either way the scan must not crash.
     assert scan.exit_code in (0, 1, 2)
