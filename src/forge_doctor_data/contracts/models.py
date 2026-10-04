@@ -296,13 +296,25 @@ class MigrationPlan(ContractModel):
         )
 
 
+def _version_str(value: object) -> str:
+    """Wire ``contract_version`` may be ``forge-contracts/1`` or the
+    integer ``1`` used by the handoff-bundle schema - both normalize
+    to the canonical string form."""
+    if isinstance(value, int):
+        return f"forge-contracts/{value}"
+    return str(value) if value else str(CURRENT)
+
+
 @dataclass(frozen=True)
 class RemediationPlan(ContractModel):
     """Deterministic fix actions bound to finding fingerprints."""
 
     id: str = ""
-    finding_fingerprints: tuple[str, ...] = ()
+    check_id: str = ""
+    problem: str = ""
+    targets: tuple[str, ...] = ()
     actions: tuple[str, ...] = ()
+    risks: tuple[str, ...] = ()
     requires_approval: bool = False
 
     def to_dict(self) -> Json:
@@ -310,19 +322,31 @@ class RemediationPlan(ContractModel):
             {
                 "contract_version": self.contract_version,
                 "id": self.id,
-                "finding_fingerprints": list(self.finding_fingerprints),
+                "check_id": self.check_id,
+                "problem": self.problem,
+                "targets": list(self.targets),
                 "actions": list(self.actions),
+                "risks": list(self.risks),
                 "requires_approval": self.requires_approval,
             }
         )
 
     @staticmethod
     def from_dict(d: Json) -> RemediationPlan:
+        # Wire actions are objects ({id, description,...}); the contract
+        # surface is their descriptions.
+        actions = tuple(
+            a.get("description", "") if isinstance(a, dict) else str(a)
+            for a in d.get("actions", ())
+        )
         return RemediationPlan(
-            contract_version=d.get("contract_version", str(CURRENT)),
-            id=d["id"],
-            finding_fingerprints=tuple(d.get("finding_fingerprints", ())),
-            actions=tuple(d.get("actions", ())),
+            contract_version=_version_str(d.get("contract_version")),
+            id=d.get("id", ""),
+            check_id=d.get("check_id", ""),
+            problem=d.get("problem", ""),
+            targets=tuple(d.get("targets", ())),
+            actions=actions,
+            risks=tuple(d.get("risks", ())),
             requires_approval=bool(d.get("requires_approval", False)),
         )
 
@@ -356,17 +380,40 @@ class HandoffBundle(ContractModel):
 
     @staticmethod
     def from_dict(d: Json) -> HandoffBundle:
+        """Deserialize the emitted wire shape (``handoff-bundle`` schema).
+
+        The bundle nests entities/relationships under ``graph``, findings
+        under ``results``, and capabilities as ``{platform: {cap: status}}``;
+        top-level keys are also accepted for forward compatibility.
+        """
         tool = d.get("tool", {})
+        graph = d.get("graph", {})
+        capabilities = d.get("capabilities", ())
+        if isinstance(capabilities, dict):
+            caps = tuple(
+                Capability(id=cap, domain=platform, status=str(status))
+                for platform, entries in sorted(capabilities.items())
+                for cap, status in sorted(entries.items())
+            )
+        else:
+            caps = tuple(Capability.from_dict(c) for c in capabilities)
         return HandoffBundle(
-            contract_version=d.get("contract_version", str(CURRENT)),
+            contract_version=_version_str(d.get("contract_version")),
             tool=tool.get("name", "forge-doctor-data"),
             tool_version=tool.get("version", ""),
             project=dict(d.get("project", {})),
             summary=dict(d.get("summary", {})),
-            findings=tuple(Finding.from_dict(f) for f in d.get("findings", ())),
-            entities=tuple(Entity.from_dict(e) for e in d.get("entities", ())),
-            relationships=tuple(Relationship.from_dict(r) for r in d.get("relationships", ())),
-            capabilities=tuple(Capability.from_dict(c) for c in d.get("capabilities", ())),
+            findings=tuple(
+                Finding.from_dict(f) for f in d.get("results", d.get("findings", ()))
+            ),
+            entities=tuple(
+                Entity.from_dict(e) for e in graph.get("entities", d.get("entities", ()))
+            ),
+            relationships=tuple(
+                Relationship.from_dict(r)
+                for r in graph.get("relationships", d.get("relationships", ()))
+            ),
+            capabilities=caps,
             plans=tuple(RemediationPlan.from_dict(p) for p in d.get("plans", ())),
         )
 
