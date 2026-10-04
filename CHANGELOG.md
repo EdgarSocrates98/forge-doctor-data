@@ -505,6 +505,41 @@ was being hardened toward the 1.0 public-contract freeze.
   `docs/agent-context.md`, `docs/collectors.md`.
 - **`knowledge audit`** — pack classification (`fresh`, `stale`,
   `expired`, `invalid_source`, `unverified`) with a dedicated command.
+- **Versioned contracts package** — `forge_doctor_data.contracts`:
+  `handoff-bundle`-shaped dataclasses (`Finding`, `Entity`,
+  `Relationship`, `Capability`, `RemediationPlan`, `HandoffBundle`)
+  with `to_dict`/`from_dict`, a `forge-contracts/N` version line, and
+  `core/contract_adapters.py` mapping engine reports onto them.
+- **MCP protocol adapters** — `integrations/mcp_protocol.py` negotiates
+  legacy and modern `initialize` shapes; an official-SDK conformance
+  suite (`tests/integration/test_mcp_conformance.py`) pins both.
+- **`inspect <domain>` aliases** — `forge-doctor-data inspect iceberg`,
+  `inspect airflow`, and 30+ more converge onto the per-domain
+  `<domain> inspect` commands (see `docs/deprecation.md`).
+- **Metamorphic/mutation suite** — `tests/integration/test_mutations.py`
+  proves detrimental mutations surface the expected check ids
+  (collect(), single-partition write, checkpoint removal, Glue runtime
+  downgrade, Iceberg format-version/partition regressions, DynamicFrame
+  mixing) plus a byte-identical determinism invariant.
+- **Integration flows** — `tests/integration/test_flows.py` covers
+  scan→baseline→diff, runtime evidence→history→regression/correlation,
+  workspace/fleet/portfolio, and handoff→contract-verify→typed consumer.
+- **Fleet benchmark** — `tools/benchmarks/fleet.py` generates a seeded
+  synthetic workspace and measures cold/warm per-repo scan curves;
+  `--budget <json>` gates measured keys and reports `unknown` for
+  unbudgeted ones. n=10/50 runs recorded in
+  `docs/performance-budgets.md`.
+- **Versioned corpus manifest** — `golden/manifest.json` indexes every
+  vendored slice with provenance (`origin`, upstream `url`/`commit`/
+  `license` required for `real` entries); `docs/corpus.md` documents
+  the review path.
+- **Architecture consolidation** — `experiments_v2`, `migration_v2`,
+  `optimize`/`optimize_v2` folded into bounded packages
+  (`core/experiments`, `core/migration`, `core/optimization`); the old
+  module paths remain as compatibility facades.
+- **Policies (continued)** — `docs/governance.md` (protected-main
+  ruleset + stable required checks), `docs/domain-gate.md` (P26 new
+  domain admission), `docs/testing.md` (test pyramid).
 
 ### Changed (step-10 consolidation)
 
@@ -541,6 +576,11 @@ was being hardened toward the 1.0 public-contract freeze.
 - **Migration planner crash** — `databricks-runtime-upgrade` iterated
   DBR dict keys then indexed them (`TypeError`); now iterates values
   correctly (caught by the golden corpus).
+- **Handoff bundle deserialization** — `HandoffBundle.from_dict` now
+  normalizes the emitted wire form: capabilities as a
+  `{platform: {cap: status}}` mapping, remediation actions as objects
+  (descriptions extracted), integer `contract_version`, and explicit
+  `null` arrays (`results`/`entities`/`relationships`) tolerated.
 
 A full platform evolution: semantic fingerprints, a real plugin SDK,
 policy-as-code, incremental analysis, runtime diagnosis, data intelligence,

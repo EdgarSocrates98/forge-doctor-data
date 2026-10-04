@@ -125,6 +125,15 @@ Reliability & trust:
 - **v1.0 readiness** — `docs/release.md` checklist; tagging remains a
   human decision.
 
+Step-10 consolidation wave (specs 248–264, run record
+`factory/runs/2026-10-04-program-v1-wave.md`): versioned `contracts`
+package, MCP legacy/modern adapters + SDK conformance, `inspect <domain>`
+alias layer, metamorphic/mutation + integration-flow suites, seeded
+fleet benchmark with recorded n=10/50 curves, versioned golden-corpus
+manifest, `_v2` module consolidation behind compatibility facades,
+`project status` doc-drift CI gate, and 0.9.0 cut. Remaining: real OSS
+corpus slices, n>=100 fleet curves, and the 1.0 RC pipeline (specs 263–264).
+
 ## Roadmap-3 — extensible operational platform (in progress)
 
 - **P1 Plugin SDK & ecosystem** — shipped: `forge_doctor_data.sdk` stable
