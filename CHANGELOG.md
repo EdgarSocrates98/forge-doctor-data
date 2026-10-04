@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-04
+
+Consolidation release: stable CLI surface, versioned contracts, typed
+public API, deterministic evidence model, offline-first scan, plugin
+SDK v2, agent context protocol, and Loop-Factory-driven hardening.
+Everything below was delivered under `Unreleased` while the 0.x line
+was being hardened toward the 1.0 public-contract freeze.
+
 ### Added (roadmap-2: production readiness)
 
 - **Forge Lab** — `forge-doctor-data lab list|run|report|metrics`:
@@ -464,6 +472,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Warehouse-domain vendor objects (stages/streams/tasks) now fold into
   the abstraction view (`storage_location`/`stream`/`task` kinds).
   Lab `labs/migration/snowflake-to-bigquery` exercises the full path.
+
+### Added (step-10 consolidation)
+
+- **Agent context protocol** — `forge-doctor-data agent manifest|context|
+  delta|evidence`: deterministic, summary-first agent handoffs with
+  `--budget` token trimming, fingerprint-based `delta --since`, and lazy
+  `evidence` lookups. No model or network calls in the core.
+- **Evidence collectors** — `forge-doctor-data collector validate|inspect`:
+  the `forge-doctor-data/evidence-bundle@1` contract (collector
+  name/version, sorted records, provenance) so external runtimes hand
+  evidence to the engine without touching the offline `scan` path.
+- **Pluggable execution stores** — `ExecutionStore` protocol with
+  `JsonlStore` (default) and `SQLiteStore` for execution history.
+- **Plugin subprocess isolation** — `plugins.execution = "isolated"`
+  runs untrusted checks in a child process (timeout + output cap +
+  JSON protocol). Documented as process isolation, not an OS sandbox.
+- **Deterministic project status** — `forge-doctor-data project status
+  [--write|--check]` regenerates `docs/project-status.md` from live
+  registries (commands, checks, contracts, MCP tools, knowledge
+  domains, factory state); the forge-gates CI job diffs it so doc
+  drift fails the build.
+- **Richer scan telemetry** — `scan --stats` now reports files scanned,
+  wall time, tracemalloc memory peak, cache hit rate, incremental reuse
+  and top check timings; `--stats-format json` emits it machine-readably
+  on stderr.
+- **Supply chain** — `.github/workflows/security.yml` gate, `SECURITY.md`,
+  CODEOWNERS, dependabot, deterministic CycloneDX SBOM in the release
+  workflow, and `tools/verify_release.py` release-metadata checks.
+- **Policies** — `docs/deprecation.md`, `docs/performance-budgets.md`,
+  `docs/architecture-boundaries.md`, `docs/plugin-isolation.md`,
+  `docs/agent-context.md`, `docs/collectors.md`.
+- **`knowledge audit`** — pack classification (`fresh`, `stale`,
+  `expired`, `invalid_source`, `unverified`) with a dedicated command.
+
+### Changed (step-10 consolidation)
+
+- CI split into stable required-check jobs (`static-analysis`,
+  `unit-tests-{3.11,3.12,3.13}`, `package-build`, `platform-smoke-*`,
+  `forge-gates`) with Poetry caching and wheel/CLI smoke.
+- `what_if`/`migrate_plans` API returns are fully typed; cache write
+  failures disable caching instead of failing scans.
+- `_bench_history.py` moved to `tools/benchmarks/history.py` so
+  experiment scripts never break quality gates.
 
 ### Fixed
 
