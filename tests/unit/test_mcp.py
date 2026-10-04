@@ -20,9 +20,16 @@ def test_initialize_negotiates_protocol():
     assert out["result"]["protocolVersion"] == "2024-11-05"
     out = _call("initialize", {"protocolVersion": "2025-03-26"})
     assert out["result"]["protocolVersion"] == "2025-03-26"
+    out = _call("initialize", {"protocolVersion": "2025-11-25"})
+    assert out["result"]["protocolVersion"] == "2025-11-25"
     # Unknown client version: respond with our newest supported.
     out = _call("initialize", {"protocolVersion": "1999-01-01"})
-    assert out["result"]["protocolVersion"] in ("2024-11-05", "2025-03-26", "2025-06-18")
+    assert out["result"]["protocolVersion"] in (
+        "2024-11-05",
+        "2025-03-26",
+        "2025-06-18",
+        "2025-11-25",
+    )
 
 
 def test_server_discover_alias():

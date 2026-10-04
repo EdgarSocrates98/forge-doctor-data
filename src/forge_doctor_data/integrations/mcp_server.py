@@ -13,12 +13,14 @@ from pathlib import Path
 from typing import Any, TextIO
 
 from forge_doctor_data import __version__
-
-# Versions this server speaks; ``initialize`` echoes the client's choice
-# when supported, otherwise responds with our newest - the client decides
-# whether it can still talk to us.
-_SUPPORTED_PROTOCOLS = ("2024-11-05", "2025-03-26", "2025-06-18")
-_PROTOCOL_VERSION = _SUPPORTED_PROTOCOLS[0]
+from forge_doctor_data.integrations.mcp_protocol import (
+    DEFAULT_ADAPTER,
+    ProtocolAdapter,
+    initialize_result,
+    negotiate,
+    tool_defs,
+    tool_result,
+)
 
 # Tool arguments that are filesystem paths - confined to --root when set.
 _PATH_ARGS = {"path", "old", "new"}
@@ -498,11 +500,17 @@ def _error(request_id: Any, code: int, message: str) -> dict[str, Any]:
     return {"jsonrpc": "2.0", "id": request_id, "error": {"code": code, "message": message}}
 
 
-def handle(request: dict[str, Any], root: Path | None = None) -> dict[str, Any] | None:
+def handle(
+    request: dict[str, Any],
+    root: Path | None = None,
+    adapter: ProtocolAdapter = DEFAULT_ADAPTER,
+) -> dict[str, Any] | None:
     """Handle one JSON-RPC request; ``None`` for notifications.
 
     ``root`` confines every path argument to that directory tree - the
-    sandbox for hosted/agent use. A request without ``id`` is a
+    sandbox for hosted/agent use. ``adapter`` is the negotiated protocol
+    version from ``initialize`` (``serve`` tracks it per session); direct
+    callers get the modern surface. A request without ``id`` is a
     notification per JSON-RPC and never produces a response.
     """
     if not isinstance(request, dict) or "method" not in request:
@@ -515,21 +523,15 @@ def handle(request: dict[str, Any], root: Path | None = None) -> dict[str, Any] 
         return None
     if method in {"initialize", "server/discover"}:
         client_version = str(params.get("protocolVersion", ""))
-        negotiated = (
-            client_version if client_version in _SUPPORTED_PROTOCOLS else _SUPPORTED_PROTOCOLS[-1]
-        )
+        negotiated = negotiate(client_version)
         return _result(
             request_id,
-            {
-                "protocolVersion": negotiated,
-                "capabilities": {"tools": {}, "resources": {}},
-                "serverInfo": {"name": "forge-doctor-data", "version": __version__},
-            },
+            initialize_result(negotiated, "forge-doctor-data", __version__),
         )
     if method == "ping":
         return _result(request_id, {})
     if method == "tools/list":
-        return _result(request_id, {"tools": _TOOL_DEFS})
+        return _result(request_id, {"tools": tool_defs(_TOOL_DEFS, adapter)})
     if method == "tools/call":
         name = str(params.get("name", ""))
         handler = _TOOL_HANDLERS.get(name)
@@ -548,18 +550,7 @@ def handle(request: dict[str, Any], root: Path | None = None) -> dict[str, Any] 
                     "isError": True,
                 },
             )
-        return _result(
-            request_id,
-            {
-                "content": [
-                    {
-                        "type": "text",
-                        "text": json.dumps(output, indent=2, ensure_ascii=False),
-                    }
-                ],
-                "structuredContent": output,
-            },
-        )
+        return _result(request_id, tool_result(output, adapter))
     if method == "resources/list":
         return _result(request_id, {"resources": _resources_list()})
     if method == "resources/read":
@@ -594,6 +585,9 @@ def serve(
     stdin = stdin or sys.stdin
     stdout = stdout or sys.stdout
     resolved_root = root.resolve() if root is not None else None
+    # Per-session negotiated adapter; modern surface until initialize says
+    # otherwise (pre-initialize requests get the current protocol).
+    adapter = DEFAULT_ADAPTER
     for line in stdin:
         line = line.strip()
         if not line:
@@ -604,7 +598,10 @@ def serve(
             stdout.write(json.dumps(_error(None, -32700, "parse error")) + "\n")
             stdout.flush()
             continue
-        response = handle(request, root=resolved_root)
+        if str(request.get("method", "")) in {"initialize", "server/discover"}:
+            client_version = str((request.get("params") or {}).get("protocolVersion", ""))
+            adapter = negotiate(client_version)
+        response = handle(request, root=resolved_root, adapter=adapter)
         if response is not None:
             stdout.write(json.dumps(response, ensure_ascii=False) + "\n")
             stdout.flush()

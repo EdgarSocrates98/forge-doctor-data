@@ -116,7 +116,11 @@ Side modules (not in the check pipeline):
   json/dot/mermaid.
 - `core/sbom.py` — CycloneDX 1.5 for project deps, plugins, knowledge packs,
   forge-doctor-data itself.
-- `integrations/mcp_server.py` — zero-dep JSON-RPC 2.0 stdio server
+- `integrations/mcp_server.py` — zero-dep JSON-RPC 2.0 stdio server;
+  `integrations/mcp_protocol.py` — version adapters (legacy
+  2024-11-05/2025-03-26/2025-06-18, modern 2025-11-25) negotiated at
+  `initialize` and shaping `tools/list` (annotations, titles) and
+  `tools/call` (`structuredContent`) per spec generation
   (`initialize`, `tools/list|call`, `resources/list|read`, `ping`); handler is
   a pure `handle(dict) -> dict | None`.
 - `integrations/lsp_server.py` — optional `pygls` server mapping findings to
