@@ -73,13 +73,14 @@ source = ["src/forge_doctor_data"]
 branch = true
 
 [tool.coverage.report]
+fail_under = 80
 exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "@overload"]
 
 [tool.ruff]
 target-version = "py311"
 src = ["src", "tests"]
 line-length = 100
-extend-exclude = ["tests/sample_projects", "examples", "labs", "golden"]
+extend-exclude = ["tests/sample_projects", "examples", "labs", "golden", ".pytest_tmp*"]
 
 [tool.ruff.lint]
 select = [

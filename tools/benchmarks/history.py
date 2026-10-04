@@ -38,11 +38,10 @@ def main() -> None:
     for n in (10_000, 100_000, 1_000_000):
         execs = make(n)
         t0 = time.perf_counter()
-        path = record_executions(root, execs, label=f"b{n}")
+        record_executions(root, execs, label=f"b{n}")
         t1 = time.perf_counter()
-        count = sum(1 for _ in iter_samples(root, kind="production"))
+        sum(1 for _ in iter_samples(root, kind="production"))
         t2 = time.perf_counter()
-        series = build_series_from_samples(count) if False else None
         print(
             f"n={n:>7}: record={t1 - t0:.2f}s read_all={t2 - t1:.2f}s "
             f"({(t1 - t0) / n * 1e6:.0f}us/sample write)"
