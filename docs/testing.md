@@ -17,6 +17,7 @@ network, credentials, or an LLM.
 | Boundary / drift | `tests/unit/test_contract_boundaries.py` | The contracts package never imports engine internals, stays domain-neutral, exports only the frozen vocabulary |
 | MCP conformance | `tests/unit/test_mcp_conformance.py` | Legacy + modern protocol adapters against the official SDK |
 | MCP boundary | `tests/unit/test_mcp_boundary.py` | Trust-boundary contract: every path-shaped tool argument confined to `--root`, symlink escapes refused, malformed envelopes -> `-32602`, pathological payloads -> `-32700` and the stdio loop survives, resource URIs segment-validated against traversal, plugins off unless the host opts in |
+| Plugin boundary | `tests/unit/test_plugin_boundary.py` + `test_plugin_conformance_proofs.py` | Pre-load trust gate in both execution modes, no id shadowing, crash containment, bounded child output (streaming cap + timeout kill), sanitized isolated results |
 | Benchmarks | `bench` command, `tools/benchmarks/*.py` | Measured curves feed `docs/performance-budgets.md`; gates use recorded baselines |
 
 ## Adding a mutation case

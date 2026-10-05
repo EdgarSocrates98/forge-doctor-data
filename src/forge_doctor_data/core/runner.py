@@ -51,6 +51,8 @@ class CheckRunner:
         except Exception:
             self.failures.append(InternalFailure(check=check, traceback=traceback.format_exc()))
             produced = [_internal_error(check)]
+        else:
+            produced = _sanitize_produced(check, produced, self.failures)
         finally:
             self.timings[check.id] = time.perf_counter() - started
         source = getattr(check, "__fd_source__", None)
@@ -124,6 +126,27 @@ def _dedupe(results: list[CheckResult]) -> list[CheckResult]:
         seen.add(key)
         unique.append(result)
     return unique
+
+
+def _sanitize_produced(
+    check: Check,
+    produced: object,
+    failures: list[InternalFailure],
+) -> list[CheckResult]:
+    """Plugin checks can breach the return contract; breaches degrade to
+    an internal-error finding instead of crashing the run."""
+    if not isinstance(produced, (list, tuple)):
+        failures.append(
+            InternalFailure(check=check, traceback="check returned a non-list result")
+        )
+        return [_internal_error(check)]
+    valid = [r for r in produced if isinstance(r, CheckResult)]
+    if len(valid) != len(produced):
+        failures.append(
+            InternalFailure(check=check, traceback="check returned non-CheckResult items")
+        )
+        return [*valid, _internal_error(check)]
+    return valid
 
 
 def _internal_error(check: Check) -> CheckResult:
