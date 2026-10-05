@@ -528,13 +528,19 @@ def read_snapshot(path: Path) -> Iterator[ExecutionSample]:
             raise ValueError(f"{path}: unreadable header: {exc}") from exc
         if header.get("format") != SNAPSHOT_FORMAT:
             raise ValueError(f"{path}: not a {SNAPSHOT_FORMAT} snapshot")
-        for line in fh:
+        for lineno, line in enumerate(fh, start=2):
             line = line.strip()
             if not line:
                 continue
-            row = json.loads(line).get("sample")
+            try:
+                row = json.loads(line).get("sample")
+            except json.JSONDecodeError as exc:
+                raise ValueError(f"{path}:{lineno}: corrupt snapshot row: {exc}") from exc
             if row:
-                yield ExecutionSample.from_dict(row)
+                try:
+                    yield ExecutionSample.from_dict(row)
+                except (TypeError, ValueError, AttributeError) as exc:
+                    raise ValueError(f"{path}:{lineno}: malformed sample row: {exc}") from exc
 
 
 def iter_samples(root: Path, kind: str | None = None) -> Iterator[ExecutionSample]:

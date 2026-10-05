@@ -5,7 +5,7 @@ measures per-repo cold and warm scan times plus aggregate wall time.
 Budgets in ``docs/performance-budgets.md`` must cite a recorded run.
 
 Usage:
-    python tools/benchmarks/fleet.py --sizes 10,50 --root .pytest_tmp/fleet
+    python tools/benchmarks/fleet.py --sizes 10,50 --root .bench/fleet
     python tools/benchmarks/fleet.py --sizes 10 --json
 """
 
@@ -13,12 +13,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import platform
 import random
 import statistics
+import subprocess
 import sys
 import time
 import tracemalloc
 from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
@@ -69,6 +73,7 @@ class SizeResult:
     files: int
     cold_ms_mean: float
     cold_ms_p50: float
+    cold_ms_p95: float
     warm_ms_mean: float
     findings_mean: float
     peak_mb: float
@@ -114,6 +119,69 @@ def measure_merge(root: Path, n: int, seed: int) -> MergeResult:
     )
 
 
+def _p95(values: list[float]) -> float:
+    """Nearest-rank p95 (deterministic for n >= 1)."""
+    if not values:
+        return 0.0
+    ordered = sorted(values)
+    idx = max(0, min(len(ordered) - 1, int(0.95 * len(ordered))))
+    return round(ordered[idx], 1)
+
+
+def _environment() -> dict[str, object]:
+    """Provenance block every scale artifact must carry (phase 6.3):
+    environment, CPU, RAM, Python, and the commit that produced it."""
+    try:
+        commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        ).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        commit = "unknown"
+    return {
+        "recorded_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "platform": platform.platform(),
+        "machine": platform.machine(),
+        "python": platform.python_version(),
+        "cpu_count": os.cpu_count(),
+        "ram_gb": _total_ram_gb(),
+        "commit": commit,
+        "generator": "tools/benchmarks/fleet.py",
+    }
+
+
+def _total_ram_gb() -> float | None:
+    """Physical RAM without third-party deps; None when unobservable."""
+    try:
+        if sys.platform.startswith("win"):
+            import ctypes
+
+            class _MemStatus(ctypes.Structure):
+                _fields_ = [
+                    ("dwLength", ctypes.c_ulong),
+                    ("dwMemoryLoad", ctypes.c_ulong),
+                    ("ullTotalPhys", ctypes.c_ulonglong),
+                    ("ullAvailPhys", ctypes.c_ulonglong),
+                    ("ullTotalPageFile", ctypes.c_ulonglong),
+                    ("ullAvailPageFile", ctypes.c_ulonglong),
+                    ("ullTotalVirtual", ctypes.c_ulonglong),
+                    ("ullAvailVirtual", ctypes.c_ulonglong),
+                    ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+                ]
+
+            status = _MemStatus()
+            status.dwLength = ctypes.sizeof(_MemStatus)
+            ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status))  # type: ignore[attr-defined]
+            return round(status.ullTotalPhys / 1e9, 1)
+        pages = os.sysconf("SC_PHYS_PAGES")
+        page_size = os.sysconf("SC_PAGE_SIZE")
+        return round(pages * page_size / 1e9, 1)
+    except (OSError, ValueError, AttributeError):
+        return None
+
+
 def measure_size(root: Path, n: int, seed: int) -> SizeResult:
     """Cold-scan every repo once, then warm-scan (cache hot) and time both."""
     repos = generate_workspace(root / f"n{n}", n, seed)
@@ -140,6 +208,7 @@ def measure_size(root: Path, n: int, seed: int) -> SizeResult:
         files=n * 3,
         cold_ms_mean=round(statistics.fmean(cold), 1),
         cold_ms_p50=round(statistics.median(cold), 1),
+        cold_ms_p95=_p95(cold),
         warm_ms_mean=round(statistics.fmean(warm), 1),
         findings_mean=round(statistics.fmean(findings), 1),
         peak_mb=round(peak / 1e6, 1),
@@ -151,7 +220,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sizes", default="10", help="comma-separated repo counts")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--root", type=Path, default=Path(".pytest_tmp/fleet"))
+    parser.add_argument(
+        "--root",
+        type=Path,
+        default=Path(".bench/fleet"),
+        help="workspace root — must NOT live under .pytest_tmp (pytest rotates "
+        "and deletes that tree mid-run)",
+    )
     parser.add_argument("--out", type=Path, default=None, help="write JSON results")
     parser.add_argument(
         "--budget",
@@ -177,6 +252,7 @@ def main() -> None:
         payload = {
             "benchmark": "fleet-merge",
             "seed": args.seed,
+            "environment": _environment(),
             "sizes": [asdict(r) for r in results],
         }
         text = json.dumps(payload, indent=2)
@@ -198,6 +274,7 @@ def main() -> None:
     payload = {
         "benchmark": "fleet",
         "seed": args.seed,
+        "environment": _environment(),
         "sizes": [asdict(r) for r in results],
     }
     text = json.dumps(payload, indent=2)

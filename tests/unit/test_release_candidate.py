@@ -12,9 +12,13 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tools"))
 
 import release_candidate as rc  # noqa: E402
+import verify_release  # noqa: E402
+
+VERSION = verify_release.project_version(ROOT)
 
 
-def _fake_dist(tmp_path: Path, version: str = "0.9.0") -> Path:
+def _fake_dist(tmp_path: Path, version: str | None = None) -> Path:
+    version = version or VERSION
     dist = tmp_path / "dist"
     dist.mkdir()
     (dist / f"forge_doctor_data-{version}-py3-none-any.whl").write_bytes(b"wheel-bytes")
@@ -27,8 +31,8 @@ def test_artifact_entries_digests_and_sizes(tmp_path: Path) -> None:
     (dist / "unrelated.txt").write_text("noise")  # must be excluded
     entries = rc.artifact_entries(dist)
     assert [e["file"] for e in entries] == [
-        "forge_doctor_data-0.9.0-py3-none-any.whl",
-        "forge_doctor_data-0.9.0.tar.gz",
+        f"forge_doctor_data-{VERSION}-py3-none-any.whl",
+        f"forge_doctor_data-{VERSION}.tar.gz",
     ]
     assert all(len(e["sha256"]) == 64 and e["bytes"] > 0 for e in entries)
 
@@ -56,8 +60,8 @@ def test_export_schemas_covers_both_families(tmp_path: Path) -> None:
 def test_manifest_deterministic_and_complete(tmp_path: Path) -> None:
     dist = _fake_dist(tmp_path)
     entries = rc.artifact_entries(dist)
-    m1 = rc.build_release_manifest(ROOT, dist, "0.9.0", entries, ["schemas/x.json"])
-    m2 = rc.build_release_manifest(ROOT, dist, "0.9.0", entries, ["schemas/x.json"])
+    m1 = rc.build_release_manifest(ROOT, dist, VERSION, entries, ["schemas/x.json"])
+    m2 = rc.build_release_manifest(ROOT, dist, VERSION, entries, ["schemas/x.json"])
     assert json.dumps(m1, sort_keys=True) == json.dumps(m2, sort_keys=True)
     assert m1["kind"] == "forge-doctor-data/release-manifest"
     assert m1["contracts"]["forge-contracts"] == "forge-contracts/1"
@@ -67,7 +71,7 @@ def test_manifest_deterministic_and_complete(tmp_path: Path) -> None:
 def test_manifest_honors_source_date_epoch(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setenv("SOURCE_DATE_EPOCH", "1700000000")
     dist = _fake_dist(tmp_path)
-    m = rc.build_release_manifest(ROOT, dist, "0.9.0", [], [])
+    m = rc.build_release_manifest(ROOT, dist, VERSION, [], [])
     assert m["generated"]["source_date_epoch"] == 1700000000
 
 
@@ -84,7 +88,7 @@ def test_run_refuses_empty_dist(tmp_path: Path) -> None:
     dist = tmp_path / "empty"
     dist.mkdir()
     with pytest.raises(ValueError, match="no distribution artifacts"):
-        rc.run(ROOT, dist, build=False)
+        rc.run(ROOT, dist, build=False, allow_dirty=True)
 
 
 def test_run_refuses_mismatched_versions(tmp_path: Path) -> None:
@@ -92,4 +96,56 @@ def test_run_refuses_mismatched_versions(tmp_path: Path) -> None:
     dist = _fake_dist(tmp_path)
     (dist / "forge_doctor_data-0.7.0-py3-none-any.whl").write_bytes(b"old")
     with pytest.raises(ValueError, match="artifact versions"):
+        rc.run(ROOT, dist, build=False, allow_dirty=True)
+
+
+def test_run_refuses_dirty_tree(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Phase 8.4: uncommitted state never enters release artifacts."""
+    dist = _fake_dist(tmp_path)
+    monkeypatch.setattr(rc, "_git", lambda *a, **k: " M modified.py")
+    with pytest.raises(ValueError, match="working tree is dirty"):
         rc.run(ROOT, dist, build=False)
+
+
+def test_run_allows_dirty_tree_with_override(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The override is explicit — a local dry run, not a silent default."""
+    dist = _fake_dist(tmp_path)
+    monkeypatch.setattr(rc, "_git", lambda *a, **k: " M modified.py")
+    outputs = rc.run(ROOT, dist, build=False, allow_dirty=True)
+    assert outputs["manifest"].is_file()
+    assert outputs["provenance"].is_file()
+
+
+def test_artifact_kinds_requires_wheel_and_sdist(tmp_path: Path) -> None:
+    """Phase 8.5: a lone wheel means the sdist is missing — fail."""
+    wheel_only = tmp_path / "dist-wheel"
+    wheel_only.mkdir()
+    (wheel_only / f"forge_doctor_data-{VERSION}-py3-none-any.whl").write_bytes(b"w")
+    with pytest.raises(ValueError, match="no sdist"):
+        rc._check_artifact_kinds(rc.artifact_entries(wheel_only))
+    sdist_only = tmp_path / "dist-sdist"
+    sdist_only.mkdir()
+    (sdist_only / f"forge_doctor_data-{VERSION}.tar.gz").write_bytes(b"s")
+    with pytest.raises(ValueError, match="no wheel"):
+        rc._check_artifact_kinds(rc.artifact_entries(sdist_only))
+
+
+def test_verify_digests_catches_tampered_artifact(tmp_path: Path) -> None:
+    """Phase 8.3: SHA256SUMS must describe the bytes on disk."""
+    dist = _fake_dist(tmp_path)
+    sums = rc.write_sha256sums(dist, rc.artifact_entries(dist))
+    rc._verify_digests(dist, sums)  # clean state passes
+    (dist / f"forge_doctor_data-{VERSION}-py3-none-any.whl").write_bytes(b"tampered")
+    with pytest.raises(ValueError, match="SHA256SUMS mismatch"):
+        rc._verify_digests(dist, sums)
+
+
+def test_build_env_derives_epoch_from_commit(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.delenv("SOURCE_DATE_EPOCH", raising=False)
+    env = rc._build_env(ROOT)
+    if env.get("SOURCE_DATE_EPOCH"):  # inside a git checkout: derived
+        assert env["SOURCE_DATE_EPOCH"].isdigit()
+    monkeypatch.setenv("SOURCE_DATE_EPOCH", "123")
+    assert rc._build_env(ROOT)["SOURCE_DATE_EPOCH"] == "123"

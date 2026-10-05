@@ -1,0 +1,28 @@
+{
+  "approved": "Devin \u2014 phase 8.6 initial RC freeze",
+  "frozen_at_commit": "baac25814dd7f965a522a690ee52da31272cfae2",
+  "kind": "forge-doctor-data/schema-freeze",
+  "schema_version": "1",
+  "schemas": {
+    "forge-contracts-1/capability": "21b5bc0a6118eaa08973b3e5906eb7921e3cf53f26cd340f2ce2e46292ba0328",
+    "forge-contracts-1/diagnostic-manifest": "301121d5cfe2adc3b52f2ff59dcb86352d3a3a2b05c72df80c31c127435c915c",
+    "forge-contracts-1/entity": "c509fcadd4e80b8ac7306e0462ff0fb4e19fa36c4d0d298eaf900e4def542f8e",
+    "forge-contracts-1/evidence": "ee9758d68ad45e1f04b93d437fcb5914b83333e8b836e9213d3a8ceea457525d",
+    "forge-contracts-1/finding": "25ba65fd12c018e596e139c10394496fc952e6b72257bae23103c36578208ac7",
+    "forge-contracts-1/handoff": "9cab8e510afe6748ae45da01c213e11db49dc2bd59b105d7246f143a53a7c07c",
+    "forge-contracts-1/migration-plan": "7070cec027fbc891deb0f39320bfd09b3b1b4d5463c2844178c9dfd1081a431a",
+    "forge-contracts-1/relationship": "4fd5610536bb7a9b563c01b78bb2637a91aac0bcccbccfde63f6fd82ad34439a",
+    "forge-contracts-1/remediation-plan": "b6718664383bf7459864a63e569a2df8bd26674c5e26ea41c79c45ae0bc09c76",
+    "forge-contracts-1/unknown-fact": "0592a139e9bced17fa3a3da28c887a09670acd4d6d94015399e35c94395e198e",
+    "legacy/capability-report": "46420af02ed861e755b14e0ea2262fc9c5e55fd6f23d490e650c1a3e734fd888",
+    "legacy/evidence": "56f05c0eb1a094aeda6c583d04afff6f6030724b06acaf3101ed5d01a9663324",
+    "legacy/finding": "66ffcc47e9effd13bc9a8d00599458c5a79af8f4c317753f7e471006fab6d71c",
+    "legacy/golden-snapshot": "2c3cd50c0f053ca904981b89d6c0da3fd92c1d123ee9c5d082ac33bb5b7774b2",
+    "legacy/handoff-bundle": "5143cee8e6cb544eea9ced483a209d0eb0efedd6c30171d881941a7cffcb2e9c",
+    "legacy/lab-expected": "105ad814ca7ab47fa5171fbaef72d1fcfbad41bb0c337c23b22bbce52e81bd2a",
+    "legacy/platform-graph": "61d3782cdf48c5a5c283bbc6e24123063559d70c216ef2ba607ddb3e2b6a1e0d",
+    "legacy/policy-pack": "23765d6d0539792761b8322afbec10db5b9691f82f0e797569025c492f32daf8",
+    "legacy/remediation-plan": "6035999176537b8ae96bcc65805e0f94d286f2ad6409aae0a47c38714df24b86",
+    "legacy/scan-report": "41b8e8ca9de594d05b8f22086b7d8a30c427b2f3121bad6e5fe43c499b3afc3d"
+  }
+}

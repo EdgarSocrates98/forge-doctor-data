@@ -87,3 +87,33 @@ plans = fd.migrate_plans("./p")
 - Non-destructive: `migrate_plans` and `what_if` are advisory; nothing
   writes back to the scanned project (scan cache lives in
   `.forge-doctor-data/` and is the only write).
+- Deterministic errors: `scan` on a missing or non-directory path raises
+  `ScanRequestError` (a `ValueError`) from the shared pipeline — every
+  frontend (CLI, MCP, LSP, SDK) fails the same way before any work runs.
+  Baseline/snapshot/contract loaders raise their typed errors
+  (`BaselineError`, `HistoryError`, `ValueError`) instead of tracebacks.
+
+## MCP trust boundary
+
+The stdio MCP server (`forge-doctor-data mcp`) is a trust boundary:
+the host controls the wire, so the server defends itself rather than
+trusting envelopes. The contract, pinned by
+`tests/unit/test_mcp_boundary.py`:
+
+- **Path confinement** — with `--root` set, every path-shaped tool
+  argument (`path`, `old`, `new`, `changes`, `manifest`) resolves inside
+  the sandbox or returns `-32602`; symlinks pointing outside are
+  refused. Without `--root` the server inherits process permissions —
+  the documented stdio posture.
+- **Envelope hygiene** — non-object `params`/`arguments` are protocol
+  errors (`-32602`), never crashes; tool-level argument failures come
+  back as `isError` results without tracebacks; `params: null` means
+  absent.
+- **Survival** — parse failures (`-32700`) include malformed JSON and
+  recursion-limit payloads; the stdio loop keeps serving after a bad
+  line.
+- **Resource URIs** — `forge-doctor-data://` URIs validate each path
+  segment (`[A-Za-z0-9_-]+`); `..` and separator tricks cannot reach
+  outside the rules/knowledge pack tree.
+- **Plugins** — third-party plugin code loads over MCP only on explicit
+  host opt-in; scans default to `no_plugins`.

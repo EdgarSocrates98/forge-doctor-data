@@ -178,6 +178,8 @@ class ScanService:
 
     def run(self, request: ScanRequest) -> ScanOutcome:
         """THE scan pipeline; raises ScanRequestError on bad input."""
+        if not request.path.is_dir():
+            raise ScanRequestError(f"scan path is not a directory: {request.path}")
         options = ScanOptions(
             categories=request.categories,
             ignore=request.ignore,

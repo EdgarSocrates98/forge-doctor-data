@@ -8,6 +8,7 @@ handler is a pure ``handle(dict) -> dict | None`` for testability.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any, TextIO
@@ -23,7 +24,7 @@ from forge_doctor_data.integrations.mcp_protocol import (
 )
 
 # Tool arguments that are filesystem paths - confined to --root when set.
-_PATH_ARGS = {"path", "old", "new"}
+_PATH_ARGS = {"path", "old", "new", "changes", "manifest"}
 
 
 class _SandboxError(ValueError):
@@ -483,11 +484,21 @@ def _resources_list() -> list[dict[str, Any]]:
     return resources
 
 
+_URI_SEGMENT = re.compile(r"[A-Za-z0-9_-]+")
+
+
 def _resources_read(uri: str) -> dict[str, Any]:
-    parts = uri.replace("forge-doctor-data://", "").split("/")
-    if parts[0] == "rules" and len(parts) == 2:
+    if not uri.startswith("forge-doctor-data://"):
+        raise ValueError(f"unknown resource {uri!r}")
+    parts = uri[len("forge-doctor-data://") :].split("/")
+    if parts[0] == "rules" and len(parts) == 2 and _URI_SEGMENT.fullmatch(parts[1]):
         return _rules_resource(parts[1])
-    if parts[0] == "knowledge" and len(parts) == 3:
+    if (
+        parts[0] == "knowledge"
+        and len(parts) == 3
+        and _URI_SEGMENT.fullmatch(parts[1])
+        and _URI_SEGMENT.fullmatch(parts[2])
+    ):
         return _knowledge_resource(parts[1], parts[2])
     raise ValueError(f"unknown resource {uri!r}")
 
@@ -517,7 +528,11 @@ def handle(
         return None
     method = str(request.get("method", ""))
     request_id = request.get("id")
-    params = request.get("params") or {}
+    params = request.get("params")
+    if params is None:
+        params = {}
+    if not isinstance(params, dict):
+        return _error(request_id, -32602, "params must be an object")
 
     if method.startswith("notifications/") or request_id is None:
         return None
@@ -537,8 +552,11 @@ def handle(
         handler = _TOOL_HANDLERS.get(name)
         if handler is None:
             return _error(request_id, -32602, f"unknown tool {name!r}")
+        arguments = params.get("arguments")
+        if arguments is not None and not isinstance(arguments, dict):
+            return _error(request_id, -32602, "arguments must be an object")
         try:
-            arguments = _sandbox_arguments(params.get("arguments") or {}, root)
+            arguments = _sandbox_arguments(arguments or {}, root)
             output = handler(arguments)
         except _SandboxError as exc:
             return _error(request_id, -32602, str(exc))
@@ -594,7 +612,7 @@ def serve(
             continue
         try:
             request = json.loads(line)
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, RecursionError):
             stdout.write(json.dumps(_error(None, -32700, "parse error")) + "\n")
             stdout.flush()
             continue

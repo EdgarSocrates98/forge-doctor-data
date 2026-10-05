@@ -1,94 +1,840 @@
 {
-  "schema_version": "1",
-  "description": "Versioned validation corpus. Each entry vendors a repo slice plus expected outputs under expected/. origin=synthetic entries were authored in-repo; origin=real entries must record upstream url+commit+license. See docs/corpus.md for the review path.",
+  "schema_version": "2",
+  "description": "Versioned validation corpus. Each entry vendors a repo slice plus expected outputs under expected/. origin=synthetic entries were authored in-repo; origin=real-oss entries must record upstream url+commit+license and per-file sha256 in vendored_files; origin=adversarial holds deliberately-broken fixtures. ground_truth.json declares expected findings/entities/edges and forbidden cross-domain findings. See docs/corpus.md for the review path.",
   "entries": [
+    {
+      "name": "airflow-example-dags",
+      "origin": "real-oss",
+      "upstream_repository": "apache/airflow",
+      "upstream_url": "https://github.com/apache/airflow",
+      "commit_sha": "b93c3db6b1641b0840bd15ac7d05bc58ff2cccbf",
+      "license": "Apache-2.0",
+      "domain": [
+        "airflow"
+      ],
+      "shape": "Five official Airflow 2.10.5 example DAGs (bash/python/branch/complex/task-group)",
+      "reason": "baseline airflow orchestration coverage on canonical upstream examples",
+      "expected_behavior": "AIR000 surface info; task/workflow graph entities; no cross-domain findings",
+      "vendored_files": [
+        {
+          "path": "dags/example_bash_operator.py",
+          "upstream_path": "dags/example_bash_operator.py",
+          "sha256": "d921e780b4c024d9dd342ae77c1d05eaf249ae35195058b9d11340be1d14b774",
+          "bytes": 2364
+        },
+        {
+          "path": "dags/example_branch_operator.py",
+          "upstream_path": "dags/example_branch_operator.py",
+          "sha256": "8c205c4dba21e528e1f740d3e83cb26e10a21110b270ad86af0e6ea26acae134",
+          "bytes": 5815
+        },
+        {
+          "path": "dags/example_complex.py",
+          "upstream_path": "dags/example_complex.py",
+          "sha256": "9c9441747201ef0d2ce2aadf5415e49a3748e0e3df1d462ff72248ef33553607",
+          "bytes": 7946
+        },
+        {
+          "path": "dags/example_python_operator.py",
+          "upstream_path": "dags/example_python_operator.py",
+          "sha256": "0b083d136555e37f005eef260f7386d22eb2f0efa69eb55408f30668427a94b8",
+          "bytes": 5090
+        },
+        {
+          "path": "dags/example_task_group.py",
+          "upstream_path": "dags/example_task_group.py",
+          "sha256": "06d73ef1cd78f61e6b21087784933d58face3852a22d2a0694b64956c36dc370",
+          "bytes": 2421
+        },
+        {
+          "path": "LICENSE",
+          "upstream_path": "LICENSE",
+          "sha256": "1456f88ddd805e738e7fb5cb3f4e29416ea36dd846e3d4f194663a7c5a425756",
+          "bytes": 13609
+        }
+      ],
+      "date_added": "2026-10-04"
+    },
     {
       "name": "airflow-glue-athena",
       "origin": "synthetic",
-      "url": null,
-      "commit": null,
+      "upstream_repository": null,
+      "upstream_url": null,
+      "commit_sha": null,
       "license": null,
-      "shape": "Airflow DAGs orchestrating Glue jobs writing to Athena-consumed tables, with runtime export"
+      "domain": [
+        "airflow",
+        "glue",
+        "athena"
+      ],
+      "shape": "Airflow DAGs orchestrating Glue jobs writing to Athena-consumed tables, with runtime export",
+      "reason": "authored cross-domain orchestration scenario",
+      "expected_behavior": "AIR + GLUE + ATH findings across the pipeline boundary",
+      "vendored_files": [
+        {
+          "path": "dags/pipeline.py",
+          "upstream_path": "dags/pipeline.py",
+          "sha256": "e71ebcb4de3e34e656561ab3d2fd40114a313c5231fe16e750264fbf25679b0c",
+          "bytes": 812
+        },
+        {
+          "path": "runtime/query-stats.json",
+          "upstream_path": "runtime/query-stats.json",
+          "sha256": "a894153f87306b293ec9510e0e25c9039c3c33af9422e792b509121611c11d1f",
+          "bytes": 293
+        }
+      ],
+      "date_added": "2026-10-04"
     },
     {
       "name": "databricks-delta",
       "origin": "synthetic",
-      "url": null,
-      "commit": null,
+      "upstream_repository": null,
+      "upstream_url": null,
+      "commit_sha": null,
       "license": null,
-      "shape": "Databricks bundle + Terraform jobs + Delta compaction script"
+      "domain": [
+        "databricks",
+        "delta"
+      ],
+      "shape": "Databricks bundle + Terraform jobs + Delta compaction script",
+      "reason": "authored databricks/delta coverage",
+      "expected_behavior": "DBX + DELTA findings",
+      "vendored_files": [
+        {
+          "path": "compact.py",
+          "upstream_path": "compact.py",
+          "sha256": "4d1fbe24447bfefc60d7b6d708bbfb350639da50aa74fa013bc682e50ff1bba5",
+          "bytes": 236
+        },
+        {
+          "path": "databricks.yml",
+          "upstream_path": "databricks.yml",
+          "sha256": "f8a89c9c9f98191ef334d43582c5c534029fddd3a21320e336879fbba5a09e21",
+          "bytes": 114
+        },
+        {
+          "path": "jobs.tf",
+          "upstream_path": "jobs.tf",
+          "sha256": "34f61ad72ac3a11292e5cb32c4bf1f825703f03c6872032dcf27299aae776baa",
+          "bytes": 305
+        }
+      ],
+      "date_added": "2026-10-04"
     },
     {
       "name": "dynamodb-neptune",
       "origin": "synthetic",
-      "url": null,
-      "commit": null,
+      "upstream_repository": null,
+      "upstream_url": null,
+      "commit_sha": null,
       "license": null,
-      "shape": "DynamoDB->Neptune sync with Terraform provisioning"
+      "domain": [
+        "dynamodb",
+        "neptune"
+      ],
+      "shape": "DynamoDB->Neptune sync with Terraform provisioning",
+      "reason": "authored ddb/neptune graph-sync coverage",
+      "expected_behavior": "DDB + NEP findings",
+      "vendored_files": [
+        {
+          "path": "main.tf",
+          "upstream_path": "main.tf",
+          "sha256": "81bda1b5a3ecdf7b6282b3e881b99809ea690793260bcc42612d4b71a1cd104e",
+          "bytes": 740
+        },
+        {
+          "path": "sync.py",
+          "upstream_path": "sync.py",
+          "sha256": "31e43b12f813de929402d0e07c370198e34edabbf466c9a2094b03ad2cb0de8b",
+          "bytes": 624
+        }
+      ],
+      "date_added": "2026-10-04"
     },
     {
       "name": "dynamodb-streams-lambda",
       "origin": "synthetic",
-      "url": null,
-      "commit": null,
+      "upstream_repository": null,
+      "upstream_url": null,
+      "commit_sha": null,
       "license": null,
-      "shape": "DynamoDB Streams fan-out to Lambda via Terraform"
+      "domain": [
+        "dynamodb",
+        "lambda"
+      ],
+      "shape": "DynamoDB Streams fan-out to Lambda via Terraform",
+      "reason": "authored ddb-streams/lambda coverage",
+      "expected_behavior": "DDBSTR + LAM findings",
+      "vendored_files": [
+        {
+          "path": "main.tf",
+          "upstream_path": "main.tf",
+          "sha256": "3c39cdad4b6fd9342b75b4cb9d890a83c88059f1beaf3e5c2f6496c618dfd716",
+          "bytes": 803
+        }
+      ],
+      "date_added": "2026-10-04"
+    },
+    {
+      "name": "elasticsearch-terraform-module",
+      "origin": "real-oss",
+      "upstream_repository": "cloudposse/terraform-aws-elasticsearch",
+      "upstream_url": "https://github.com/cloudposse/terraform-aws-elasticsearch",
+      "commit_sha": "0fedd88334c54a67eb73fe7059b6c556ca25060d",
+      "license": "Apache-2.0",
+      "domain": [
+        "search",
+        "terraform-aws"
+      ],
+      "shape": "cloudposse ES/OpenSearch module: domain resources + var-driven security flags",
+      "reason": "Search domain IaC detection + variable-default resolution (SRCH004 guard)",
+      "expected_behavior": "SRCH000 surface + SRCH004 node-to-node true positive; no missing-encryption FP",
+      "vendored_files": [
+        {
+          "path": "context.tf",
+          "upstream_path": "context.tf",
+          "sha256": "b9644bbd7706d9359fc27ad06c48aabd96a4d255815859c2906ce1b5a7d49d56",
+          "bytes": 10101
+        },
+        {
+          "path": "elasticsearch_domain.tf",
+          "upstream_path": "elasticsearch_domain.tf",
+          "sha256": "5564569b6afe94153d16f3920029a3a122e68f62c295a580e2fe2e1255211daf",
+          "bytes": 5468
+        },
+        {
+          "path": "LICENSE",
+          "upstream_path": "LICENSE",
+          "sha256": "85c57f9dd7ad76ac2e6847cdaf1acc93f79dcdd556cf276aa9c24b5c3ec7deb5",
+          "bytes": 11352
+        },
+        {
+          "path": "main.tf",
+          "upstream_path": "main.tf",
+          "sha256": "2116240e71c84d89f98a1cb4cb1193f587c5855961768e87149d19f89fc673f9",
+          "bytes": 8286
+        },
+        {
+          "path": "opensearch_domain.tf",
+          "upstream_path": "opensearch_domain.tf",
+          "sha256": "ea6f9aa4daaa58ee95267a7137201ea2b864bdee2be202451367377e4538c50a",
+          "bytes": 5480
+        },
+        {
+          "path": "outputs.tf",
+          "upstream_path": "outputs.tf",
+          "sha256": "e1acefb6d31296ef65907cc06791456a4b8e375cae7b25b72483e889c13fa173",
+          "bytes": 1569
+        },
+        {
+          "path": "variables.tf",
+          "upstream_path": "variables.tf",
+          "sha256": "20e5f58c9438ead6a55125e9a11986b435708a31837cac29112bf77ffccd6409",
+          "bytes": 16792
+        },
+        {
+          "path": "versions.tf",
+          "upstream_path": "versions.tf",
+          "sha256": "32de91b2893648ab08e3e7d493ec515b70ef76b0cfd0bb02387dec8345127b16",
+          "bytes": 150
+        }
+      ],
+      "date_added": "2026-10-05"
     },
     {
       "name": "emr-iceberg",
       "origin": "synthetic",
-      "url": null,
-      "commit": null,
+      "upstream_repository": null,
+      "upstream_url": null,
+      "commit_sha": null,
       "license": null,
-      "shape": "EMR cluster running Spark jobs on Iceberg tables"
+      "domain": [
+        "emr",
+        "iceberg",
+        "spark"
+      ],
+      "shape": "EMR cluster running Spark jobs on Iceberg tables",
+      "reason": "authored emr/iceberg coverage",
+      "expected_behavior": "EMR + ICE + SPARK findings",
+      "vendored_files": [
+        {
+          "path": "jobs.py",
+          "upstream_path": "jobs.py",
+          "sha256": "4a5710800c37a6d65f47d7a0305ca8885b24d2c7a3c986d0f9eac0bdb0f60957",
+          "bytes": 511
+        },
+        {
+          "path": "main.tf",
+          "upstream_path": "main.tf",
+          "sha256": "937a26ac1a6fa82ee5a744121c9e5b4596ea11418788c025162a70d88b9f3873",
+          "bytes": 296
+        }
+      ],
+      "date_added": "2026-10-04"
+    },
+    {
+      "name": "flink-pyflink-examples",
+      "origin": "real-oss",
+      "upstream_repository": "apache/flink",
+      "upstream_url": "https://github.com/apache/flink",
+      "commit_sha": "6eeffe83da9c9ac130c7591243b78c6820a8b3ca",
+      "license": "Apache-2.0",
+      "domain": [
+        "flink"
+      ],
+      "shape": "apache/flink PyFlink datastream examples",
+      "reason": "Flink/PyFlink detection on upstream datastream job examples",
+      "expected_behavior": "FLK000 surface + FLK001/FLK002 true positives; compute_job entity",
+      "vendored_files": [
+        {
+          "path": "flink-python/pyflink/examples/datastream/event_time_timer.py",
+          "upstream_path": "flink-python/pyflink/examples/datastream/event_time_timer.py",
+          "sha256": "c742aaf779b25299ceaaacb993a27b51ee818963376528a9046a32f38ae63a2a",
+          "bytes": 3576
+        },
+        {
+          "path": "flink-python/pyflink/examples/datastream/state_access.py",
+          "upstream_path": "flink-python/pyflink/examples/datastream/state_access.py",
+          "sha256": "e3dd321494a0e49b660674ca2452bec56c8e8797889fd079aba9aaa2dc72cc81",
+          "bytes": 2819
+        },
+        {
+          "path": "flink-python/pyflink/examples/datastream/streaming_word_count.py",
+          "upstream_path": "flink-python/pyflink/examples/datastream/streaming_word_count.py",
+          "sha256": "9e1f3108b49a7faf71bc9a49c8e5fbab50672da3fb64b51f8538a9269c142f00",
+          "bytes": 3849
+        },
+        {
+          "path": "flink-python/pyflink/examples/datastream/word_count.py",
+          "upstream_path": "flink-python/pyflink/examples/datastream/word_count.py",
+          "sha256": "ce9486db1c6c004879322cb6433b4578d4fe5762a2e0182cf8174b2f0f0ebc54",
+          "bytes": 5963
+        },
+        {
+          "path": "LICENSE",
+          "upstream_path": "LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "bytes": 11357
+        }
+      ],
+      "date_added": "2026-10-05"
     },
     {
       "name": "glue-4-to-5",
       "origin": "synthetic",
-      "url": null,
-      "commit": null,
+      "upstream_repository": null,
+      "upstream_url": null,
+      "commit_sha": null,
       "license": null,
-      "shape": "Glue 4.0 jobs pre-migration to 5.0 (EOL/runtime checks)"
+      "domain": [
+        "glue"
+      ],
+      "shape": "Glue 4.0 jobs pre-migration to 5.0 (EOL/runtime checks)",
+      "reason": "authored glue EOL-migration scenario",
+      "expected_behavior": "GLUE EOL findings + migration advice",
+      "vendored_files": [
+        {
+          "path": "jobs/etl.py",
+          "upstream_path": "jobs/etl.py",
+          "sha256": "6f16ffc915fbe384b938c8343d273de70e6a48987eabf82761482e4bbe9ca909",
+          "bytes": 426
+        },
+        {
+          "path": "main.tf",
+          "upstream_path": "main.tf",
+          "sha256": "0d80d200b585cd682e9d7b40723306bbfbbecdf57cfcb0a32e1883e466f3199e",
+          "bytes": 171
+        }
+      ],
+      "date_added": "2026-10-04"
+    },
+    {
+      "name": "glue-terraform-example",
+      "origin": "real-oss",
+      "upstream_repository": "cloudposse/terraform-aws-glue",
+      "upstream_url": "https://github.com/cloudposse/terraform-aws-glue",
+      "commit_sha": "d53e4934ac7f4d6477ec735b26b86339a2c4fb6b",
+      "license": "Apache-2.0",
+      "domain": [
+        "glue",
+        "terraform-aws"
+      ],
+      "shape": "terraform-aws-glue complete example: jobs/crawlers/catalog/LF + PySpark ETL",
+      "reason": "Glue + Lake Formation domain coverage on real IaC",
+      "expected_behavior": "GLUE/LF findings; catalog/principal/infrastructure entities; governs edges",
+      "vendored_files": [
+        {
+          "path": "examples/complete/context.tf",
+          "upstream_path": "examples/complete/context.tf",
+          "sha256": "b9644bbd7706d9359fc27ad06c48aabd96a4d255815859c2906ce1b5a7d49d56",
+          "bytes": 10101
+        },
+        {
+          "path": "examples/complete/fixtures.us-east-2.tfvars",
+          "upstream_path": "examples/complete/fixtures.us-east-2.tfvars",
+          "sha256": "0535ba77fcfb4e7164dcdb05d665cdd603c2e6188b30aca485fc1cddf647ed2e",
+          "bytes": 392
+        },
+        {
+          "path": "examples/complete/main.tf",
+          "upstream_path": "examples/complete/main.tf",
+          "sha256": "7b327e155214678495f70eada2f26cc4aeee5f796f503c79bca482fb4f586945",
+          "bytes": 6734
+        },
+        {
+          "path": "examples/complete/outputs.tf",
+          "upstream_path": "examples/complete/outputs.tf",
+          "sha256": "8c3a3f79c488421eaf41d3d67b320495e0e08822dc463ede6640e229a126c9c0",
+          "bytes": 881
+        },
+        {
+          "path": "examples/complete/providers.tf",
+          "upstream_path": "examples/complete/providers.tf",
+          "sha256": "5e05e357987c1b29a1e1a909ab24f2bb616bed21f5bd4b9d9123869e33d89025",
+          "bytes": 88
+        },
+        {
+          "path": "examples/complete/scripts/data_cleaning.py",
+          "upstream_path": "examples/complete/scripts/data_cleaning.py",
+          "sha256": "c20c5b1da77ee433aeee60b227111140a8ccccbecf102bcb3742b5c0ee653ee2",
+          "bytes": 2677
+        },
+        {
+          "path": "examples/complete/variables.tf",
+          "upstream_path": "examples/complete/variables.tf",
+          "sha256": "c68921a66a5f1c81c40a4b9f79709853af8d9c7a66d154903771e9f3ba8349be",
+          "bytes": 425
+        },
+        {
+          "path": "examples/complete/versions.tf",
+          "upstream_path": "examples/complete/versions.tf",
+          "sha256": "a7a633a79334b14bf6a193fc1b2931532fe08a62a1749e91f440c8289c77633f",
+          "bytes": 239
+        },
+        {
+          "path": "LICENSE",
+          "upstream_path": "LICENSE",
+          "sha256": "f275a6bd9e4d90ebfb07c2bf009b2819f37f1163c256e7d2c359955aa0a1abaa",
+          "bytes": 11346
+        }
+      ],
+      "date_added": "2026-10-05"
+    },
+    {
+      "name": "iceberg-spark-env",
+      "origin": "real-oss",
+      "upstream_repository": "databricks/docker-spark-iceberg",
+      "upstream_url": "https://github.com/databricks/docker-spark-iceberg",
+      "commit_sha": "cf617dc29e8672792e76b9bcf6017af52f570020",
+      "license": "Apache-2.0",
+      "domain": [
+        "iceberg",
+        "spark"
+      ],
+      "shape": "Spark env tuned for Iceberg: spark-defaults.conf catalog, pyiceberg.yaml, Dockerfile",
+      "reason": "Iceberg catalog config parsing on real spark-defaults.conf (guards ICE012 regression)",
+      "expected_behavior": "ICE000 detection; catalog entity; zero ICE012 false positives on catalog sub-keys",
+      "vendored_files": [
+        {
+          "path": "LICENSE",
+          "upstream_path": "LICENSE",
+          "sha256": "e761f41071771e7fe23ef022c909e73e3239d09fecfe0e04bad8c2a5665adba3",
+          "bytes": 15060
+        },
+        {
+          "path": "spark/.pyiceberg.yaml",
+          "upstream_path": "spark/.pyiceberg.yaml",
+          "sha256": "8739e51aece0c93e5fd243fe2f23ccff4a2222abddac2f11c550cb8cd30aeee3",
+          "bytes": 951
+        },
+        {
+          "path": "spark/Dockerfile",
+          "upstream_path": "spark/Dockerfile",
+          "sha256": "aff0b2909e2d29fe62c5769ac7327cfe945d840d7eafdd62ec8cdd40dd716f39",
+          "bytes": 6743
+        },
+        {
+          "path": "spark/requirements.txt",
+          "upstream_path": "spark/requirements.txt",
+          "sha256": "8da6fe70e01ce52db4fa47e2059c734916201b7cd67493f5c3f3c0d6c160eba3",
+          "bytes": 193
+        },
+        {
+          "path": "spark/spark-defaults.conf",
+          "upstream_path": "spark/spark-defaults.conf",
+          "sha256": "3d8a9e0ef956021620609e644f2be7f16703e26115b887df39092a14cb68e43d",
+          "bytes": 1662
+        }
+      ],
+      "date_added": "2026-10-05"
+    },
+    {
+      "name": "jaffle-shop-dbt",
+      "origin": "real-oss",
+      "upstream_repository": "dbt-labs/jaffle-shop-classic",
+      "upstream_url": "https://github.com/dbt-labs/jaffle-shop-classic",
+      "commit_sha": "fd7bfacae4f497ff044a6a0275268676bf1b64c3",
+      "license": "Apache-2.0",
+      "domain": [
+        "dbt"
+      ],
+      "shape": "Canonical dbt example project: 3 staging + 2 marts models, schema.yml tests/docs, seeds",
+      "reason": "baseline dbt domain coverage on a widely-referenced real project",
+      "expected_behavior": "dbt entities/edges in graph.json; DBT findings; no streaming/search/trino-domain noise",
+      "vendored_files": [
+        {
+          "path": "dbt_project.yml",
+          "upstream_path": "dbt_project.yml",
+          "sha256": "62d00befbc5f4d2f924a497881d34a28b09af1c2da697396da61c144cb048ae7",
+          "bytes": 422
+        },
+        {
+          "path": "LICENSE",
+          "upstream_path": "LICENSE",
+          "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+          "bytes": 11357
+        },
+        {
+          "path": "models/customers.sql",
+          "upstream_path": "models/customers.sql",
+          "sha256": "455b90a31f418ae776213ad9932c7cb72d19a5269a8c722bd9f4e44957313ce8",
+          "bytes": 1195
+        },
+        {
+          "path": "models/orders.sql",
+          "upstream_path": "models/orders.sql",
+          "sha256": "53950235d8e29690d259e95ee49bda6a5b7911b44c739b738a646dc6014bcfcd",
+          "bytes": 970
+        },
+        {
+          "path": "models/schema.yml",
+          "upstream_path": "models/schema.yml",
+          "sha256": "bb83d7da8a5a778456b9de25d1ae891fd10ba1377805c9cf2878909bddb184af",
+          "bytes": 2311
+        },
+        {
+          "path": "models/staging/schema.yml",
+          "upstream_path": "models/staging/schema.yml",
+          "sha256": "0292575ae99af70a8d5504cf7280a688c209eb81ad15b13569e26c8e680cb931",
+          "bytes": 671
+        },
+        {
+          "path": "models/staging/stg_customers.sql",
+          "upstream_path": "models/staging/stg_customers.sql",
+          "sha256": "6f18a29204dad1de6dbb0c288144c4990742e0a1e065c3b2a67b5f98334c22ba",
+          "bytes": 326
+        },
+        {
+          "path": "models/staging/stg_orders.sql",
+          "upstream_path": "models/staging/stg_orders.sql",
+          "sha256": "afffa9cbc57e5fd2cf5898ebf571d444a62c9d6d7929d8133d30567fb9a2ce97",
+          "bytes": 349
+        },
+        {
+          "path": "models/staging/stg_payments.sql",
+          "upstream_path": "models/staging/stg_payments.sql",
+          "sha256": "eb899938258d1fba27fca716a7c334119912a2f9601282026097a7b6ce8cfcd2",
+          "bytes": 442
+        },
+        {
+          "path": "seeds/raw_customers.csv",
+          "upstream_path": "seeds/raw_customers.csv",
+          "sha256": "24579b4b26098d43265376f3c50be8b10faf8e8fd95f5508074f10f76a12671d",
+          "bytes": 1302
+        },
+        {
+          "path": "seeds/raw_orders.csv",
+          "upstream_path": "seeds/raw_orders.csv",
+          "sha256": "c5f309d84ba32f2a39235c59f2d4f6c855aedba7e215847c957f1a5f2fa80d3e",
+          "bytes": 2623
+        },
+        {
+          "path": "seeds/raw_payments.csv",
+          "upstream_path": "seeds/raw_payments.csv",
+          "sha256": "03fd407f3135f84456431a923f22fc185a2154079e210c20b690e3ab11687d11",
+          "bytes": 2560
+        }
+      ],
+      "date_added": "2026-10-04"
+    },
+    {
+      "name": "kafka-python-clients",
+      "origin": "real-oss",
+      "upstream_repository": "confluentinc/confluent-kafka-python",
+      "upstream_url": "https://github.com/confluentinc/confluent-kafka-python",
+      "commit_sha": "7f2e72f3db14647b163ee5fa7283d674eda194f3",
+      "license": "Apache-2.0",
+      "domain": [
+        "kafka"
+      ],
+      "shape": "confluent-kafka-python examples: producer/consumer/avro/clients",
+      "reason": "Kafka client detection on the reference Python client repo",
+      "expected_behavior": "KFK000 surface + KFK006 no-TLS true positive; no broker-side claims",
+      "vendored_files": [
+        {
+          "path": "examples/avro_consumer.py",
+          "upstream_path": "examples/avro_consumer.py",
+          "sha256": "e01349bda83798b9d409e79324e692cde3b13de530569a1ea79912c9656eecfd",
+          "bytes": 3819
+        },
+        {
+          "path": "examples/avro_producer.py",
+          "upstream_path": "examples/avro_producer.py",
+          "sha256": "f4c39b963818fe294325d359e290fce19528229d33a56d993ebafdc5796dac9c",
+          "bytes": 6340
+        },
+        {
+          "path": "examples/consumer.py",
+          "upstream_path": "examples/consumer.py",
+          "sha256": "0e9e8287d1c36822a2dce42c2c587a6a527a9849df58655761e9dee3a97680ac",
+          "bytes": 3885
+        },
+        {
+          "path": "examples/producer.py",
+          "upstream_path": "examples/producer.py",
+          "sha256": "5a75143961dd509aa1787f90ba6a15093fc77c20e2d0d26b0620aded63141e3a",
+          "bytes": 2317
+        },
+        {
+          "path": "LICENSE",
+          "upstream_path": "LICENSE",
+          "sha256": "383c56b9649c10baf15b3c630f769d4c8fcf7ed1ff430495e8c15513521d0899",
+          "bytes": 34725
+        }
+      ],
+      "date_added": "2026-10-05"
     },
     {
       "name": "kafka-spark-iceberg",
       "origin": "synthetic",
-      "url": null,
-      "commit": null,
+      "upstream_repository": null,
+      "upstream_url": null,
+      "commit_sha": null,
       "license": null,
-      "shape": "Kafka -> Spark Structured Streaming -> Iceberg with runtime export"
+      "domain": [
+        "kafka",
+        "spark",
+        "iceberg"
+      ],
+      "shape": "Kafka -> Spark Structured Streaming -> Iceberg with runtime export",
+      "reason": "authored streaming pipeline coverage",
+      "expected_behavior": "KFK + STREAM + SPARK + ICE findings",
+      "vendored_files": [
+        {
+          "path": "infra.tf",
+          "upstream_path": "infra.tf",
+          "sha256": "ab302c53e020ae0dfb5ab011fd0583e1276a31ef72071d9f1146416ecff000b9",
+          "bytes": 153
+        },
+        {
+          "path": "runtime/batch0.json",
+          "upstream_path": "runtime/batch0.json",
+          "sha256": "48005bd27ccb24ee72893ce4030d1178b863fb09c8072ac84af988abe246e2cc",
+          "bytes": 354
+        },
+        {
+          "path": "runtime/batch1.json",
+          "upstream_path": "runtime/batch1.json",
+          "sha256": "2db0bcbcbf2a3b36f35d71b1ad36861787c2e0ea3e515fe786c2207331a08131",
+          "bytes": 357
+        },
+        {
+          "path": "runtime/batch2.json",
+          "upstream_path": "runtime/batch2.json",
+          "sha256": "5910bacfa3884eb0424b5504bcfe582231922300871869fc8590a78a177e04ca",
+          "bytes": 358
+        },
+        {
+          "path": "streams.py",
+          "upstream_path": "streams.py",
+          "sha256": "9a512ea44d66772eb3a5c9f8222fe236883efd1e476533fef2302597b59e4b6d",
+          "bytes": 464
+        }
+      ],
+      "date_added": "2026-10-04"
     },
     {
       "name": "lf-cross-account",
       "origin": "synthetic",
-      "url": null,
-      "commit": null,
+      "upstream_repository": null,
+      "upstream_url": null,
+      "commit_sha": null,
       "license": null,
-      "shape": "Lake Formation cross-account grants in Terraform"
+      "domain": [
+        "lakeformation"
+      ],
+      "shape": "Lake Formation cross-account grants in Terraform",
+      "reason": "authored LF governance coverage",
+      "expected_behavior": "LF findings on cross-account grants",
+      "vendored_files": [
+        {
+          "path": "main.tf",
+          "upstream_path": "main.tf",
+          "sha256": "169d0c321d41486a7099d3ea45b878353fdaa499cd1cbe626e3c36983ae20839",
+          "bytes": 642
+        }
+      ],
+      "date_added": "2026-10-04"
     },
     {
-      "name": "jaffle-shop-dbt",
-      "origin": "real",
-      "url": "https://github.com/dbt-labs/jaffle-shop-classic",
-      "commit": "fd7bfacae4f497ff044a6a0275268676bf1b64c3",
+      "name": "spark-py-examples",
+      "origin": "real-oss",
+      "upstream_repository": "apache/spark",
+      "upstream_url": "https://github.com/apache/spark",
+      "commit_sha": "f6953f77e61359bffca4e7b11818d05cd724194b",
       "license": "Apache-2.0",
-      "shape": "Canonical dbt example project: 3 staging + 2 marts models, schema.yml tests/docs, seeds"
-    },
-    {
-      "name": "airflow-example-dags",
-      "origin": "real",
-      "url": "https://github.com/apache/airflow",
-      "commit": "b93c3db6b1641b0840bd15ac7d05bc58ff2cccbf",
-      "license": "Apache-2.0",
-      "shape": "Five official Airflow 2.10.5 example DAGs (bash/python/branch/complex/task-group)"
+      "domain": [
+        "spark"
+      ],
+      "shape": "PySpark examples (pi, wordcount, streaming network wordcount, sql basic)",
+      "reason": "Spark analyzer + SPARK/SQL checks on canonical PySpark source",
+      "expected_behavior": "SPARK + SQL findings; sql/query/table entities; no non-spark domain claims",
+      "vendored_files": [
+        {
+          "path": "examples/src/main/python/pi.py",
+          "upstream_path": "examples/src/main/python/pi.py",
+          "sha256": "645d3687a0108bd784c70a230bd9da0e3bb711e0d7535dc55cd9dd5d57349ed8",
+          "bytes": 1443
+        },
+        {
+          "path": "examples/src/main/python/sql/basic.py",
+          "upstream_path": "examples/src/main/python/sql/basic.py",
+          "sha256": "fc1e088b472e14e34ff597b8fc4225f8ef29d054cc348b36fa2e73dc539f78ab",
+          "bytes": 6308
+        },
+        {
+          "path": "examples/src/main/python/streaming/network_wordcount.py",
+          "upstream_path": "examples/src/main/python/streaming/network_wordcount.py",
+          "sha256": "264e2d5c20d2875582d0a26dd3336746500e9df2034c6149357d08c3fcb29c5a",
+          "bytes": 1883
+        },
+        {
+          "path": "examples/src/main/python/wordcount.py",
+          "upstream_path": "examples/src/main/python/wordcount.py",
+          "sha256": "295c8fd27833e2b05ea0689bcda1d5d098a3b2f78f0be737f99176e44793022a",
+          "bytes": 1417
+        },
+        {
+          "path": "LICENSE",
+          "upstream_path": "LICENSE",
+          "sha256": "b8ea0873b8410497804dbb19dac00ffa5017d2ab33582b9e7ce46692fa4a0da1",
+          "bytes": 13640
+        }
+      ],
+      "date_added": "2026-10-05"
     },
     {
       "name": "terraform-aws-vpc",
-      "origin": "real",
-      "url": "https://github.com/terraform-aws-modules/terraform-aws-vpc",
-      "commit": "b3abd6df2ecf052451a361ed55b8f06f8742a795",
+      "origin": "real-oss",
+      "upstream_repository": "terraform-aws-modules/terraform-aws-vpc",
+      "upstream_url": "https://github.com/terraform-aws-modules/terraform-aws-vpc",
+      "commit_sha": "b3abd6df2ecf052451a361ed55b8f06f8742a795",
       "license": "Apache-2.0",
-      "shape": "terraform-aws-modules VPC module root (main.tf, variables.tf, outputs.tf)"
+      "domain": [
+        "terraform-aws"
+      ],
+      "shape": "terraform-aws-modules VPC module root (main.tf, variables.tf, outputs.tf)",
+      "reason": "mainstream AWS IaC baseline for terraform_model + TF checks",
+      "expected_behavior": "TF findings only from terraform surface; no domain-leak findings",
+      "vendored_files": [
+        {
+          "path": "LICENSE",
+          "upstream_path": "LICENSE",
+          "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9",
+          "bytes": 10173
+        },
+        {
+          "path": "main.tf",
+          "upstream_path": "main.tf",
+          "sha256": "6a483e4221a1af60247b0e7c6f86a76df25b3c94bb47d35d5948e8cbd8dcf352",
+          "bytes": 63083
+        },
+        {
+          "path": "outputs.tf",
+          "upstream_path": "outputs.tf",
+          "sha256": "ef5f4fbff46ef32f2e10043dc389f5502a973e8286ba04d9705c8b9660c92713",
+          "bytes": 21991
+        },
+        {
+          "path": "variables.tf",
+          "upstream_path": "variables.tf",
+          "sha256": "6719b1cfe8e3b86f5b2e152d736185cc5d7851e3b62ba1b214e14cb053a159b5",
+          "bytes": 54681
+        }
+      ],
+      "date_added": "2026-10-04"
+    },
+    {
+      "name": "trino-server-dev-etc",
+      "origin": "real-oss",
+      "upstream_repository": "trinodb/trino",
+      "upstream_url": "https://github.com/trinodb/trino",
+      "commit_sha": "ee2cedd174cc28ec1eef756d181a7d7342993ef1",
+      "license": "Apache-2.0",
+      "domain": [
+        "trino"
+      ],
+      "shape": "trinodb/trino dev-server etc/: config.properties + catalog/*.properties",
+      "reason": "Trino config/catalog detection incl. test-connector warnings",
+      "expected_behavior": "TRINO000 surface + TRINO003/004 test-catalog true positives; catalog entity",
+      "vendored_files": [
+        {
+          "path": "LICENSE",
+          "upstream_path": "LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "bytes": 11358
+        },
+        {
+          "path": "testing/trino-server-dev/etc/access-control.properties",
+          "upstream_path": "testing/trino-server-dev/etc/access-control.properties",
+          "sha256": "dea418cd909b9b4e42f57f0b10ea47122369297331454bcd9a10b01a9baf03d3",
+          "bytes": 28
+        },
+        {
+          "path": "testing/trino-server-dev/etc/catalog/blackhole.properties",
+          "upstream_path": "testing/trino-server-dev/etc/catalog/blackhole.properties",
+          "sha256": "b639c48ddbb50fa01288794e1291e9d22d834555791d99249d6da6ae4923ba76",
+          "bytes": 196
+        },
+        {
+          "path": "testing/trino-server-dev/etc/catalog/hive.properties",
+          "upstream_path": "testing/trino-server-dev/etc/catalog/hive.properties",
+          "sha256": "58e41baef66d179a2e53751a9509cbd6c69500cf5dde6e216b4ad32ba023169f",
+          "bytes": 522
+        },
+        {
+          "path": "testing/trino-server-dev/etc/catalog/iceberg.properties",
+          "upstream_path": "testing/trino-server-dev/etc/catalog/iceberg.properties",
+          "sha256": "3e0658541811f800379b718334cb1ecfdca7a92325048330d86d6252918c4a32",
+          "bytes": 570
+        },
+        {
+          "path": "testing/trino-server-dev/etc/catalog/jmx.properties",
+          "upstream_path": "testing/trino-server-dev/etc/catalog/jmx.properties",
+          "sha256": "8a8cf988acc83ec81967ad9c4c5d42aa259ddca72bb3371272014d9b4802cdec",
+          "bytes": 190
+        },
+        {
+          "path": "testing/trino-server-dev/etc/config.properties",
+          "upstream_path": "testing/trino-server-dev/etc/config.properties",
+          "sha256": "1d5237499180ee6533885189414ef3008c27a0930d4d19c78d14c450ec8a92e0",
+          "bytes": 2027
+        },
+        {
+          "path": "testing/trino-server-dev/etc/jvm.config",
+          "upstream_path": "testing/trino-server-dev/etc/jvm.config",
+          "sha256": "909b490e756bb83af37032fff0ede100ffaa6bab50d430f6c38c547795e76180",
+          "bytes": 170
+        },
+        {
+          "path": "testing/trino-server-dev/etc/log.properties",
+          "upstream_path": "testing/trino-server-dev/etc/log.properties",
+          "sha256": "9a911d9df0f39e7c4d87695883b8fa50f810b29474a2598717ce912d7ed8d587",
+          "bytes": 306
+        }
+      ],
+      "date_added": "2026-10-05"
     }
   ]
 }

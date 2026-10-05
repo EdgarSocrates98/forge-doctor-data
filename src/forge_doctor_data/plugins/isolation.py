@@ -16,7 +16,8 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
-from dataclasses import dataclass
+import threading
+from dataclasses import dataclass, replace
 from importlib.metadata import EntryPoint, entry_points
 from pathlib import Path
 from typing import Any
@@ -97,10 +98,17 @@ def _run(name: str, distribution: str | None, check_id: str, root: Path) -> list
 
 
 def _worker(argv: list[str]) -> int:
+    if len(argv) < 3:
+        raise SystemExit(
+            "usage: python -m forge_doctor_data.plugins.isolation "
+            "<describe|run> <entry_point> <distribution> [args]"
+        )
     command, name, distribution = argv[0], argv[1], argv[2] or None
     if command == "describe":
         payload: object = _describe(name, distribution)
     elif command == "run":
+        if len(argv) < 5:
+            raise SystemExit("usage: ... run <entry_point> <distribution> <check_id> <root>")
         check_id, root = argv[3], Path(argv[4])
         payload = _run(name, distribution, check_id, root)
     else:
@@ -109,21 +117,79 @@ def _worker(argv: list[str]) -> int:
     return 0
 
 
-def _invoke(args: list[str], *, timeout_seconds: float, max_output_bytes: int) -> object:
-    result = subprocess.run(
-        [sys.executable, "-m", "forge_doctor_data.plugins.isolation", *args],
-        capture_output=True,
+def _capped_drain(stream: Any, limit: int) -> tuple[str, bool]:
+    """Read ``stream`` to EOF storing at most ``limit`` bytes.
+
+    The stream is always drained - a child that overflows keeps writing
+    into the pipe (no deadlock) while the parent's memory stays bounded.
+    Returns ``(text, overflowed)``.
+    """
+    chunks: list[str] = []
+    stored = 0
+    total = 0
+    while True:
+        chunk = stream.read(65_536)
+        if not chunk:
+            break
+        size = len(chunk.encode("utf-8", "replace"))
+        total += size
+        if stored < limit:
+            keep = min(size, limit - stored)
+            chunks.append(chunk.encode("utf-8", "replace")[:keep].decode("utf-8", "replace"))
+            stored += keep
+    return "".join(chunks), total > limit
+
+
+def _run_child(cmd: list[str], *, timeout_seconds: float, max_output_bytes: int) -> tuple[str, str]:
+    """Spawn ``cmd``, drain stdout/stderr with hard byte caps, enforce the
+    timeout. Returns ``(stdout, stderr)`` or raises ``RuntimeError``."""
+    proc = subprocess.Popen(  # argv list, no shell
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
         text=True,
-        timeout=timeout_seconds,
-        check=False,
     )
-    if len(result.stdout.encode("utf-8")) > max_output_bytes:
-        raise RuntimeError("isolated plugin stdout exceeded configured limit")
-    if result.returncode != 0:
-        detail = result.stderr.strip() or f"exit code {result.returncode}"
-        raise RuntimeError(f"isolated plugin failed: {detail}")
+    drained: dict[str, tuple[str, bool]] = {}
+    threads = [
+        threading.Thread(
+            target=lambda: drained.__setitem__("out", _capped_drain(proc.stdout, max_output_bytes)),
+            daemon=True,
+        ),
+        threading.Thread(
+            target=lambda: drained.__setitem__("err", _capped_drain(proc.stderr, max_output_bytes)),
+            daemon=True,
+        ),
+    ]
+    for thread in threads:
+        thread.start()
     try:
-        return json.loads(result.stdout)
+        proc.wait(timeout=timeout_seconds)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        proc.wait()
+        raise RuntimeError(
+            f"isolated plugin exceeded timeout {timeout_seconds}s - killed"
+        ) from None
+    for thread in threads:
+        thread.join(timeout=10)
+    out, out_over = drained.get("out", ("", False))
+    err, err_over = drained.get("err", ("", False))
+    if out_over or err_over:
+        raise RuntimeError("isolated plugin output exceeded configured limit")
+    if proc.returncode != 0:
+        detail = err.strip() or f"exit code {proc.returncode}"
+        raise RuntimeError(f"isolated plugin failed: {detail}")
+    return out, err
+
+
+def _invoke(args: list[str], *, timeout_seconds: float, max_output_bytes: int) -> object:
+    out, _err = _run_child(
+        [sys.executable, "-m", "forge_doctor_data.plugins.isolation", *args],
+        timeout_seconds=timeout_seconds,
+        max_output_bytes=max_output_bytes,
+    )
+    try:
+        return json.loads(out)
     except json.JSONDecodeError as exc:
         raise RuntimeError(f"isolated plugin returned invalid JSON: {exc}") from exc
 
@@ -142,7 +208,11 @@ def describe_entry_point(
     )
     if not isinstance(payload, list):
         raise RuntimeError("isolated plugin description must be an array")
-    return [row for row in payload if isinstance(row, dict)]
+    return [
+        row
+        for row in payload
+        if isinstance(row, dict) and isinstance(row.get("id"), str) and row["id"]
+    ]
 
 
 def _result_from_dict(row: dict[str, Any]) -> CheckResult:
@@ -195,7 +265,26 @@ class IsolatedCheck:
         )
         if not isinstance(payload, list):
             raise RuntimeError("isolated plugin results must be an array")
-        return [_result_from_dict(row) for row in payload if isinstance(row, dict)]
+        results: list[CheckResult] = []
+        for row in payload:
+            if not isinstance(row, dict):
+                continue
+            result = _result_from_dict(row)
+            if result.file is not None and not _inside_root(result.file, ctx.root):
+                # A finding's file is a claim, not a read - but claims
+                # outside the scanned tree are dropped, not forwarded.
+                result = replace(result, file=None)
+            results.append(result)
+        return results
+
+
+def _inside_root(file: Path, root: Path) -> bool:
+    try:
+        resolved = file.resolve() if file.is_absolute() else (Path(root) / file).resolve()
+    except OSError:
+        return False
+    root_resolved = Path(root).resolve()
+    return resolved == root_resolved or root_resolved in resolved.parents
 
 
 if __name__ == "__main__":

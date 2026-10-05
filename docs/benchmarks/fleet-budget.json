@@ -1,10 +1,10 @@
 {
   "schema_version": "1",
-  "description": "Fleet benchmark budget keys. Values = recorded baseline (docs/benchmarks/fleet-merge-n150.json, fleet-scan-n100.json) x ~3x tolerance, per docs/performance-budgets.md. Absent keys report 'unknown' - never gated.",
+  "description": "Fleet benchmark budget keys. Values = recorded baseline x ~3x tolerance, per docs/performance-budgets.md. Absent keys report 'unknown' - never gated.",
   "baseline": {
-    "merge": "fleet-merge-n150.json",
-    "scan": "fleet-scan-n100.json",
-    "recorded": "2026-03 (seeded synthetic workspace, offline)"
+    "merge": ["fleet-merge-n250-n500.json", "fleet-merge-n150.json"],
+    "scan": ["fleet-scan-n250.json", "fleet-scan-n100.json"],
+    "recorded": "2026-10 (seeded synthetic workspace, offline; env block inside each artifact)"
   },
   "cold_ms_p50_max": 1100,
   "cold_ms_mean_max": 1300,

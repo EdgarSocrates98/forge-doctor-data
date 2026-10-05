@@ -1,0 +1,30 @@
+{
+  "benchmark": "fleet-merge",
+  "seed": 42,
+  "environment": {
+    "recorded_at": "2026-10-05T14:44:54+00:00",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "machine": "AMD64",
+    "python": "3.14.6",
+    "cpu_count": 6,
+    "ram_gb": 17.1,
+    "commit": "1121104dc2503d7a17a536159e5b5c383c33fa98",
+    "generator": "tools/benchmarks/fleet.py"
+  },
+  "sizes": [
+    {
+      "repos": 250,
+      "entities": 1503,
+      "relationships": 1001,
+      "merge_ms": 24671.4,
+      "peak_mb": 12.2
+    },
+    {
+      "repos": 500,
+      "entities": 3003,
+      "relationships": 2001,
+      "merge_ms": 40612.1,
+      "peak_mb": 2.9
+    }
+  ]
+}

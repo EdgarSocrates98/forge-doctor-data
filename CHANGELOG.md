@@ -7,6 +7,76 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-rc1] - 2026-10-05
+
+Release candidate. The public surface is frozen, the real-world
+corpus is provenanced, trust boundaries are tested, and the release
+pipeline is reproducible — see `docs/releases/1.0.0-rc1.md`.
+
+### RC hardening program (specs 274-284)
+
+#### Added
+
+- **RC baseline + contract freeze** — `tools/rc_baseline.py` records
+  version, API surface, test count, coverage, and release gates into
+  `docs/rc-baseline.json`; `docs/rc-policy.md` defines the RC rules
+  (no-feature rule, defect categories P0-P3, allowed-change list).
+- **Real OSS corpus (10 slices)** — jaffle-shop, airflow example DAGs,
+  terraform-aws-vpc, spark examples, spark-iceberg env, kafka clients,
+  pyflink examples, trino dev-etc, elasticsearch TF module, glue TF
+  example — every slice pinned to a 40-char commit SHA with vendored
+  LICENSE and per-file sha256. `ground_truth.json` per slice;
+  `golden/metrics.json` reports precision/recall per domain and per
+  origin (P=R=1.0 on real and synthetic).
+- **MCP boundary hardening** — sandbox confinement for every
+  path-shaped tool argument, strict resource-URI segment validation,
+  malformed-envelope `-32602`/`argument` normalization, deep-JSON
+  resilience in the stdio loop; 53-test boundary suite.
+- **Plugin trust-boundary hardening** — discovery trust filtering,
+  isolated-process timeout + bounded output capture, invalid-result
+  containment (runner converts contract breaches into internal-error
+  findings instead of crashing).
+- **What-if / migration proofs** — byte-identical determinism,
+  no-mutation of observed state, exhaustive concept-registry sweep
+  (missing evidence or declared gaps never yield `DIRECT`), readiness
+  verdicts with counted unknown budgets.
+- **Hardening §12-18 suite** — streaming history readers survive
+  corrupt snapshots deterministically, retention + daily compaction,
+  pack provenance audit statuses, cross-surface output consistency
+  (API/CLI/handoff), bounded handoffs that keep highest-severity
+  findings and record truncation as `UnknownFact`, deterministic
+  errors on every public surface, filesystem-write confinement,
+  path-traversal rejection.
+- **Scale envelope** — measured scan n=250 and merge n=250/n=500 with
+  full environment provenance per artifact (recorded_at, platform,
+  cpu, ram, python, commit); `benchmarks.yml` scheduled gate;
+  validated envelope documented honestly (n=1000 unproven).
+- **forge-contracts manifesto** — `docs/forge-contracts.md`: universal
+  vocabulary, domain prohibition (incl. OpenAPI/GraphQL/QueryExecution),
+  x-* extension rules, negotiation window, engine-free conformance kit.
+- **RC pipeline gates** — dirty-tree refusal (`--allow-dirty`
+  override), wheel+sdist requirement, `SOURCE_DATE_EPOCH` derived from
+  HEAD commit, SHA256SUMS re-verification, `tools/schema_freeze.py`
+  schema-freeze gate wired into CI.
+
+#### Fixed
+
+- `ICE012` no longer treats nested `spark.sql.catalog.<name>.<key>`
+  properties as separate catalog implementations (real-world FP on
+  the databricks spark-iceberg slice).
+- `SRCH004` resolves module-local Terraform variable defaults for
+  encryption attributes; unprovable expressions now report `unknown`
+  instead of claiming missing encryption.
+- `ScanService` rejects non-directory scan paths with
+  `ScanRequestError` — the API previously returned a plausible report
+  for a missing path (false trust).
+- `HandoffBundle.bounded()` keeps findings severity-first under
+  truncation instead of list-position order.
+- `agent_context` ranks findings error>warning>info for budget
+  trimming; `evidence_refs` resync to surviving rows.
+- `load_pack` validates path segments — `load_pack_ref` traversal can
+  no longer escape the knowledge directory.
+
 ### v1.0 readiness consolidation (specs 265-273)
 
 Themed around one rule: trust > features, proof > breadth, contracts >

@@ -160,10 +160,11 @@ def _py_static_evidence(index: object) -> tuple[list[IcebergEvidence], set[Path]
             if site.dotted.endswith("conf.set") and args and args[0].startswith(_CONF_SET_RE):
                 key = args[0]
                 value = args[1] if len(args) > 1 else ""
-                if key.startswith("spark.sql.catalog."):
-                    name = key[len("spark.sql.catalog.") :].split(".")[0]
+                rest = key[len("spark.sql.catalog.") :]
+                if key.startswith("spark.sql.catalog.") and "." not in rest:
+                    # bare `spark.sql.catalog.<name>` — the catalog implementation
                     evidence.append(
-                        IcebergEvidence("catalog", name, value, relative, site.line, "python")
+                        IcebergEvidence("catalog", rest, value, relative, site.line, "python")
                     )
                 else:
                     evidence.append(
@@ -367,10 +368,17 @@ def _config_evidence(ctx: ProjectContext) -> list[IcebergEvidence]:
                 key, _, value = stripped.partition(" ")
             key = key.strip()
             if key.startswith("spark.sql.catalog."):
-                name = key[len("spark.sql.catalog.") :].split(".")[0]
-                evidence.append(
-                    IcebergEvidence("catalog", name, value.strip(), relative, line_no, "config")
-                )
+                rest = key[len("spark.sql.catalog.") :]
+                if "." not in rest:
+                    # `spark.sql.catalog.<name>` — the catalog implementation
+                    evidence.append(
+                        IcebergEvidence("catalog", rest, value.strip(), relative, line_no, "config")
+                    )
+                else:
+                    # `spark.sql.catalog.<name>.<prop>` — a catalog property
+                    evidence.append(
+                        IcebergEvidence("config", key, value.strip(), relative, line_no, "config")
+                    )
             elif key.startswith(_CONF_SET_RE):
                 evidence.append(
                     IcebergEvidence("config", key, value.strip(), relative, line_no, "config")

@@ -221,3 +221,7 @@ per-file invocation to `--files`.
 - **Check ids are the API** — messages may change, ids never.
 - **Severity, not score** — no arbitrary weights; PASS/INFO/WARNING/ERROR.
 - **No writes** — Forge Doctor Data diagnoses; a future `fix` command would be new.
+- **Claim-to-evidence** — no capability claim ships without implementation,
+  a proof artifact, and a regression gate (see `CONTRIBUTING.md`; the
+  validated scale envelope, corpus metrics, and contract freezes all
+  follow it).

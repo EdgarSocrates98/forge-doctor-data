@@ -14,9 +14,16 @@ from pathlib import Path
 from typing import Any
 
 
+def _safe_segment(value: str) -> bool:
+    """One path segment only — traversal cannot escape the knowledge dir."""
+    return bool(value) and "/" not in value and "\\" not in value and value not in {".", ".."}
+
+
 @cache
 def load_pack(domain: str, name: str = "versions") -> dict[str, Any]:
     """Load ``knowledge/<domain>/<name>.json``; empty dict when missing."""
+    if not _safe_segment(domain) or not _safe_segment(name):
+        return {}
     resource = files("forge_doctor_data") / "knowledge" / domain / f"{name}.json"
     try:
         payload: dict[str, Any] = json.loads(resource.read_text(encoding="utf-8"))

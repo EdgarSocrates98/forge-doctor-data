@@ -1,0 +1,68 @@
+{
+  "entry": "spark-py-examples",
+  "expected_edges": {
+    "kinds": [
+      "reads"
+    ]
+  },
+  "expected_entities": {
+    "domains": [
+      "sql"
+    ],
+    "kinds": [
+      "query",
+      "table"
+    ]
+  },
+  "expected_findings": {
+    "check_id_prefixes": [
+      "SPARK",
+      "SQL"
+    ],
+    "check_ids": []
+  },
+  "expected_unknowns": [
+    {
+      "check_id": "SPARK002",
+      "reason": "the examples do not call toPandas(); the driver-bound risk is absent, not just unproven"
+    }
+  ],
+  "forbidden_findings": {
+    "check_id_prefixes": [
+      "AIR",
+      "DBT",
+      "DBX",
+      "TRINO",
+      "SRCH",
+      "FLK",
+      "KFK",
+      "KIN",
+      "STREAM",
+      "SNOW",
+      "PARQ",
+      "DCTR",
+      "NEP",
+      "NEPA",
+      "NEPCD",
+      "NEPGT",
+      "CTM",
+      "DELTA",
+      "EMR",
+      "SFN",
+      "BQ",
+      "ATH",
+      "AZ",
+      "GCP",
+      "DRU",
+      "CH",
+      "PIN",
+      "LAM",
+      "DDBGT",
+      "DDBSTR",
+      "ICE"
+    ],
+    "check_ids": []
+  },
+  "notes": "apache/spark PySpark examples incl. collect() and SELECT * usage (real risk classes).",
+  "schema_version": "1"
+}

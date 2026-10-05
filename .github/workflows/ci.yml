@@ -251,6 +251,9 @@ jobs:
       - name: Public API surface freeze
         run: poetry run python tools/api_surface.py --check
 
+      - name: Schema freeze gate
+        run: poetry run python tools/schema_freeze.py --check
+
       - name: Doc drift (generated project status)
         run: poetry run forge-doctor-data project status --check
 

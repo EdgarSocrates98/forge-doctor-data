@@ -1,22 +1,176 @@
 {
   "aggregate": {
-    "entries": 11,
+    "entries": 18,
     "fn": 0,
     "fp": 0,
     "precision": 1.0,
     "recall": 1.0,
-    "tp": 328
+    "tp": 511
+  },
+  "by_domain": {
+    "airflow": {
+      "entries": 2,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 46
+    },
+    "athena": {
+      "entries": 1,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 24
+    },
+    "databricks": {
+      "entries": 1,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 36
+    },
+    "dbt": {
+      "entries": 1,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 30
+    },
+    "delta": {
+      "entries": 1,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 36
+    },
+    "dynamodb": {
+      "entries": 2,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 70
+    },
+    "emr": {
+      "entries": 1,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 36
+    },
+    "flink": {
+      "entries": 1,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 24
+    },
+    "glue": {
+      "entries": 3,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 85
+    },
+    "iceberg": {
+      "entries": 3,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 87
+    },
+    "kafka": {
+      "entries": 2,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 52
+    },
+    "lakeformation": {
+      "entries": 1,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 28
+    },
+    "lambda": {
+      "entries": 1,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 31
+    },
+    "neptune": {
+      "entries": 1,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 39
+    },
+    "search": {
+      "entries": 1,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 26
+    },
+    "spark": {
+      "entries": 4,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 115
+    },
+    "terraform-aws": {
+      "entries": 3,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 84
+    },
+    "trino": {
+      "entries": 1,
+      "fn": 0,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 27
+    }
   },
   "entries": {
     "airflow-example-dags": {
+      "domain": [
+        "airflow"
+      ],
       "fn": 0,
       "fp": 0,
-      "origin": "real",
+      "origin": "real-oss",
       "precision": 1.0,
       "recall": 1.0,
       "tp": 22
     },
     "airflow-glue-athena": {
+      "domain": [
+        "airflow",
+        "glue",
+        "athena"
+      ],
       "fn": 0,
       "fp": 0,
       "origin": "synthetic",
@@ -25,6 +179,10 @@
       "tp": 24
     },
     "databricks-delta": {
+      "domain": [
+        "databricks",
+        "delta"
+      ],
       "fn": 0,
       "fp": 0,
       "origin": "synthetic",
@@ -33,6 +191,10 @@
       "tp": 36
     },
     "dynamodb-neptune": {
+      "domain": [
+        "dynamodb",
+        "neptune"
+      ],
       "fn": 0,
       "fp": 0,
       "origin": "synthetic",
@@ -41,6 +203,10 @@
       "tp": 39
     },
     "dynamodb-streams-lambda": {
+      "domain": [
+        "dynamodb",
+        "lambda"
+      ],
       "fn": 0,
       "fp": 0,
       "origin": "synthetic",
@@ -48,7 +214,24 @@
       "recall": 1.0,
       "tp": 31
     },
+    "elasticsearch-terraform-module": {
+      "domain": [
+        "search",
+        "terraform-aws"
+      ],
+      "fn": 0,
+      "fp": 0,
+      "origin": "real-oss",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 26
+    },
     "emr-iceberg": {
+      "domain": [
+        "emr",
+        "iceberg",
+        "spark"
+      ],
       "fn": 0,
       "fp": 0,
       "origin": "synthetic",
@@ -56,7 +239,21 @@
       "recall": 1.0,
       "tp": 36
     },
+    "flink-pyflink-examples": {
+      "domain": [
+        "flink"
+      ],
+      "fn": 0,
+      "fp": 0,
+      "origin": "real-oss",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 24
+    },
     "glue-4-to-5": {
+      "domain": [
+        "glue"
+      ],
       "fn": 0,
       "fp": 0,
       "origin": "synthetic",
@@ -64,15 +261,58 @@
       "recall": 1.0,
       "tp": 28
     },
-    "jaffle-shop-dbt": {
+    "glue-terraform-example": {
+      "domain": [
+        "glue",
+        "terraform-aws"
+      ],
       "fn": 0,
       "fp": 0,
-      "origin": "real",
+      "origin": "real-oss",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 33
+    },
+    "iceberg-spark-env": {
+      "domain": [
+        "iceberg",
+        "spark"
+      ],
+      "fn": 0,
+      "fp": 0,
+      "origin": "real-oss",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 22
+    },
+    "jaffle-shop-dbt": {
+      "domain": [
+        "dbt"
+      ],
+      "fn": 0,
+      "fp": 0,
+      "origin": "real-oss",
       "precision": 1.0,
       "recall": 1.0,
       "tp": 30
     },
+    "kafka-python-clients": {
+      "domain": [
+        "kafka"
+      ],
+      "fn": 0,
+      "fp": 0,
+      "origin": "real-oss",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 23
+    },
     "kafka-spark-iceberg": {
+      "domain": [
+        "kafka",
+        "spark",
+        "iceberg"
+      ],
       "fn": 0,
       "fp": 0,
       "origin": "synthetic",
@@ -81,6 +321,9 @@
       "tp": 29
     },
     "lf-cross-account": {
+      "domain": [
+        "lakeformation"
+      ],
       "fn": 0,
       "fp": 0,
       "origin": "synthetic",
@@ -88,23 +331,90 @@
       "recall": 1.0,
       "tp": 28
     },
-    "terraform-aws-vpc": {
+    "spark-py-examples": {
+      "domain": [
+        "spark"
+      ],
       "fn": 0,
       "fp": 0,
-      "origin": "real",
+      "origin": "real-oss",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 28
+    },
+    "terraform-aws-vpc": {
+      "domain": [
+        "terraform-aws"
+      ],
+      "fn": 0,
+      "fp": 0,
+      "origin": "real-oss",
       "precision": 1.0,
       "recall": 1.0,
       "tp": 25
+    },
+    "trino-server-dev-etc": {
+      "domain": [
+        "trino"
+      ],
+      "fn": 0,
+      "fp": 0,
+      "origin": "real-oss",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 27
     }
   },
+  "failed_entries": 0,
   "metric": "finding-level precision/recall vs recorded ground truth",
+  "passed_entries": 18,
+  "precision_by_domain": {
+    "airflow": 1.0,
+    "athena": 1.0,
+    "databricks": 1.0,
+    "dbt": 1.0,
+    "delta": 1.0,
+    "dynamodb": 1.0,
+    "emr": 1.0,
+    "flink": 1.0,
+    "glue": 1.0,
+    "iceberg": 1.0,
+    "kafka": 1.0,
+    "lakeformation": 1.0,
+    "lambda": 1.0,
+    "neptune": 1.0,
+    "search": 1.0,
+    "spark": 1.0,
+    "terraform-aws": 1.0,
+    "trino": 1.0
+  },
   "real_only": {
-    "entries": 3,
+    "entries": 10,
     "fn": 0,
     "fp": 0,
     "precision": 1.0,
     "recall": 1.0,
-    "tp": 77
+    "tp": 260
+  },
+  "recall_by_domain": {
+    "airflow": 1.0,
+    "athena": 1.0,
+    "databricks": 1.0,
+    "dbt": 1.0,
+    "delta": 1.0,
+    "dynamodb": 1.0,
+    "emr": 1.0,
+    "flink": 1.0,
+    "glue": 1.0,
+    "iceberg": 1.0,
+    "kafka": 1.0,
+    "lakeformation": 1.0,
+    "lambda": 1.0,
+    "neptune": 1.0,
+    "search": 1.0,
+    "spark": 1.0,
+    "terraform-aws": 1.0,
+    "trino": 1.0
   },
   "schema_version": "1",
   "synthetic_only": {
@@ -114,5 +424,6 @@
     "precision": 1.0,
     "recall": 1.0,
     "tp": 251
-  }
+  },
+  "total_entries": 18
 }

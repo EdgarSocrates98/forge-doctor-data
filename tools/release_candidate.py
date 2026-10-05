@@ -161,11 +161,58 @@ def _build_sbom(root: Path, dist: Path) -> Path:
     return out
 
 
-def run(root: Path, dist: Path, *, build: bool = True) -> dict[str, Path]:
+def _check_dirty(root: Path, allow_dirty: bool) -> None:
+    """Phase 8.4: a dirty tree means unreviewed state in the artifacts —
+    refuse unless the caller explicitly opts out (local dry runs)."""
+    if allow_dirty:
+        return
+    dirty = _git(root, "status", "--porcelain")
+    if dirty:
+        raise ValueError(
+            "working tree is dirty — commit or stash before building RC "
+            "artifacts (pass --allow-dirty for a local dry run)"
+        )
+
+
+def _check_artifact_kinds(entries: list[dict[str, Any]]) -> None:
+    """Phase 8.5: the set must contain both a wheel and an sdist — a lone
+    wheel means the sdist was never built or was lost."""
+    names = {e["file"] for e in entries}
+    if not any(n.endswith(".whl") for n in names):
+        raise ValueError("distribution set has no wheel (*.whl)")
+    if not any(n.endswith(".tar.gz") for n in names):
+        raise ValueError("distribution set has no sdist (*.tar.gz)")
+
+
+def _verify_digests(dist: Path, sums_file: Path) -> None:
+    """Phase 8.3: re-hash every listed artifact against SHA256SUMS — the
+    digest file must describe the bytes on disk, not a prior build."""
+    for line in sums_file.read_text(encoding="utf-8").splitlines():
+        digest, _, name = line.partition("  ")
+        target = dist / name
+        if not target.is_file() or sha256_file(target) != digest:
+            raise ValueError(f"SHA256SUMS mismatch for {name}")
+
+
+def _build_env(root: Path) -> dict[str, str]:
+    """Phase 8.2: honor SOURCE_DATE_EPOCH; when unset, derive it from the
+    HEAD commit timestamp so the same checkout builds reproducibly."""
+    env = dict(os.environ)
+    if "SOURCE_DATE_EPOCH" not in env:
+        stamp = _git(root, "show", "-s", "--format=%ct", "HEAD")
+        if stamp and stamp.isdigit():
+            env["SOURCE_DATE_EPOCH"] = stamp
+    return env
+
+
+def run(
+    root: Path, dist: Path, *, build: bool = True, allow_dirty: bool = False
+) -> dict[str, Path]:
     """Full RC pipeline; returns the written artifact paths."""
+    _check_dirty(root, allow_dirty)
     version = verify_release.verify(root)
     if build:
-        subprocess.run(["poetry", "build"], cwd=root, check=True)
+        subprocess.run(["poetry", "build"], cwd=root, check=True, env=_build_env(root))
     if not dist.is_dir() or not any(dist.glob("forge_doctor_data-*")):
         raise ValueError(f"no distribution artifacts in {dist} (build first?)")
     verify_release.verify(root, dist)
@@ -173,7 +220,9 @@ def run(root: Path, dist: Path, *, build: bool = True) -> dict[str, Path]:
     outputs: dict[str, Path] = {}
     outputs["sbom"] = _build_sbom(root, dist)
     entries = artifact_entries(dist)
+    _check_artifact_kinds(entries)
     outputs["sha256sums"] = write_sha256sums(dist, entries)
+    _verify_digests(dist, outputs["sha256sums"])
     schema_files = export_schemas(dist)
     manifest = build_release_manifest(root, dist, version, entries, schema_files)
     outputs["manifest"] = dist / "release-manifest.json"
@@ -200,11 +249,16 @@ def main() -> int:
         "--dist", type=Path, default=None, help="artifact dir (default: <root>/dist)"
     )
     parser.add_argument("--no-build", action="store_true", help="reuse existing dist/")
+    parser.add_argument(
+        "--allow-dirty",
+        action="store_true",
+        help="skip the clean-tree gate (local dry runs only)",
+    )
     args = parser.parse_args()
     root = args.root.resolve()
     dist = (args.dist or root / "dist").resolve()
     try:
-        outputs = run(root, dist, build=not args.no_build)
+        outputs = run(root, dist, build=not args.no_build, allow_dirty=args.allow_dirty)
     except (OSError, ValueError, subprocess.CalledProcessError) as exc:
         print(f"release-candidate failed: {exc}", file=sys.stderr)
         return 1

@@ -1,0 +1,56 @@
+{
+  "ci": {
+    "job_definitions": 7,
+    "jobs": [
+      "static-analysis",
+      "unit-tests",
+      "package-build",
+      "smoke",
+      "extras-smoke",
+      "dogfood",
+      "forge-gates"
+    ],
+    "matrix_total": 11,
+    "workflow": "ci.yml"
+  },
+  "contracts": {
+    "contract_version": 1,
+    "family": "forge-contracts/1"
+  },
+  "corpus": {
+    "adversarial_entries": 0,
+    "golden_entries": 18,
+    "real_oss_entries": 10,
+    "synthetic_entries": 8
+  },
+  "fleet": {
+    "merge_validated_envelope": 500,
+    "scan_validated_envelope": 250
+  },
+  "git": {
+    "branch": "feat/rc-hardening-1.0",
+    "dirty": true,
+    "head": "f94f161d617e3d23f973a0e43d49ded42be826a2"
+  },
+  "kind": "forge-doctor-data/rc-baseline",
+  "labs": {
+    "scenario_count": 66
+  },
+  "mcp": {
+    "tool_count": 13
+  },
+  "package": {
+    "name": "forge-doctor-data",
+    "version": "1.0.0rc1"
+  },
+  "public_api": {
+    "public_api_sha256": "9337298979bbb5fed080b14d7bac51fb8dd027aeee89467de816a985b6537288",
+    "surface_file": "docs/api-surface.json"
+  },
+  "rc_target": "1.0.0-rc1",
+  "schema_version": "1",
+  "verification": {
+    "coverage_percent": 81.04,
+    "test_count": 2596
+  }
+}

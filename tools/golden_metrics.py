@@ -55,9 +55,13 @@ def _pr(expected: set[str], actual: set[str]) -> dict[str, Any]:
     return {"tp": tp, "fp": fp, "fn": fn, "precision": precision, "recall": recall}
 
 
+_REAL_ORIGINS = {"real", "real-oss"}
+
+
 def collect_metrics(golden_root: Path = GOLDEN, name_filter: str | None = None) -> dict[str, Any]:
     manifest = json.loads((golden_root / "manifest.json").read_text(encoding="utf-8"))
     origins = {e["name"]: e["origin"] for e in manifest["entries"]}
+    domains = {e["name"]: e.get("domain", []) for e in manifest["entries"]}
     entries: dict[str, Any] = {}
     for repo_dir in discover_golden(golden_root):
         name = repo_dir.parent.name
@@ -66,7 +70,11 @@ def collect_metrics(golden_root: Path = GOLDEN, name_filter: str | None = None) 
         expected_path = repo_dir.parent / "expected" / "findings.json"
         expected = {_row_key(r) for r in json.loads(expected_path.read_text("utf-8"))}
         actual = {_row_key(r) for r in _actual_findings(repo_dir)}
-        entries[name] = {"origin": origins.get(name, "unknown"), **_pr(expected, actual)}
+        entries[name] = {
+            "origin": origins.get(name, "unknown"),
+            "domain": domains.get(name, []),
+            **_pr(expected, actual),
+        }
 
     def aggregate(subset: dict[str, Any]) -> dict[str, Any]:
         tp = sum(v["tp"] for v in subset.values())
@@ -81,15 +89,29 @@ def collect_metrics(golden_root: Path = GOLDEN, name_filter: str | None = None) 
             "recall": tp / (tp + fn) if tp + fn else 1.0,
         }
 
-    real = {k: v for k, v in entries.items() if v["origin"] == "real"}
+    real = {k: v for k, v in entries.items() if v["origin"] in _REAL_ORIGINS}
     synthetic = {k: v for k, v in entries.items() if v["origin"] == "synthetic"}
+    by_domain = {
+        d: aggregate({k: v for k, v in entries.items() if d in v["domain"]})
+        for d in sorted({d for v in entries.values() for d in v["domain"]})
+    }
     return {
         "schema_version": "1",
         "metric": "finding-level precision/recall vs recorded ground truth",
         "entries": dict(sorted(entries.items())),
+        "total_entries": len(entries),
+        "passed_entries": sum(
+            1 for v in entries.values() if v["precision"] == 1.0 and v["recall"] == 1.0
+        ),
+        "failed_entries": sum(
+            1 for v in entries.values() if v["precision"] < 1.0 or v["recall"] < 1.0
+        ),
         "aggregate": aggregate(entries),
         "real_only": aggregate(real),
         "synthetic_only": aggregate(synthetic),
+        "by_domain": by_domain,
+        "precision_by_domain": {d: m["precision"] for d, m in by_domain.items()},
+        "recall_by_domain": {d: m["recall"] for d, m in by_domain.items()},
     }
 
 
