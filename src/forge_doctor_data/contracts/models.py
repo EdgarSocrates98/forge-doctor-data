@@ -9,6 +9,18 @@ already the JSON document.
 Naming matches the published JSON Schemas (``core.schemas.SCHEMAS``):
 ``finding``, ``platform-graph`` entities/relationships, ``evidence``,
 ``capability-report``, ``remediation-plan``, ``handoff-bundle``.
+
+Null/extension semantics (frozen by spec 266):
+- required scalars: a missing key *or* an explicit ``null`` raises
+  ``ValueError`` - ``null`` is not a value and must never be conflated
+  with one.
+- collections: missing key, explicit ``null`` and ``[]`` all mean "no
+  items" - never a crash, never a silent scalar.
+- optional scalars: missing or ``null`` decodes to ``None`` and emits
+  absent - the wire distinguishes "unknown" from "empty string".
+- ``x-*`` keys are domain extensions: ``from_dict`` captures them into
+  ``extensions`` and ``to_dict`` re-emits them, so forward payloads
+  survive a round trip through an older reader.
 """
 
 from __future__ import annotations
@@ -28,11 +40,84 @@ def _drop_none(d: Json) -> Json:
     return {k: v for k, v in d.items() if v is not None}
 
 
+def _required(d: Json, key: str) -> Any:
+    """Required field: missing key and explicit ``null`` are both errors."""
+    if key not in d:
+        raise ValueError(f"missing required field: {key!r}")
+    value = d[key]
+    if value is None:
+        raise ValueError(f"required field {key!r} is explicitly null")
+    return value
+
+
+def _req_str(d: Json, key: str) -> str:
+    return str(_required(d, key))
+
+
+def _opt_str(d: Json, key: str) -> str | None:
+    value = d.get(key)
+    return None if value is None else str(value)
+
+
+def _opt_int(d: Json, key: str) -> int | None:
+    value = d.get(key)
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ValueError(f"field {key!r} must be an integer or null, got {value!r}")
+    return value
+
+
+def _opt_bool(d: Json, key: str) -> bool | None:
+    value = d.get(key)
+    if value is None:
+        return None
+    return bool(value)
+
+
+def _list(d: Json, key: str) -> tuple[Any, ...]:
+    """Collection field: missing, ``null`` and ``[]`` all decode to ``()``."""
+    value = d.get(key)
+    if value is None:
+        return ()
+    if not isinstance(value, (list, tuple)):
+        raise ValueError(f"field {key!r} must be an array, got {value!r}")
+    return tuple(value)
+
+
+def _str_list(d: Json, key: str) -> tuple[str, ...]:
+    return tuple(str(v) for v in _list(d, key))
+
+
+def _obj(d: Json, key: str) -> Json:
+    value = d.get(key)
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        raise ValueError(f"field {key!r} must be an object, got {value!r}")
+    return dict(value)
+
+
+def _extensions(d: Json) -> Json:
+    """``x-*`` extension keys survive a parse so forward payloads round-trip."""
+    return {k: v for k, v in d.items() if isinstance(k, str) and k.startswith("x-")}
+
+
+def _version_str(value: object) -> str:
+    """Wire ``contract_version`` may be ``forge-contracts/1`` or the
+    integer ``1`` used by the handoff-bundle schema - both normalize
+    to the canonical string form."""
+    if isinstance(value, int):
+        return f"forge-contracts/{value}"
+    return str(value) if value else str(CURRENT)
+
+
 @dataclass(frozen=True)
 class ContractModel:
     """Base: deterministic JSON (de)serialization for every contract."""
 
     contract_version: str = field(default=str(CURRENT))
+    extensions: Json = field(default_factory=dict)
 
     def to_dict(self) -> Json:  # pragma: no cover - overridden
         raise NotImplementedError
@@ -67,6 +152,7 @@ class Finding(ContractModel):
     def to_dict(self) -> Json:
         return _drop_none(
             {
+                **self.extensions,
                 "contract_version": self.contract_version,
                 "check_id": self.check_id,
                 "title": self.title,
@@ -92,25 +178,26 @@ class Finding(ContractModel):
     @staticmethod
     def from_dict(d: Json) -> Finding:
         return Finding(
-            contract_version=d.get("contract_version", str(CURRENT)),
-            check_id=d["check_id"],
-            title=d["title"],
-            severity=d["severity"],
-            category=d["category"],
-            message=d["message"],
-            fingerprint=d.get("fingerprint"),
-            file=d.get("file"),
-            line=d.get("line"),
-            column=d.get("column"),
-            end_line=d.get("end_line"),
-            end_column=d.get("end_column"),
-            recommendation=d.get("recommendation"),
-            confidence=d.get("confidence"),
-            evidence=d.get("evidence"),
-            evidence_kind=d.get("evidence_kind"),
-            source=d.get("source"),
-            fixable=d.get("fixable"),
-            tags=tuple(d.get("tags", ())),
+            contract_version=_version_str(d.get("contract_version")),
+            extensions=_extensions(d),
+            check_id=_req_str(d, "check_id"),
+            title=_req_str(d, "title"),
+            severity=_req_str(d, "severity"),
+            category=_req_str(d, "category"),
+            message=_req_str(d, "message"),
+            fingerprint=_opt_str(d, "fingerprint"),
+            file=_opt_str(d, "file"),
+            line=_opt_int(d, "line"),
+            column=_opt_int(d, "column"),
+            end_line=_opt_int(d, "end_line"),
+            end_column=_opt_int(d, "end_column"),
+            recommendation=_opt_str(d, "recommendation"),
+            confidence=_opt_str(d, "confidence"),
+            evidence=_opt_str(d, "evidence"),
+            evidence_kind=_opt_str(d, "evidence_kind"),
+            source=_opt_str(d, "source"),
+            fixable=_opt_bool(d, "fixable"),
+            tags=_str_list(d, "tags"),
         )
 
 
@@ -130,6 +217,7 @@ class Entity(ContractModel):
     def to_dict(self) -> Json:
         return _drop_none(
             {
+                **self.extensions,
                 "contract_version": self.contract_version,
                 "id": self.id,
                 "kind": self.kind,
@@ -145,15 +233,16 @@ class Entity(ContractModel):
     @staticmethod
     def from_dict(d: Json) -> Entity:
         return Entity(
-            contract_version=d.get("contract_version", str(CURRENT)),
-            id=d["id"],
-            kind=d["kind"],
-            domain=d["domain"],
-            identifier=d["identifier"],
-            name=d.get("name", ""),
-            file=d.get("file"),
-            line=d.get("line"),
-            attrs=dict(d.get("attrs", {})),
+            contract_version=_version_str(d.get("contract_version")),
+            extensions=_extensions(d),
+            id=_req_str(d, "id"),
+            kind=_req_str(d, "kind"),
+            domain=_req_str(d, "domain"),
+            identifier=str(d.get("identifier") or ""),
+            name=str(d.get("name") or ""),
+            file=_opt_str(d, "file"),
+            line=_opt_int(d, "line"),
+            attrs=_obj(d, "attrs"),
         )
 
 
@@ -170,6 +259,7 @@ class Relationship(ContractModel):
     def to_dict(self) -> Json:
         return _drop_none(
             {
+                **self.extensions,
                 "contract_version": self.contract_version,
                 "src": self.src,
                 "dst": self.dst,
@@ -182,12 +272,13 @@ class Relationship(ContractModel):
     @staticmethod
     def from_dict(d: Json) -> Relationship:
         return Relationship(
-            contract_version=d.get("contract_version", str(CURRENT)),
-            src=d["src"],
-            dst=d["dst"],
-            kind=d["kind"],
-            evidence_kind=d.get("evidence_kind"),
-            attrs=dict(d.get("attrs", {})),
+            contract_version=_version_str(d.get("contract_version")),
+            extensions=_extensions(d),
+            src=_req_str(d, "src"),
+            dst=_req_str(d, "dst"),
+            kind=_req_str(d, "kind"),
+            evidence_kind=_opt_str(d, "evidence_kind"),
+            attrs=_obj(d, "attrs"),
         )
 
 
@@ -203,6 +294,7 @@ class Evidence(ContractModel):
     def to_dict(self) -> Json:
         return _drop_none(
             {
+                **self.extensions,
                 "contract_version": self.contract_version,
                 "ref": self.ref,
                 "kind": self.kind,
@@ -214,11 +306,12 @@ class Evidence(ContractModel):
     @staticmethod
     def from_dict(d: Json) -> Evidence:
         return Evidence(
-            contract_version=d.get("contract_version", str(CURRENT)),
-            ref=d["ref"],
-            kind=d["kind"],
-            source=d["source"],
-            detail=d.get("detail"),
+            contract_version=_version_str(d.get("contract_version")),
+            extensions=_extensions(d),
+            ref=_req_str(d, "ref"),
+            kind=_req_str(d, "kind"),
+            source=_req_str(d, "source"),
+            detail=_opt_str(d, "detail"),
         )
 
 
@@ -235,6 +328,7 @@ class Capability(ContractModel):
     def to_dict(self) -> Json:
         return _drop_none(
             {
+                **self.extensions,
                 "contract_version": self.contract_version,
                 "id": self.id,
                 "domain": self.domain,
@@ -247,12 +341,55 @@ class Capability(ContractModel):
     @staticmethod
     def from_dict(d: Json) -> Capability:
         return Capability(
-            contract_version=d.get("contract_version", str(CURRENT)),
-            id=d["id"],
-            domain=d["domain"],
-            status=d["status"],
-            confidence=d.get("confidence"),
-            evidence_refs=tuple(d.get("evidence_refs", ())),
+            contract_version=_version_str(d.get("contract_version")),
+            extensions=_extensions(d),
+            id=_req_str(d, "id"),
+            domain=_req_str(d, "domain"),
+            status=_req_str(d, "status"),
+            confidence=_opt_str(d, "confidence"),
+            evidence_refs=_str_list(d, "evidence_refs"),
+        )
+
+
+@dataclass(frozen=True)
+class UnknownFact(ContractModel):
+    """An honest UNKNOWN: something the producer could not determine.
+
+    Cross-doctor consumers must be able to see *what* is unknown and
+    *why* - a silent empty list hides gaps, a fabricated value hides
+    them worse. ``reason`` is required precisely so an UNKNOWN always
+    carries its excuse.
+    """
+
+    subject: str = ""  # entity/capability id, path, or artifact the fact is about
+    kind: str = ""  # class of unknown: entity | capability | evidence | metric | ...
+    reason: str = ""  # why it is unknown: missing artifact, pack gap, ...
+    source: str | None = None  # which check/pack surfaced the UNKNOWN
+    detail: str | None = None  # extra context for the consumer
+
+    def to_dict(self) -> Json:
+        return _drop_none(
+            {
+                **self.extensions,
+                "contract_version": self.contract_version,
+                "subject": self.subject,
+                "kind": self.kind,
+                "reason": self.reason,
+                "source": self.source,
+                "detail": self.detail,
+            }
+        )
+
+    @staticmethod
+    def from_dict(d: Json) -> UnknownFact:
+        return UnknownFact(
+            contract_version=_version_str(d.get("contract_version")),
+            extensions=_extensions(d),
+            subject=_req_str(d, "subject"),
+            kind=_req_str(d, "kind"),
+            reason=_req_str(d, "reason"),
+            source=_opt_str(d, "source"),
+            detail=_opt_str(d, "detail"),
         )
 
 
@@ -271,6 +408,7 @@ class MigrationPlan(ContractModel):
     def to_dict(self) -> Json:
         return _drop_none(
             {
+                **self.extensions,
                 "contract_version": self.contract_version,
                 "id": self.id,
                 "source": self.source,
@@ -285,24 +423,16 @@ class MigrationPlan(ContractModel):
     @staticmethod
     def from_dict(d: Json) -> MigrationPlan:
         return MigrationPlan(
-            contract_version=d.get("contract_version", str(CURRENT)),
-            id=d["id"],
-            source=d["source"],
-            target=d["target"],
-            kind=d["kind"],
-            readiness=d.get("readiness"),
-            steps=tuple(d.get("steps", ())),
-            risks=tuple(d.get("risks", ())),
+            contract_version=_version_str(d.get("contract_version")),
+            extensions=_extensions(d),
+            id=_req_str(d, "id"),
+            source=_req_str(d, "source"),
+            target=_req_str(d, "target"),
+            kind=_req_str(d, "kind"),
+            readiness=_opt_str(d, "readiness"),
+            steps=_str_list(d, "steps"),
+            risks=_str_list(d, "risks"),
         )
-
-
-def _version_str(value: object) -> str:
-    """Wire ``contract_version`` may be ``forge-contracts/1`` or the
-    integer ``1`` used by the handoff-bundle schema - both normalize
-    to the canonical string form."""
-    if isinstance(value, int):
-        return f"forge-contracts/{value}"
-    return str(value) if value else str(CURRENT)
 
 
 @dataclass(frozen=True)
@@ -320,6 +450,7 @@ class RemediationPlan(ContractModel):
     def to_dict(self) -> Json:
         return _drop_none(
             {
+                **self.extensions,
                 "contract_version": self.contract_version,
                 "id": self.id,
                 "check_id": self.check_id,
@@ -336,18 +467,18 @@ class RemediationPlan(ContractModel):
         # Wire actions are objects ({id, description,...}); the contract
         # surface is their descriptions.
         actions = tuple(
-            a.get("description", "") if isinstance(a, dict) else str(a)
-            for a in d.get("actions", ())
+            a.get("description", "") if isinstance(a, dict) else str(a) for a in _list(d, "actions")
         )
         return RemediationPlan(
             contract_version=_version_str(d.get("contract_version")),
-            id=d.get("id", ""),
-            check_id=d.get("check_id", ""),
-            problem=d.get("problem", ""),
-            targets=tuple(d.get("targets", ())),
+            extensions=_extensions(d),
+            id=_req_str(d, "id"),
+            check_id=_req_str(d, "check_id"),
+            problem=_req_str(d, "problem"),
+            targets=_str_list(d, "targets"),
             actions=actions,
-            risks=tuple(d.get("risks", ())),
-            requires_approval=bool(d.get("requires_approval", False)),
+            risks=_str_list(d, "risks"),
+            requires_approval=bool(d.get("requires_approval") or False),
         )
 
 
@@ -364,9 +495,11 @@ class HandoffBundle(ContractModel):
     relationships: tuple[Relationship, ...] = ()
     capabilities: tuple[Capability, ...] = ()
     plans: tuple[RemediationPlan, ...] = ()
+    unknowns: tuple[UnknownFact, ...] = ()
 
     def to_dict(self) -> Json:
         return {
+            **self.extensions,
             "contract_version": self.contract_version,
             "tool": {"name": self.tool, "version": self.tool_version},
             "project": self.project,
@@ -376,7 +509,60 @@ class HandoffBundle(ContractModel):
             "relationships": [r.to_dict() for r in self.relationships],
             "capabilities": [c.to_dict() for c in self.capabilities],
             "plans": [p.to_dict() for p in self.plans],
+            "unknowns": [u.to_dict() for u in self.unknowns],
         }
+
+    def bounded(
+        self,
+        *,
+        findings: int | None = None,
+        entities: int | None = None,
+        relationships: int | None = None,
+        capabilities: int | None = None,
+        plans: int | None = None,
+        unknowns: int | None = None,
+    ) -> HandoffBundle:
+        """Context-bounded bundle (spec 266 §7): keep the first N items of
+        each family and record the truncation as ``UnknownFact`` entries -
+        a bounded handoff states what it dropped instead of pretending
+        completeness."""
+
+        def cut(items: tuple[Any, ...], limit: int | None, family: str) -> tuple[Any, ...]:
+            if limit is None or len(items) <= limit:
+                return items
+            return items[:limit]
+
+        notes = list(self.unknowns[:unknowns] if unknowns is not None else self.unknowns)
+        for family, items, limit in (
+            ("findings", self.findings, findings),
+            ("entities", self.entities, entities),
+            ("relationships", self.relationships, relationships),
+            ("capabilities", self.capabilities, capabilities),
+            ("plans", self.plans, plans),
+        ):
+            if limit is not None and len(items) > limit:
+                notes.append(
+                    UnknownFact(
+                        subject=family,
+                        kind="truncated",
+                        reason=f"bounded to {limit} of {len(items)}",
+                        source="forge-doctor-data",
+                    )
+                )
+        return HandoffBundle(
+            contract_version=self.contract_version,
+            extensions=dict(self.extensions),
+            tool=self.tool,
+            tool_version=self.tool_version,
+            project=dict(self.project),
+            summary=dict(self.summary),
+            findings=cut(self.findings, findings, "findings"),
+            entities=cut(self.entities, entities, "entities"),
+            relationships=cut(self.relationships, relationships, "relationships"),
+            capabilities=cut(self.capabilities, capabilities, "capabilities"),
+            plans=cut(self.plans, plans, "plans"),
+            unknowns=tuple(notes),
+        )
 
     @staticmethod
     def from_dict(d: Json) -> HandoffBundle:
@@ -388,7 +574,7 @@ class HandoffBundle(ContractModel):
         """
         tool = d.get("tool", {})
         graph = d.get("graph", {})
-        capabilities = d.get("capabilities", ())
+        capabilities = d.get("capabilities") or ()
         if isinstance(capabilities, dict):
             caps = tuple(
                 Capability(id=cap, domain=platform, status=str(status))
@@ -399,10 +585,11 @@ class HandoffBundle(ContractModel):
             caps = tuple(Capability.from_dict(c) for c in capabilities)
         return HandoffBundle(
             contract_version=_version_str(d.get("contract_version")),
+            extensions=_extensions(d),
             tool=tool.get("name", "forge-doctor-data"),
             tool_version=tool.get("version", ""),
-            project=dict(d.get("project", {})),
-            summary=dict(d.get("summary", {})),
+            project=dict(d.get("project") or {}),
+            summary=dict(d.get("summary") or {}),
             findings=tuple(
                 Finding.from_dict(f) for f in d.get("results") or d.get("findings") or ()
             ),
@@ -414,7 +601,8 @@ class HandoffBundle(ContractModel):
                 for r in graph.get("relationships") or d.get("relationships") or ()
             ),
             capabilities=caps,
-            plans=tuple(RemediationPlan.from_dict(p) for p in d.get("plans", ())),
+            plans=tuple(RemediationPlan.from_dict(p) for p in d.get("plans") or ()),
+            unknowns=tuple(UnknownFact.from_dict(u) for u in d.get("unknowns") or ()),
         )
 
 
@@ -427,17 +615,20 @@ class DiagnosticManifest(ContractModel):
     domains: tuple[str, ...] = ()
     entity_count: int = 0
     finding_count: int = 0
+    unknown_count: int = 0
     risks: tuple[Json, ...] = ()
     capabilities: tuple[Capability, ...] = ()
     evidence_refs: tuple[str, ...] = ()
 
     def to_dict(self) -> Json:
         return {
+            **self.extensions,
             "contract_version": self.contract_version,
             "tool": {"name": self.tool, "version": self.tool_version},
             "domains": list(self.domains),
             "entity_count": self.entity_count,
             "finding_count": self.finding_count,
+            "unknown_count": self.unknown_count,
             "risks": [dict(r) for r in self.risks],
             "capabilities": [c.to_dict() for c in self.capabilities],
             "evidence_refs": list(self.evidence_refs),
@@ -447,13 +638,15 @@ class DiagnosticManifest(ContractModel):
     def from_dict(d: Json) -> DiagnosticManifest:
         tool = d.get("tool", {})
         return DiagnosticManifest(
-            contract_version=d.get("contract_version", str(CURRENT)),
+            contract_version=_version_str(d.get("contract_version")),
+            extensions=_extensions(d),
             tool=tool.get("name", "forge-doctor-data"),
             tool_version=tool.get("version", ""),
-            domains=tuple(d.get("domains", ())),
-            entity_count=int(d.get("entity_count", 0)),
-            finding_count=int(d.get("finding_count", 0)),
-            risks=tuple(dict(r) for r in d.get("risks", ())),
-            capabilities=tuple(Capability.from_dict(c) for c in d.get("capabilities", ())),
-            evidence_refs=tuple(d.get("evidence_refs", ())),
+            domains=_str_list(d, "domains"),
+            entity_count=int(d.get("entity_count") or 0),
+            finding_count=int(d.get("finding_count") or 0),
+            unknown_count=int(d.get("unknown_count") or 0),
+            risks=tuple(dict(r) for r in _list(d, "risks")),
+            capabilities=tuple(Capability.from_dict(c) for c in _list(d, "capabilities")),
+            evidence_refs=_str_list(d, "evidence_refs"),
         )
