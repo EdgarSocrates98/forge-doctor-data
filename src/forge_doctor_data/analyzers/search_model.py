@@ -336,9 +336,56 @@ _TF_DOMAIN_TYPES = {
 }
 
 
+_MISSING = object()
+_VAR_REF = re.compile(r"^var\.([\w.-]+)$", re.IGNORECASE)
+
+
+def _tf_var_defaults(ctx: ProjectContext) -> dict[str, Any]:
+    """``variable "name" { default = ... }`` literals from the same module.
+
+    Static module-internal resolution only — no tfvars, no remote state —
+    so a var-driven ``enabled = var.x`` flag can resolve to a literal, fall
+    back to ``"unknown"`` when it can't be proved (honest UNKNOWN, never
+    "absent").
+    """
+    from forge_doctor_data.analyzers.terraform_model import terraform_model
+
+    out: dict[str, Any] = {}
+    for b in terraform_model(ctx).by_kind("variable"):
+        if b.labels and "default" in b.attrs:
+            out[b.labels[0]] = b.attrs["default"]
+    return out
+
+
+def _tf_bool(body: str, attr_pattern: str, defaults: dict[str, Any]) -> str:
+    """Resolve ``<attr_pattern> = <literal|var.x>`` to true|false|""|unknown.
+
+    ``""`` means the assignment is absent; ``"unknown"`` means it exists but
+    its value is not statically provable (unresolvable ``var.``/expression).
+    """
+    m = re.search(attr_pattern + r"\s*=\s*(\"?)([\w.-]+)\1", body, re.IGNORECASE)
+    if not m:
+        return ""
+    raw = m.group(2)
+    lowered = raw.lower()
+    if lowered in {"true", "false"}:
+        return lowered
+    var = _VAR_REF.match(raw)
+    if var is None:
+        return "unknown"  # local.x / module.x / function call — unprovable
+    default = defaults.get(var.group(1), _MISSING)
+    if default is _MISSING:
+        return "unknown"
+    if isinstance(default, bool):
+        return "true" if default else "false"
+    text = str(default).strip('"').lower()
+    return text if text in {"true", "false"} else "unknown"
+
+
 def _scan_terraform(ctx: ProjectContext, model: SearchPlatformModel) -> None:
     from forge_doctor_data.analyzers.terraform_model import terraform_model
 
+    defaults = _tf_var_defaults(ctx)
     for b in terraform_model(ctx).resources:
         if b.kind != "resource" or len(b.labels) < 2:
             continue
@@ -346,23 +393,11 @@ def _scan_terraform(ctx: ProjectContext, model: SearchPlatformModel) -> None:
         if rtype not in _TF_DOMAIN_TYPES:
             continue
         vendor = next((v for pat, v in _TF_VENDOR if pat.search(rtype)), "search")
-        enc = re.search(
-            r"encrypt_at_rest\s*\{[^}]*enabled\s*=\s*(true|false)", b.body, re.IGNORECASE
-        ) or re.search(
-            r"encryption_at_rest\s*\{[^}]*enabled\s*=\s*(true|false)",
-            b.body,
-            re.IGNORECASE,
-        )
-        n2n = re.search(
-            r"node_to_node_encryption\s*\{[^}]*enabled\s*=\s*(true|false)",
-            b.body,
-            re.IGNORECASE,
-        )
-        tls = re.search(
-            r"(?:enforce_https|tls_security_policy)\s*=\s*(\"?[\w.-]+\"?)",
-            b.body,
-            re.IGNORECASE,
-        )
+        enc = _tf_bool(b.body, r"encrypt_at_rest\s*\{[^}]*enabled", defaults)
+        if not enc:
+            enc = _tf_bool(b.body, r"encryption_at_rest\s*\{[^}]*enabled", defaults)
+        n2n = _tf_bool(b.body, r"node_to_node_encryption\s*\{[^}]*enabled", defaults)
+        tls = _tf_bool(b.body, r"(?:enforce_https|tls_security_policy)", defaults)
         model.domains.append(
             SearchDomain(
                 vendor=vendor,
@@ -370,9 +405,9 @@ def _scan_terraform(ctx: ProjectContext, model: SearchPlatformModel) -> None:
                 file=b.file,
                 line=b.line,
                 address=b.address,
-                encryption_at_rest=enc.group(1).lower() if enc else "",
-                node_to_node=n2n.group(1).lower() if n2n else "",
-                https_tls=tls.group(1).strip('"').lower() if tls else "",
+                encryption_at_rest=enc,
+                node_to_node=n2n,
+                https_tls=tls,
             )
         )
 

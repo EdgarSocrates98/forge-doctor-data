@@ -1,0 +1,72 @@
+{
+  "entry": "glue-terraform-example",
+  "expected_edges": {
+    "kinds": [
+      "governs"
+    ]
+  },
+  "expected_entities": {
+    "domains": [
+      "aws",
+      "glue",
+      "lakeformation"
+    ],
+    "kinds": [
+      "catalog",
+      "infrastructure_resource",
+      "principal"
+    ]
+  },
+  "expected_findings": {
+    "check_id_prefixes": [
+      "GLUE",
+      "LF",
+      "TF"
+    ],
+    "check_ids": []
+  },
+  "expected_unknowns": [
+    {
+      "check_id": "GLUE002",
+      "reason": "glue_version is a module variable; the job runtime is unprovable statically"
+    }
+  ],
+  "forbidden_findings": {
+    "check_id_prefixes": [
+      "AIR",
+      "ATH",
+      "AZ",
+      "BQ",
+      "CH",
+      "CTM",
+      "DBT",
+      "DBX",
+      "DCTR",
+      "DDBGT",
+      "DDBSTR",
+      "DELTA",
+      "DRU",
+      "EMR",
+      "FLK",
+      "GCP",
+      "ICE",
+      "KFK",
+      "KIN",
+      "LAM",
+      "NEP",
+      "NEPA",
+      "NEPCD",
+      "NEPGT",
+      "PARQ",
+      "PIN",
+      "SFN",
+      "SNOW",
+      "SRCH",
+      "STREAM",
+      "TRINO"
+    ],
+    "check_ids": []
+  },
+  "notes": "cloudposse/terraform-aws-glue complete example - jobs, crawlers, catalog + a real PySpark ETL script.",
+  "schema_version": "1"
+}

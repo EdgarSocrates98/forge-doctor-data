@@ -1,0 +1,63 @@
+{
+  "entry": "trino-server-dev-etc",
+  "expected_edges": {
+    "kinds": []
+  },
+  "expected_entities": {
+    "domains": [
+      "trino"
+    ],
+    "kinds": [
+      "catalog"
+    ]
+  },
+  "expected_findings": {
+    "check_id_prefixes": [
+      "TRINO"
+    ],
+    "check_ids": []
+  },
+  "expected_unknowns": [
+    {
+      "check_id": "TRINO005",
+      "reason": "config-only slice has no authored SQL; three-part catalog refs are unprovable"
+    }
+  ],
+  "forbidden_findings": {
+    "check_id_prefixes": [
+      "AIR",
+      "DBT",
+      "DBX",
+      "SRCH",
+      "FLK",
+      "KFK",
+      "KIN",
+      "STREAM",
+      "SNOW",
+      "PARQ",
+      "DCTR",
+      "NEP",
+      "NEPA",
+      "NEPCD",
+      "NEPGT",
+      "CTM",
+      "DELTA",
+      "EMR",
+      "SFN",
+      "BQ",
+      "ATH",
+      "AZ",
+      "GCP",
+      "DRU",
+      "CH",
+      "PIN",
+      "LAM",
+      "DDBGT",
+      "DDBSTR",
+      "ICE"
+    ],
+    "check_ids": []
+  },
+  "notes": "trinodb/trino dev-server etc/: config.properties + catalog/*.properties incl. test connectors (TRINO003/004 true positives).",
+  "schema_version": "1"
+}

@@ -1,0 +1,67 @@
+{
+  "entry": "jaffle-shop-dbt",
+  "expected_edges": {
+    "kinds": [
+      "reads_from",
+      "writes_to"
+    ]
+  },
+  "expected_entities": {
+    "domains": [
+      "dbt"
+    ],
+    "kinds": [
+      "dbt_model",
+      "table"
+    ]
+  },
+  "expected_findings": {
+    "check_id_prefixes": [
+      "DBT"
+    ],
+    "check_ids": []
+  },
+  "expected_unknowns": [
+    {
+      "check_id": "DBT003",
+      "reason": "jaffle-shop declares no dbt sources, so source freshness is unprovable; silence is the honest output"
+    }
+  ],
+  "forbidden_findings": {
+    "check_id_prefixes": [
+      "AIR",
+      "DBX",
+      "TRINO",
+      "SRCH",
+      "FLK",
+      "KFK",
+      "KIN",
+      "STREAM",
+      "SNOW",
+      "PARQ",
+      "DCTR",
+      "NEP",
+      "NEPA",
+      "NEPCD",
+      "NEPGT",
+      "CTM",
+      "DELTA",
+      "EMR",
+      "SFN",
+      "BQ",
+      "ATH",
+      "AZ",
+      "GCP",
+      "DRU",
+      "CH",
+      "PIN",
+      "LAM",
+      "DDBGT",
+      "DDBSTR",
+      "ICE"
+    ],
+    "check_ids": []
+  },
+  "notes": "Canonical dbt-core project slice: staging + marts models, schema.yml, seeds.",
+  "schema_version": "1"
+}

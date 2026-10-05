@@ -189,10 +189,14 @@ class DomainNoEncryption(_SearchCheck):
         out: list[CheckResult] = []
         for d in search_model(ctx).domains:
             missing = []
-            if d.encryption_at_rest != "true":
-                missing.append("encrypt_at_rest")
-            if d.node_to_node != "true":
-                missing.append("node_to_node_encryption")
+            for label, value in (
+                ("encrypt_at_rest", d.encryption_at_rest),
+                ("node_to_node_encryption", d.node_to_node),
+            ):
+                if value == "unknown":
+                    continue  # var-driven/expression — can't prove (honest UNKNOWN)
+                if value != "true":
+                    missing.append(label)
             if not missing:
                 continue
             out.append(

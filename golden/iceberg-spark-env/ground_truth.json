@@ -1,0 +1,63 @@
+{
+  "entry": "iceberg-spark-env",
+  "expected_edges": {
+    "kinds": []
+  },
+  "expected_entities": {
+    "domains": [
+      "iceberg"
+    ],
+    "kinds": [
+      "catalog"
+    ]
+  },
+  "expected_findings": {
+    "check_id_prefixes": [
+      "ICE"
+    ],
+    "check_ids": []
+  },
+  "expected_unknowns": [
+    {
+      "check_id": "ICE012",
+      "reason": "one impl per catalog name; spark.sql.catalog.<name>.<prop> keys are properties, not impls - the ICE012 guard stays silent"
+    }
+  ],
+  "forbidden_findings": {
+    "check_id_prefixes": [
+      "AIR",
+      "DBT",
+      "DBX",
+      "TRINO",
+      "SRCH",
+      "FLK",
+      "KFK",
+      "KIN",
+      "STREAM",
+      "SNOW",
+      "PARQ",
+      "DCTR",
+      "NEP",
+      "NEPA",
+      "NEPCD",
+      "NEPGT",
+      "CTM",
+      "DELTA",
+      "EMR",
+      "SFN",
+      "BQ",
+      "ATH",
+      "AZ",
+      "GCP",
+      "DRU",
+      "CH",
+      "PIN",
+      "LAM",
+      "DDBGT",
+      "DDBSTR"
+    ],
+    "check_ids": []
+  },
+  "notes": "Databricks (ex-Tabular) docker-spark-iceberg env: spark-defaults.conf catalog config + pyiceberg.yaml + Dockerfile.",
+  "schema_version": "1"
+}

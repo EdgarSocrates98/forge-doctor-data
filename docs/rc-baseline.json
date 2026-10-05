@@ -19,8 +19,8 @@
   },
   "corpus": {
     "adversarial_entries": 0,
-    "golden_entries": 11,
-    "real_oss_entries": 3,
+    "golden_entries": 18,
+    "real_oss_entries": 10,
     "synthetic_entries": 8
   },
   "fleet": {
@@ -30,7 +30,7 @@
   "git": {
     "branch": "feat/rc-hardening-1.0",
     "dirty": true,
-    "head": "9586dcb70f2c0888d95ce938a3e231b5ebd70c4e"
+    "head": "9b3bdfe7903884c9cc335f9caa7e37b57a415ee8"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -50,7 +50,7 @@
   "rc_target": "1.0.0-rc1",
   "schema_version": "1",
   "verification": {
-    "coverage_percent": 80.84,
-    "test_count": 2369
+    "coverage_percent": 81.04,
+    "test_count": 2414
   }
 }

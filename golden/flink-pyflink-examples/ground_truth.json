@@ -1,0 +1,61 @@
+{
+  "entry": "flink-pyflink-examples",
+  "expected_edges": {
+    "kinds": []
+  },
+  "expected_entities": {
+    "domains": [
+      "flink"
+    ],
+    "kinds": [
+      "compute_job"
+    ]
+  },
+  "expected_findings": {
+    "check_id_prefixes": [
+      "FLK"
+    ],
+    "check_ids": []
+  },
+  "expected_unknowns": [
+    {
+      "check_id": "FLK004",
+      "reason": "examples declare no checkpoint mode; delivery-mode is unprovable"
+    }
+  ],
+  "forbidden_findings": {
+    "check_id_prefixes": [
+      "AIR",
+      "DBT",
+      "DBX",
+      "TRINO",
+      "SRCH",
+      "KFK",
+      "SNOW",
+      "PARQ",
+      "DCTR",
+      "NEP",
+      "NEPA",
+      "NEPCD",
+      "NEPGT",
+      "CTM",
+      "DELTA",
+      "EMR",
+      "SFN",
+      "BQ",
+      "ATH",
+      "AZ",
+      "GCP",
+      "DRU",
+      "CH",
+      "PIN",
+      "LAM",
+      "DDBGT",
+      "DDBSTR",
+      "ICE"
+    ],
+    "check_ids": []
+  },
+  "notes": "apache/flink PyFlink datastream examples - keyed state without checkpointing (FLK002 true positive).",
+  "schema_version": "1"
+}
