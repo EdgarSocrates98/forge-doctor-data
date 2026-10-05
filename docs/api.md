@@ -87,6 +87,11 @@ plans = fd.migrate_plans("./p")
 - Non-destructive: `migrate_plans` and `what_if` are advisory; nothing
   writes back to the scanned project (scan cache lives in
   `.forge-doctor-data/` and is the only write).
+- Deterministic errors: `scan` on a missing or non-directory path raises
+  `ScanRequestError` (a `ValueError`) from the shared pipeline — every
+  frontend (CLI, MCP, LSP, SDK) fails the same way before any work runs.
+  Baseline/snapshot/contract loaders raise their typed errors
+  (`BaselineError`, `HistoryError`, `ValueError`) instead of tracebacks.
 
 ## MCP trust boundary
 

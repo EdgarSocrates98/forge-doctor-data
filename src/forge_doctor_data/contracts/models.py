@@ -529,12 +529,24 @@ class HandoffBundle(ContractModel):
         """Context-bounded bundle (spec 266 §7): keep the first N items of
         each family and record the truncation as ``UnknownFact`` entries -
         a bounded handoff states what it dropped instead of pretending
-        completeness."""
+        completeness. Findings are kept severity-first (error > warning >
+        info > pass) so truncation preserves the highest-value context;
+        the kept set is re-emitted in bundle order."""
 
         def cut(items: tuple[Any, ...], limit: int | None, family: str) -> tuple[Any, ...]:
             if limit is None or len(items) <= limit:
                 return items
             return items[:limit]
+
+        def cut_findings(items: tuple[Any, ...], limit: int | None) -> tuple[Any, ...]:
+            if limit is None or len(items) <= limit:
+                return items
+            rank = {"error": 0, "warning": 1, "info": 2}
+            keep = sorted(
+                range(len(items)),
+                key=lambda i: (rank.get(getattr(items[i], "severity", "info"), 3), i),
+            )[:limit]
+            return tuple(items[i] for i in sorted(keep))
 
         notes = list(self.unknowns[:unknowns] if unknowns is not None else self.unknowns)
         for family, items, limit in (
@@ -560,7 +572,7 @@ class HandoffBundle(ContractModel):
             tool_version=self.tool_version,
             project=dict(self.project),
             summary=dict(self.summary),
-            findings=cut(self.findings, findings, "findings"),
+            findings=cut_findings(self.findings, findings),
             entities=cut(self.entities, entities, "entities"),
             relationships=cut(self.relationships, relationships, "relationships"),
             capabilities=cut(self.capabilities, capabilities, "capabilities"),

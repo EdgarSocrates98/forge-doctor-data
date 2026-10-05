@@ -45,9 +45,14 @@ def _finding_rows(report: ScanReport) -> list[dict[str, object]]:
                 "evidence_ref": f"finding:{result.fingerprint}",
             }
         )
+    rank = {"error": 0, "warning": 1, "info": 2}
     return sorted(
         rows,
-        key=lambda row: (str(row["severity"]), str(row["id"]), str(row["fingerprint"])),
+        key=lambda row: (
+            rank.get(str(row["severity"]), 3),
+            str(row["id"]),
+            str(row["fingerprint"]),
+        ),
     )
 
 
@@ -133,6 +138,24 @@ def _trim_to_budget(payload: dict[str, object], budget: int) -> dict[str, object
                 and len(json.dumps(trimmed, separators=(",", ":"), ensure_ascii=False)) > max_chars
             ):
                 value.pop()
+    # Evidence refs are lazy handles into the bundle: after trimming they
+    # enumerate surviving rows only, then shrink tail-first if the
+    # remaining skeleton still exceeds the budget.
+    risks = trimmed.get("risks")
+    details = trimmed.get("details")
+    d_entities = details.get("entities") if isinstance(details, dict) else None
+    if isinstance(risks, list) or isinstance(d_entities, list):
+        trimmed["evidence_refs"] = [
+            *(f"finding:{r['fingerprint']}" for r in risks or [] if r.get("fingerprint")),
+            *(f"entity:{e['id']}" for e in d_entities or [] if e.get("id")),
+        ]
+    refs = trimmed.get("evidence_refs")
+    if isinstance(refs, list):
+        while (
+            refs
+            and len(json.dumps(trimmed, separators=(",", ":"), ensure_ascii=False)) > max_chars
+        ):
+            refs.pop()
     return trimmed
 
 
