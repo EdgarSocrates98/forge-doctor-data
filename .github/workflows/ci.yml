@@ -241,6 +241,12 @@ jobs:
       - name: Contract conformance
         run: poetry run forge-doctor-data schema contracts
 
+      - name: forge-contracts/1 conformance (bundled fixtures)
+        run: poetry run forge-doctor-data contracts conformance --fixtures
+
+      - name: Public API surface freeze
+        run: python tools/api_surface.py --check
+
       - name: Doc drift (generated project status)
         run: poetry run forge-doctor-data project status --check
 
