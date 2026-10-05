@@ -125,7 +125,7 @@ jobs:
           poetry run forge-doctor-data schema contracts >/dev/null
 
       - name: Upload environment manifest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: env-manifest
           path: env-manifest.json

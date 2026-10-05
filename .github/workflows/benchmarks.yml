@@ -65,7 +65,7 @@ jobs:
             --budget docs/benchmarks/fleet-budget.json
 
       - name: Upload run artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fleet-envelope-${{ github.run_id }}
           path: |
