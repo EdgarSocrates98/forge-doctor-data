@@ -2,6 +2,13 @@
 
 This is process isolation: plugin crashes and output are contained, but the
 child is not an OS security sandbox. Operators still need least privilege.
+
+Trust contract: this module re-verifies nothing. The worker ``ep.load()``s
+whatever entry point its argv names - the *caller* must gate identities
+before invoking (``discovery._ep_trusted`` decides which names may reach a
+worker). Invoking the worker directly bypasses the trust gate by design;
+that is an operator action with the operator's own privileges, not an
+engine path.
 """
 
 from __future__ import annotations

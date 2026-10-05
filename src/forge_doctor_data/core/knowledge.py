@@ -104,10 +104,72 @@ def pack_meta(pack: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _pack_version_keys(pack: dict[str, Any]) -> set[str]:
+    versions = pack.get("versions")
+    return set(versions) if isinstance(versions, dict) else set()
+
+
+def verify_pack_dependencies(domain: str, name: str) -> list[str]:
+    """Cross-pack referential integrity (spec §13 supply chain).
+
+    Rules, applied only where the pack shape supports them:
+    - a pack's ``domain`` field must equal its directory name;
+    - ``versions`` pack keys must be well-formed version keys;
+    - ``compatibility.targets`` must exist in the sibling ``versions``
+      pack of the same domain;
+    - ``compatibility.runtimes.<engine>.<version>`` must exist in
+      ``<engine>/versions`` whenever that engine ships a versions pack
+      (engines without one have no checkable dependency).
+    """
+    issues: list[str] = []
+    pack = load_pack(domain, name)
+    if not pack:
+        return []
+    # The tree has two layouts: <domain>/<kind>.json (domain=dir) and
+    # <kind>/<domain>.json (domain=file stem). Both are valid anchors.
+    if "domain" in pack and pack["domain"] not in {domain, name}:
+        issues.append(
+            f"{domain}/{name}: domain field {pack['domain']!r} "
+            f"matches neither directory nor filename"
+        )
+
+    if isinstance(pack.get("versions"), dict):
+        for key in pack["versions"]:
+            if not isinstance(key, str) or not any(ch.isdigit() for ch in key):
+                issues.append(f"{domain}/{name}: malformed version key {key!r}")
+
+    if name == "compatibility":
+        targets = pack.get("targets")
+        if isinstance(targets, dict):
+            known = _pack_version_keys(load_pack(domain, "versions"))
+            if known:
+                for target in targets:
+                    if target not in known:
+                        issues.append(
+                            f"{domain}/compatibility: target {target!r} not in versions pack"
+                        )
+        runtimes = pack.get("runtimes")
+        if isinstance(runtimes, dict):
+            for engine, engine_vers in sorted(runtimes.items()):
+                if not isinstance(engine_vers, dict):
+                    continue
+                known = _pack_version_keys(load_pack(engine, "versions"))
+                if not known:
+                    continue  # engine has no versions pack -> nothing to check against
+                for ver in engine_vers:
+                    if ver not in known:
+                        issues.append(
+                            f"{domain}/compatibility: runtimes.{engine}.{ver} "
+                            f"not in {engine}/versions"
+                        )
+    return issues
+
+
 def verify_pack(domain: str, name: str, today: date | None = None) -> list[str]:
     """Structural + staleness issues for one pack; empty list = healthy."""
 
     issues: list[str] = []
+    issues.extend(verify_pack_dependencies(domain, name))
     pack = load_pack(domain, name)
     if not pack:
         return [f"{domain}/{name}: missing or unreadable"]

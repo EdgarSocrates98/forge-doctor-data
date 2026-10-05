@@ -51,7 +51,10 @@ dev = [
 
 [tool.poetry]
 packages = [{ include = "forge_doctor_data", from = "src" }]
-include = [{ path = "src/forge_doctor_data/knowledge", format = ["sdist", "wheel"] }]
+include = [
+    { path = "src/forge_doctor_data/knowledge", format = ["sdist", "wheel"] },
+    { path = "src/forge_doctor_data/contracts/fixtures", format = ["sdist", "wheel"] },
+]
 requires-poetry = ">=2.2"
 
 [tool.forge-doctor-data]

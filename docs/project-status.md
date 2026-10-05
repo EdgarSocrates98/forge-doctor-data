@@ -6,7 +6,7 @@ Package version: `0.9.0`
 
 ## Surface
 
-- CLI commands: 221
+- CLI commands: 223
 - Built-in checks: 342 across 42 categories
 - Contracts: 10
 - MCP tools: 13
@@ -39,7 +39,9 @@ Package version: `0.9.0`
 - `collector validate`
 - `compatibility`
 - `contract validate`
+- `contracts conformance`
 - `contracts list`
+- `contracts schema`
 - `contracts verify`
 - `controlm inspect`
 - `data-model inspect`
@@ -351,6 +353,6 @@ _none installed_
 
 - inbox: 47
 - active: 24
-- archive: 116
-- run records: 89
+- archive: 125
+- run records: 90
 

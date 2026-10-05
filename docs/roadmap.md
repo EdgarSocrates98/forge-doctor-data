@@ -131,8 +131,18 @@ package, MCP legacy/modern adapters + SDK conformance, `inspect <domain>`
 alias layer, metamorphic/mutation + integration-flow suites, seeded
 fleet benchmark with recorded n=10/50 curves, versioned golden-corpus
 manifest, `_v2` module consolidation behind compatibility facades,
-`project status` doc-drift CI gate, and 0.9.0 cut. Remaining: real OSS
-corpus slices, n>=100 fleet curves, and the 1.0 RC pipeline (specs 263–264).
+`project status` doc-drift CI gate, and 0.9.0 cut.
+
+Step-11 v1-readiness wave (specs 265–273, branch
+`feat/consolidation-v1-readiness`): deterministic CI Poetry bootstrap +
+env manifest; forge-contracts/1 stabilization (UnknownFact, `x-*`
+extensions, null semantics, bounded handoffs); published JSON Schemas +
+canonical fixtures + `contracts conformance` for cross-doctor proof;
+three real OSS corpus slices with P/R metrics; streaming fleet merge
+with recorded n<=150 curves and budget keys; public API surface freeze;
+the release-candidate pipeline (SBOM/SHA256SUMS/manifest/provenance);
+and the readiness scorecard in `docs/v1-readiness.md`. Remaining before
+tag: human sign-off + version bump per `docs/release.md`.
 
 ## Roadmap-3 — extensible operational platform (in progress)
 

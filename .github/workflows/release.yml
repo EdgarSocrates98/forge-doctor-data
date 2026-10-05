@@ -41,7 +41,9 @@ jobs:
           poetry run python tools/verify_release.py --dist dist
           python -m pip install --no-deps dist/*.whl
           forge-doctor-data doctor .
-          forge-doctor-data sbom . --format cyclonedx --output dist/sbom.json
+          # Full release-candidate artifact set: SBOM, SHA256SUMS,
+          # published schemas, release manifest, provenance, env manifest.
+          poetry run python tools/release_candidate.py --no-build
 
       - name: Upload dist artifacts
         uses: actions/upload-artifact@v4

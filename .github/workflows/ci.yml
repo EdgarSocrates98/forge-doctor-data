@@ -5,6 +5,13 @@ on:
     branches: [main]
   pull_request:
 
+# Bootstrap order (deterministic, no circular dependency):
+#   setup-python  →  install Poetry  →  manual .venv cache  →  poetry install
+# setup-python's `cache: poetry` shells out to the poetry binary during cache
+# resolution, so it can only run AFTER Poetry exists. We keep Poetry pinned to
+# a major range matching requires-poetry and cache the in-project venv keyed on
+# the lockfile hash instead.
+
 jobs:
   static-analysis:
     name: static-analysis
@@ -15,13 +22,24 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: poetry
 
       - name: Install Poetry
-        run: pipx install "poetry>=2.2"
+        run: pipx install "poetry>=2.2,<3"
+
+      - name: Cache virtualenv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-py3.12-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
+          restore-keys: venv-${{ runner.os }}-py3.12-
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --no-interaction
+
+      - name: Environment manifest
+        run: poetry run python tools/env_manifest.py --output env-manifest.json
 
       - name: Ruff
         run: poetry run ruff check .
@@ -45,13 +63,24 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: poetry
 
       - name: Install Poetry
-        run: pipx install "poetry>=2.2"
+        run: pipx install "poetry>=2.2,<3"
+
+      - name: Cache virtualenv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-py${{ matrix.python-version }}-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
+          restore-keys: venv-${{ runner.os }}-py${{ matrix.python-version }}-
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --no-interaction
+
+      - name: Environment manifest
+        run: poetry run python tools/env_manifest.py
 
       - name: Tests
         run: poetry run pytest --cov --cov-report=term-missing
@@ -66,13 +95,24 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: poetry
 
       - name: Install Poetry
-        run: pipx install "poetry>=2.2"
+        run: pipx install "poetry>=2.2,<3"
+
+      - name: Cache virtualenv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-py3.12-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
+          restore-keys: venv-${{ runner.os }}-py3.12-
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --no-interaction
+
+      - name: Environment manifest
+        run: poetry run python tools/env_manifest.py --output env-manifest.json
 
       - name: Build package
         run: poetry build
@@ -81,8 +121,15 @@ jobs:
         run: |
           poetry run python tools/verify_release.py --dist dist
           poetry run python -m pip install --no-deps dist/*.whl
-          forge-doctor-data --version
-          forge-doctor-data schema contracts >/dev/null
+          poetry run forge-doctor-data --version
+          poetry run forge-doctor-data schema contracts >/dev/null
+
+      - name: Upload environment manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: env-manifest
+          path: env-manifest.json
+          if-no-files-found: error
 
   smoke:
     name: platform-smoke-${{ matrix.os }}
@@ -100,7 +147,7 @@ jobs:
 
       - name: Install Poetry
         shell: bash
-        run: pipx install "poetry>=2.2"
+        run: pipx install "poetry>=2.2,<3"
 
       - name: Build wheel
         shell: bash
@@ -108,8 +155,13 @@ jobs:
 
       - name: Install wheel
         shell: bash
-        run: python -m pip install dist/forge_doctor_data-*.whl
+        # All extras: the lab/golden expectations cover the SQL surface,
+        # which silently degrades when sqlglot is absent.
+        run: |
+          WHEEL=$(ls dist/forge_doctor_data-*.whl)
+          python -m pip install "${WHEEL}[sql,watch,lsp,schemas]"
 
+      # Wheel-first smoke: critical commands must work in a clean install.
       - name: CLI smoke
         shell: bash
         run: |
@@ -122,6 +174,9 @@ jobs:
           forge-doctor-data schema contracts scan-report | python -c "import json,sys; s=json.load(sys.stdin); assert 'results' in s['required']"
           forge-doctor-data explain SPARK001 >/dev/null
           forge-doctor-data checks >/dev/null
+          forge-doctor-data lab run
+          forge-doctor-data golden run
+          printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05"}}\n' | forge-doctor-data mcp --root . | head -1 | grep -q '"protocolVersion"'
 
   extras-smoke:
     name: extras smoke (watch/lsp/schemas)
@@ -168,16 +223,33 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: poetry
 
       - name: Install Poetry
-        run: pipx install "poetry>=2.2"
+        run: pipx install "poetry>=2.2,<3"
+
+      - name: Cache virtualenv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-py3.12-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
+          restore-keys: venv-${{ runner.os }}-py3.12-
 
       - name: Install dependencies
-        run: poetry install --no-interaction
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --no-interaction
+
+      - name: Environment manifest
+        run: poetry run python tools/env_manifest.py
 
       - name: Contract conformance
         run: poetry run forge-doctor-data schema contracts
+
+      - name: forge-contracts/1 conformance (bundled fixtures)
+        run: poetry run forge-doctor-data contracts conformance --fixtures
+
+      - name: Public API surface freeze
+        run: poetry run python tools/api_surface.py --check
 
       - name: Doc drift (generated project status)
         run: poetry run forge-doctor-data project status --check

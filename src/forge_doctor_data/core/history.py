@@ -11,6 +11,7 @@ re-scan. Snapshots are additive records; ``--keep N`` prunes oldest.
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -152,6 +153,20 @@ def list_snapshots(root: Path) -> list[Path]:
     return sorted(p for p in d.iterdir() if p.suffix == ".json" and p.is_file())
 
 
+def iter_snapshots(root: Path, *, tail: int | None = None) -> Iterator[HistorySnapshot]:
+    """Lazy, bounded snapshot reader (spec §13 history bounds).
+
+    Yields snapshots oldest→newest, parsing one file at a time so a long
+    history never materializes the whole series in memory. ``tail=N``
+    bounds to the N most recent without loading the rest.
+    """
+    snaps = list_snapshots(root)
+    if tail is not None:
+        snaps = snaps[max(0, len(snaps) - tail) :]
+    for path in snaps:
+        yield load_snapshot(path)
+
+
 def load_snapshot(path: Path) -> HistorySnapshot:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -221,7 +236,7 @@ def diff_snapshots(older: HistorySnapshot, newer: HistorySnapshot) -> SnapshotDi
     )
 
 
-def trend(snapshots: list[HistorySnapshot]) -> list[dict[str, Any]]:
+def trend(snapshots: Iterable[HistorySnapshot]) -> list[dict[str, Any]]:
     """Per-snapshot series row: counts by severity + per-category totals."""
     rows: list[dict[str, Any]] = []
     for snap in snapshots:

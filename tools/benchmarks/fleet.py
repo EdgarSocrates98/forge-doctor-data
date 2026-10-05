@@ -23,6 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
+from forge_doctor_data.core.fleet import build_fleet_model, load_manifest
 from forge_doctor_data.core.service import ScanRequest, ScanService
 
 _PYSPARK_JOB = """import pyspark
@@ -72,6 +73,45 @@ class SizeResult:
     findings_mean: float
     peak_mb: float
     wall_s: float
+
+
+@dataclass(frozen=True)
+class MergeResult:
+    repos: int
+    entities: int
+    relationships: int
+    merge_ms: float
+    peak_mb: float
+
+
+def measure_merge(root: Path, n: int, seed: int) -> MergeResult:
+    """Streaming-merge N repos via a fleet manifest; time + peak memory."""
+    workspace = root / f"m{n}"
+    repos = generate_workspace(workspace, n, seed)
+    manifest_path = workspace / "fleet.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "fleet": f"bench-{n}",
+                "repos": [{"path": r.name, "name": r.name} for r in sorted(repos)],
+            }
+        ),
+        encoding="utf-8",
+    )
+    manifest = load_manifest(manifest_path)
+    tracemalloc.start()
+    t0 = time.perf_counter()
+    model = build_fleet_model(manifest)
+    merge_ms = (time.perf_counter() - t0) * 1000
+    _, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    return MergeResult(
+        repos=n,
+        entities=len(model.graph.entities()),
+        relationships=len(model.graph.relationships()),
+        merge_ms=round(merge_ms, 1),
+        peak_mb=round(peak / 1e6, 1),
+    )
 
 
 def measure_size(root: Path, n: int, seed: int) -> SizeResult:
@@ -124,9 +164,36 @@ def main() -> None:
         ),
     )
     parser.add_argument("--json", action="store_true", help="print JSON to stdout")
+    parser.add_argument(
+        "--merge",
+        action="store_true",
+        help="measure the fleet manifest merge path instead of per-repo scans",
+    )
     args = parser.parse_args()
 
     sizes = [int(s) for s in args.sizes.split(",") if s.strip()]
+    if args.merge:
+        results = [measure_merge(args.root, n, args.seed) for n in sizes]
+        payload = {
+            "benchmark": "fleet-merge",
+            "seed": args.seed,
+            "sizes": [asdict(r) for r in results],
+        }
+        text = json.dumps(payload, indent=2)
+        if args.out is not None:
+            args.out.write_text(text + "\n", encoding="utf-8")
+        print(text)
+        if not args.json:
+            for r in results:
+                print(
+                    f"n={r.repos:>5} entities={r.entities:>6} edges={r.relationships:>6} "
+                    f"merge={r.merge_ms:>9.1f}ms peak={r.peak_mb:>7.1f}MB",
+                    file=sys.stderr,
+                )
+        if args.budget is not None:
+            sys.exit(_check_merge_budget(results, args.budget))
+        return
+
     results = [measure_size(args.root, n, args.seed) for n in sizes]
     payload = {
         "benchmark": "fleet",
@@ -190,6 +257,34 @@ _BUDGET_KEYS = (
     "ms_per_repo_wall_max",
     "peak_mb_max",
 )
+
+_MERGE_BUDGET_KEYS = ("merge_ms_per_repo_max", "merge_peak_mb_max")
+
+
+def _check_merge_budget(results: list[MergeResult], budget_path: Path) -> int:
+    """Gate merge curves against JSON budget keys (unknown when absent)."""
+    budget = json.loads(budget_path.read_text(encoding="utf-8"))
+    worst = 0
+    for r in results:
+        measured = {
+            "merge_ms_per_repo_max": r.merge_ms / r.repos if r.repos else 0.0,
+            "merge_peak_mb_max": r.peak_mb,
+        }
+        for key, value in measured.items():
+            limit = budget.get(key)
+            if limit is None:
+                continue
+            ok = value <= limit
+            worst = worst or (not ok)
+            print(
+                f"budget n={r.repos} {key}: {value:.1f} {'<=' if ok else '>'} "
+                f"{limit} -> {'PASS' if ok else 'FAIL'}",
+                file=sys.stderr,
+            )
+    for key in _MERGE_BUDGET_KEYS:
+        if key not in budget:
+            print(f"budget {key}: unknown (not in budget file)", file=sys.stderr)
+    return int(worst)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,321 @@
+{
+  "package_version": "0.9.0",
+  "schema_version": "1",
+  "stability_classes": {
+    "stable": "semver-bound; removal or rename requires a MAJOR bump",
+    "ux": "CLI surface; governed by docs/deprecation.md policy",
+    "wire": "external contract; follows its own version family"
+  },
+  "surfaces": {
+    "cli": {
+      "entries": {
+        "commands": [
+          "advise",
+          "aws",
+          "checks",
+          "ci",
+          "compatibility",
+          "dependencies",
+          "diagnose",
+          "diff",
+          "docker",
+          "doctor",
+          "explain",
+          "export",
+          "fix",
+          "git",
+          "glue",
+          "iac",
+          "info",
+          "init",
+          "lineage",
+          "lsp",
+          "mcp",
+          "python",
+          "remediate",
+          "repo",
+          "root-cause",
+          "sbom",
+          "scan",
+          "suppressions",
+          "trace",
+          "version"
+        ],
+        "groups": [
+          "agent",
+          "airflow",
+          "analytical",
+          "architecture",
+          "athena",
+          "bench",
+          "bigquery",
+          "cache",
+          "capabilities",
+          "catalog",
+          "cloud",
+          "collector",
+          "contract",
+          "contracts",
+          "controlm",
+          "data-model",
+          "databricks",
+          "dbt",
+          "delta",
+          "dynamodb",
+          "emr",
+          "fleet",
+          "flink",
+          "golden",
+          "graph",
+          "history",
+          "iceberg",
+          "incident",
+          "inspect",
+          "kafka",
+          "kinesis",
+          "knowledge",
+          "lab",
+          "lakeformation",
+          "lambda",
+          "migrate",
+          "neptune",
+          "ontology",
+          "optimize",
+          "parquet",
+          "platform",
+          "plugins",
+          "policy",
+          "project",
+          "quality",
+          "redshift",
+          "reliability",
+          "runtime",
+          "schema",
+          "search",
+          "snowflake",
+          "spark",
+          "stepfunctions",
+          "streaming",
+          "terraform",
+          "trino",
+          "twin",
+          "what-if",
+          "workspace"
+        ]
+      },
+      "module": "forge_doctor_data.cli",
+      "stability": "ux"
+    },
+    "contracts_fixtures": {
+      "entries": {
+        "capability.json": {},
+        "diagnostic-manifest.json": {},
+        "entity.json": {},
+        "evidence.json": {},
+        "finding.json": {},
+        "handoff.json": {},
+        "migration-plan.json": {},
+        "relationship.json": {},
+        "remediation-plan.json": {},
+        "unknown-fact.json": {}
+      },
+      "module": "forge_doctor_data.contracts.fixtures",
+      "stability": "wire"
+    },
+    "contracts_schemas": {
+      "entries": {
+        "capability": {
+          "$id": "https://forge-contracts.dev/schemas/forge-contracts/1/capability.json"
+        },
+        "diagnostic-manifest": {
+          "$id": "https://forge-contracts.dev/schemas/forge-contracts/1/diagnostic-manifest.json"
+        },
+        "entity": {
+          "$id": "https://forge-contracts.dev/schemas/forge-contracts/1/entity.json"
+        },
+        "evidence": {
+          "$id": "https://forge-contracts.dev/schemas/forge-contracts/1/evidence.json"
+        },
+        "finding": {
+          "$id": "https://forge-contracts.dev/schemas/forge-contracts/1/finding.json"
+        },
+        "handoff": {
+          "$id": "https://forge-contracts.dev/schemas/forge-contracts/1/handoff.json"
+        },
+        "migration-plan": {
+          "$id": "https://forge-contracts.dev/schemas/forge-contracts/1/migration-plan.json"
+        },
+        "relationship": {
+          "$id": "https://forge-contracts.dev/schemas/forge-contracts/1/relationship.json"
+        },
+        "remediation-plan": {
+          "$id": "https://forge-contracts.dev/schemas/forge-contracts/1/remediation-plan.json"
+        },
+        "unknown-fact": {
+          "$id": "https://forge-contracts.dev/schemas/forge-contracts/1/unknown-fact.json"
+        }
+      },
+      "module": "forge_doctor_data.contracts.schemas",
+      "stability": "wire"
+    },
+    "contracts_vocabulary": {
+      "contract_version": "forge-contracts/1",
+      "entries": {
+        "CONTRACT_VERSION": {},
+        "CURRENT": {},
+        "Capability": {},
+        "ContractVersion": {},
+        "DiagnosticManifest": {},
+        "Entity": {},
+        "Evidence": {},
+        "Finding": {},
+        "HandoffBundle": {},
+        "MigrationPlan": {},
+        "Relationship": {},
+        "RemediationPlan": {},
+        "SUPPORTED": {},
+        "SUPPORTED_MAX": {},
+        "SUPPORTED_MIN": {},
+        "UnknownFact": {},
+        "negotiate": {},
+        "within_range": {}
+      },
+      "module": "forge_doctor_data.contracts",
+      "stability": "wire"
+    },
+    "legacy_wire_schemas": {
+      "entries": {
+        "capability-report": {
+          "$id": "https://forge-doctor-data.dev/schemas/capability-report.json"
+        },
+        "evidence": {
+          "$id": "https://forge-doctor-data.dev/schemas/evidence.json"
+        },
+        "finding": {
+          "$id": "https://forge-doctor-data.dev/schemas/finding.json"
+        },
+        "golden-snapshot": {
+          "$id": "https://forge-doctor-data.dev/schemas/golden-snapshot.json"
+        },
+        "handoff-bundle": {
+          "$id": "https://forge-doctor-data.dev/schemas/handoff-bundle.json"
+        },
+        "lab-expected": {
+          "$id": "https://forge-doctor-data.dev/schemas/lab-expected.json"
+        },
+        "platform-graph": {
+          "$id": "https://forge-doctor-data.dev/schemas/platform-graph.json"
+        },
+        "policy-pack": {
+          "$id": "https://forge-doctor-data.dev/schemas/policy-pack.json"
+        },
+        "remediation-plan": {
+          "$id": "https://forge-doctor-data.dev/schemas/remediation-plan.json"
+        },
+        "scan-report": {
+          "$id": "https://forge-doctor-data.dev/schemas/scan-report.json"
+        }
+      },
+      "module": "forge_doctor_data.core.schemas",
+      "scan_schema_version": "3.0",
+      "schema_version": "1.0",
+      "stability": "wire"
+    },
+    "mcp": {
+      "entries": {
+        "check_compatibility": {},
+        "diagnose_log": {},
+        "diff_findings": {},
+        "explain_rule": {},
+        "get_capacity_signals": {},
+        "get_critical_path": {},
+        "get_execution_baseline": {},
+        "get_incident_explanation": {},
+        "get_lineage": {},
+        "get_portfolio_summary": {},
+        "get_regressions": {},
+        "get_runtime_correlations": {},
+        "scan_project": {}
+      },
+      "module": "forge_doctor_data.integrations.mcp_server",
+      "protocols": {
+        "default": "2025-11-25",
+        "legacy": [
+          "2024-11-05",
+          "2025-03-26",
+          "2025-06-18"
+        ],
+        "modern": "2025-11-25"
+      },
+      "stability": "wire"
+    },
+    "plugin_sdk": {
+      "entries": {
+        "CURRENT_API_VERSION": {},
+        "Check": {},
+        "CheckBase": {},
+        "CheckResult": {},
+        "Confidence": {},
+        "ENTRY_POINT_GROUP": {},
+        "EvidenceKind": {},
+        "PluginDescriptor": {},
+        "PluginIdentity": {},
+        "ProjectContext": {},
+        "SUPPORTED_API_VERSIONS": {},
+        "Severity": {}
+      },
+      "module": "forge_doctor_data.sdk",
+      "stability": "stable"
+    },
+    "python_api": {
+      "entries": {
+        "DataPlatformGraph": {
+          "kind": "callable",
+          "signature": "(_entities: 'dict[str, Entity]' = <factory>, _edges: 'set[Relationship]' = <factory>, _out: 'dict[str, list[Relationship]]' = <factory>, _in: 'dict[str, list[Relationship]]' = <factory>) -> None"
+        },
+        "SCAN_SCHEMA_VERSION": {
+          "kind": "constant",
+          "signature": null
+        },
+        "SCHEMA_VERSION": {
+          "kind": "constant",
+          "signature": null
+        },
+        "ScanOptions": {
+          "kind": "callable",
+          "signature": "(categories: 'tuple[str, ...]' = (), ignore: 'tuple[str, ...]' = (), fail_on: 'str' = 'error', verbose: 'bool' = False, use_cache: 'bool | None' = None, overlay: 'Mapping[str, str] | None' = None, hermetic: 'bool' = False) -> None"
+        },
+        "ScanReport": {
+          "kind": "callable",
+          "signature": "(version: 'str', project: 'Path', results: 'list[CheckResult]' = <factory>, baseline: 'BaselineDiff | None' = None, suppressions: 'tuple[SuppressionRecord, ...]' = ()) -> None"
+        },
+        "capabilities_evaluate": {
+          "kind": "callable",
+          "signature": "(platform: 'str', capability: 'str', *, version: 'str | None' = None, attributes: 'dict[str, str] | None' = None) -> 'str'"
+        },
+        "migrate_plans": {
+          "kind": "callable",
+          "signature": "(path: 'str | Path' = '.') -> 'list[MigrationPlan]'"
+        },
+        "platform_graph": {
+          "kind": "callable",
+          "signature": "(path: 'str | Path' = '.') -> 'DataPlatformGraph'"
+        },
+        "scan": {
+          "kind": "callable",
+          "signature": "(path: 'str | Path' = '.', *, profile: 'str' = 'default', ignore: 'tuple[str, ...]' = ()) -> 'ScanReport'"
+        },
+        "version": {
+          "kind": "callable",
+          "signature": "() -> 'str'"
+        },
+        "what_if": {
+          "kind": "callable",
+          "signature": "(path: 'str | Path', changes: 'dict[str, str]') -> 'list[WhatIfReport]'"
+        }
+      },
+      "module": "forge_doctor_data.api",
+      "stability": "stable"
+    }
+  }
+}

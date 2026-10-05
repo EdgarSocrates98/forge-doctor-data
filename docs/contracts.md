@@ -87,7 +87,7 @@ tests.
 
 `forge_doctor_data.contracts` is the dependency-free, JSON-native model
 layer downstream tools program against: `Entity`, `Relationship`,
-`Evidence`, `Finding`, `Capability`, `MigrationPlan`,
+`Evidence`, `Finding`, `Capability`, `UnknownFact`, `MigrationPlan`,
 `RemediationPlan`, `HandoffBundle`, `DiagnosticManifest`, and
 `ContractVersion` negotiation (`forge-contracts/1`). The engine
 converts via `core/contract_adapters.py` — dependency direction is
@@ -95,3 +95,26 @@ always engine → contracts. These models are the seed of a standalone
 `forge-contracts` distribution; extracting a separate package is a
 publish-time decision, not an engine change (imports stay
 `forge_doctor_data.contracts` today).
+
+## forge-contracts/1 conformance (spec 267)
+
+The published JSON Schemas live in `forge_doctor_data.contracts.schemas`
+(pure data — any implementation can validate against them), canonical
+fixtures ship in the wheel under `contracts/fixtures/`, and
+`forge-doctor-data contracts conformance <file|-> [--kind K] [--fixtures]
+[--json]` runs the two-layer check: schema shape + strict model decode +
+version negotiation, with kind auto-detection. `contracts schema [kind]`
+dumps a schema.
+
+## The Forger boundary
+
+`core/forger.py::accept_request` is the single request surface:
+`{"kind": "scan", "path": ..., "options": {"bounded": {...}}}` in,
+`HandoffBundle` out. `REQUEST_KINDS` is exactly `("scan",)` — Doctor
+Data never routes, schedules, fans out, or calls another Doctor;
+orchestration is The Forger's job. `options.bounded` produces a
+context-economy bundle (`HandoffBundle.bounded()` records truncation as
+honest `UnknownFact`s) and the emission is stamped with an
+`x-forge-data` extension block. Pinned by `test_forger_boundary.py`,
+including a subprocess proof that a consumer parses the bundle with
+zero engine imports.

@@ -17,6 +17,10 @@ forge-doctor-data lab metrics     # precision/recall within noise budget
 forge-doctor-data golden run      # snapshot regression clean
 forge-doctor-data bench run .     # no perf regression vs recorded baseline
 forge-doctor-data knowledge verify  # all packs verified, none stale
+forge-doctor-data contracts conformance --fixtures  # forge-contracts/1 surface valid
+python tools/api_surface.py --check                 # no public API drift
+python tools/golden_metrics.py --check              # corpus metrics fresh
+python tools/release_candidate.py                   # RC artifact set builds
 ```
 
 CI mirrors this: `ci.yml` runs the quality gate on Python 3.11–3.13 and
@@ -50,6 +54,27 @@ Before tagging, a human confirms:
    (`dist/*` + PEP 740 attestations).
 4. Post-release smoke: `pipx install forge-doctor-data && forge-doctor-data doctor .`
    on a clean machine.
+
+## Release-candidate artifact set
+
+`tools/release_candidate.py` produces the full RC set locally (dry-run;
+nothing is published) and is also what `release.yml` runs after the
+build:
+
+- `dist/sbom.json` — CycloneDX 1.5 SBOM of the project.
+- `dist/SHA256SUMS` — sha256 + name for every distribution artifact.
+- `dist/schemas/` — published wire schemas as release files:
+  `forge-contracts-1/<kind>.json` (10 kinds) and `legacy/<name>.json`.
+- `dist/release-manifest.json` — version, git HEAD + dirty flag,
+  artifact digests, contract versions, schema list. Deterministic;
+  a timestamp only appears when `SOURCE_DATE_EPOCH` is set.
+- `dist/provenance.json` — in-toto/SLSA-lite statement binding artifact
+  digests to the source revision.
+- `dist/env-manifest.json` — the build environment manifest.
+
+Local dry-run: `python tools/release_candidate.py` (or `--no-build` to
+reuse an existing `dist/`). Mixed-version dists fail `verify_release`
+before any artifact is emitted.
 
 ## Deliberately out of scope for 1.0
 

@@ -36,6 +36,8 @@ class ContractVersion:
 # The shared contract surface shipped by this package.
 CURRENT = ContractVersion("forge-contracts", 1)
 SUPPORTED: tuple[ContractVersion, ...] = (CURRENT,)
+SUPPORTED_MIN: ContractVersion = min(SUPPORTED)
+SUPPORTED_MAX: ContractVersion = max(SUPPORTED)
 
 
 def negotiate(
@@ -46,3 +48,16 @@ def negotiate(
     version = offered if isinstance(offered, ContractVersion) else ContractVersion.parse(offered)
     candidates = [v for v in supported if v.compatible_with(version)]
     return max(candidates) if candidates else None
+
+
+def within_range(offered: str | ContractVersion) -> bool:
+    """Whether ``offered`` falls inside the declared ``[min, max]`` window.
+
+    Unlike ``negotiate`` (exact shared version), range membership is the
+    forward-compat check: a payload from a newer supported-line reader is
+    still acceptable when its major stays inside the published window.
+    """
+    version = offered if isinstance(offered, ContractVersion) else ContractVersion.parse(offered)
+    return version.family == CURRENT.family and (
+        SUPPORTED_MIN.major <= version.major <= SUPPORTED_MAX.major
+    )
