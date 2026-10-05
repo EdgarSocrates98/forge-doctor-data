@@ -49,8 +49,9 @@ def test_merge_budget_unknown_keys_not_gated(tmp_path: Path, capsys) -> None:
     """Absent budget keys report 'unknown' - they never fail a run."""
     budget = tmp_path / "b.json"
     budget.write_text("{}")
-    results = [fleet.MergeResult(repos=2, entities=1, relationships=0,
-                                merge_ms=99999.0, peak_mb=9999.0)]
+    results = [
+        fleet.MergeResult(repos=2, entities=1, relationships=0, merge_ms=99999.0, peak_mb=9999.0)
+    ]
     assert fleet._check_merge_budget(results, budget) == 0
     assert "unknown" in capsys.readouterr().err
 
@@ -58,6 +59,7 @@ def test_merge_budget_unknown_keys_not_gated(tmp_path: Path, capsys) -> None:
 def test_merge_budget_breach_fails(tmp_path: Path) -> None:
     budget = tmp_path / "b.json"
     budget.write_text('{"merge_peak_mb_max": 1}')
-    results = [fleet.MergeResult(repos=2, entities=1, relationships=0,
-                                merge_ms=1.0, peak_mb=9999.0)]
+    results = [
+        fleet.MergeResult(repos=2, entities=1, relationships=0, merge_ms=1.0, peak_mb=9999.0)
+    ]
     assert fleet._check_merge_budget(results, budget) == 1

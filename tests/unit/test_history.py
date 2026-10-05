@@ -13,6 +13,7 @@ from forge_doctor_data.core.context import ProjectContext
 from forge_doctor_data.core.history import (
     HistoryError,
     diff_snapshots,
+    iter_snapshots,
     list_snapshots,
     load_snapshot,
     prune,
@@ -105,6 +106,22 @@ def test_trend_and_prune(tmp_path: Path) -> None:
     removed = prune(tmp_path, 2)
     assert len(removed) == 2
     assert len(list_snapshots(tmp_path)) == 2
+
+
+def test_iter_snapshots_bounded_reader(tmp_path: Path) -> None:
+    """Spec §13: tail bounds without materializing the whole series."""
+    (tmp_path / "a.py").write_text("print('x')\n")
+    ctx = ProjectContext(root=tmp_path)
+    for i in range(5):
+        record_snapshot(_report(_finding(f"X00{i}", f"fp{i}")), tmp_path, ctx)
+    all_snaps = list(iter_snapshots(tmp_path))
+    assert len(all_snaps) == 5
+    tail = list(iter_snapshots(tmp_path, tail=2))
+    assert len(tail) == 2
+    assert [s.name for s in tail] == [s.name for s in all_snaps[-2:]]
+    # trend consumes the lazy stream directly (no intermediate list needed)
+    rows = trend(iter_snapshots(tmp_path, tail=3))
+    assert len(rows) == 3
 
 
 def test_history_cli_list_diff_trend(tmp_path: Path) -> None:
