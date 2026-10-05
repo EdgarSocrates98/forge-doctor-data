@@ -121,8 +121,8 @@ jobs:
         run: |
           poetry run python tools/verify_release.py --dist dist
           poetry run python -m pip install --no-deps dist/*.whl
-          forge-doctor-data --version
-          forge-doctor-data schema contracts >/dev/null
+          poetry run forge-doctor-data --version
+          poetry run forge-doctor-data schema contracts >/dev/null
 
       - name: Upload environment manifest
         uses: actions/upload-artifact@v4

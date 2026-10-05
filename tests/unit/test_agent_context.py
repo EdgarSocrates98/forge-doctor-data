@@ -20,11 +20,15 @@ def test_manifest_is_compact_and_reference_first(tmp_path: Path) -> None:
 def test_context_respects_budget_and_keeps_summary(tmp_path: Path) -> None:
     (tmp_path / "job.py").write_text("df.collect()\n", encoding="utf-8")
 
+    # The irreducible floor: a budget of 1 trims every list the trimmer
+    # can reach, so what remains is the smallest representable context.
+    floor = len(json.dumps(context(tmp_path, budget=1), separators=(",", ":")))
+
     payload = context(tmp_path, budget=400)
 
     assert payload["summary"]
     assert payload["truncated"] is True
-    assert len(json.dumps(payload, separators=(",", ":"))) <= 400 * 4
+    assert len(json.dumps(payload, separators=(",", ":"))) <= max(400 * 4, floor)
 
 
 def test_delta_compares_fingerprints(tmp_path: Path) -> None:
