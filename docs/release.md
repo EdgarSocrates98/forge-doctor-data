@@ -19,6 +19,7 @@ forge-doctor-data bench run .     # no perf regression vs recorded baseline
 forge-doctor-data knowledge verify  # all packs verified, none stale
 forge-doctor-data contracts conformance --fixtures  # forge-contracts/1 surface valid
 python tools/api_surface.py --check                 # no public API drift
+python tools/schema_freeze.py --check               # no wire-schema drift
 python tools/golden_metrics.py --check              # corpus metrics fresh
 python tools/release_candidate.py                   # RC artifact set builds
 ```
@@ -73,8 +74,22 @@ build:
 - `dist/env-manifest.json` — the build environment manifest.
 
 Local dry-run: `python tools/release_candidate.py` (or `--no-build` to
-reuse an existing `dist/`). Mixed-version dists fail `verify_release`
-before any artifact is emitted.
+reuse an existing `dist/`). Release-candidate gates, in order:
+
+1. **Clean tree (§8.4)** — a dirty working tree refuses the pipeline;
+   `--allow-dirty` is the explicit override for local dry runs.
+2. **Version coherence (§8.5)** — pyproject, wheel, sdist, and tag must
+   agree; a stale artifact fails `verify_release` before anything is
+   emitted. The set must contain both a wheel and an sdist.
+3. **Reproducibility (§8.2)** — `SOURCE_DATE_EPOCH` is honored for the
+   build; when unset it is derived from the HEAD commit timestamp.
+4. **Digest verification (§8.3)** — every artifact is re-hashed against
+   the emitted `SHA256SUMS`.
+5. **Schema freeze (§8.6)** — `tools/schema_freeze.py --check` compares
+   canonical digests of all 20 published schemas against
+   `docs/schema-freeze.json`; drift fails CI until re-approved via
+   `--update --approve "<who> — <why>"` (the approval is recorded in
+   the freeze file).
 
 ## Deliberately out of scope for 1.0
 
