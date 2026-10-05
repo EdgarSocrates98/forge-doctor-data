@@ -15,7 +15,8 @@ network, credentials, or an LLM.
 | Contract conformance | `contracts conformance`, `tests/unit/test_conformance.py` | forge-contracts/1 payloads validated twice (JSON Schema + strict model decode); kind auto-detection; bundled canonical fixtures |
 | Contract mutation gate | `tests/unit/test_contract_mutations.py` | Every single-field mutation of a valid payload (delete/null/type-flip per required key, all 10 kinds) must be killed by the gate - asserted at 100% kill rate over >=100 mutations |
 | Boundary / drift | `tests/unit/test_contract_boundaries.py` | The contracts package never imports engine internals, stays domain-neutral, exports only the frozen vocabulary |
-| MCP conformance | `tests/integration/test_mcp_conformance.py` | Legacy + modern protocol adapters against the official SDK |
+| MCP conformance | `tests/unit/test_mcp_conformance.py` | Legacy + modern protocol adapters against the official SDK |
+| MCP boundary | `tests/unit/test_mcp_boundary.py` | Trust-boundary contract: every path-shaped tool argument confined to `--root`, symlink escapes refused, malformed envelopes -> `-32602`, pathological payloads -> `-32700` and the stdio loop survives, resource URIs segment-validated against traversal, plugins off unless the host opts in |
 | Benchmarks | `bench` command, `tools/benchmarks/*.py` | Measured curves feed `docs/performance-budgets.md`; gates use recorded baselines |
 
 ## Adding a mutation case
