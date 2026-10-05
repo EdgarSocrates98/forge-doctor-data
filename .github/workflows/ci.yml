@@ -155,7 +155,11 @@ jobs:
 
       - name: Install wheel
         shell: bash
-        run: python -m pip install dist/forge_doctor_data-*.whl
+        # All extras: the lab/golden expectations cover the SQL surface,
+        # which silently degrades when sqlglot is absent.
+        run: |
+          WHEEL=$(ls dist/forge_doctor_data-*.whl)
+          python -m pip install "${WHEEL}[sql,watch,lsp,schemas]"
 
       # Wheel-first smoke: critical commands must work in a clean install.
       - name: CLI smoke
