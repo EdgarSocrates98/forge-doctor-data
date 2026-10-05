@@ -1,0 +1,118 @@
+{
+  "aggregate": {
+    "entries": 11,
+    "fn": 0,
+    "fp": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "tp": 328
+  },
+  "entries": {
+    "airflow-example-dags": {
+      "fn": 0,
+      "fp": 0,
+      "origin": "real",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 22
+    },
+    "airflow-glue-athena": {
+      "fn": 0,
+      "fp": 0,
+      "origin": "synthetic",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 24
+    },
+    "databricks-delta": {
+      "fn": 0,
+      "fp": 0,
+      "origin": "synthetic",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 36
+    },
+    "dynamodb-neptune": {
+      "fn": 0,
+      "fp": 0,
+      "origin": "synthetic",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 39
+    },
+    "dynamodb-streams-lambda": {
+      "fn": 0,
+      "fp": 0,
+      "origin": "synthetic",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 31
+    },
+    "emr-iceberg": {
+      "fn": 0,
+      "fp": 0,
+      "origin": "synthetic",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 36
+    },
+    "glue-4-to-5": {
+      "fn": 0,
+      "fp": 0,
+      "origin": "synthetic",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 28
+    },
+    "jaffle-shop-dbt": {
+      "fn": 0,
+      "fp": 0,
+      "origin": "real",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 30
+    },
+    "kafka-spark-iceberg": {
+      "fn": 0,
+      "fp": 0,
+      "origin": "synthetic",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 29
+    },
+    "lf-cross-account": {
+      "fn": 0,
+      "fp": 0,
+      "origin": "synthetic",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 28
+    },
+    "terraform-aws-vpc": {
+      "fn": 0,
+      "fp": 0,
+      "origin": "real",
+      "precision": 1.0,
+      "recall": 1.0,
+      "tp": 25
+    }
+  },
+  "metric": "finding-level precision/recall vs recorded ground truth",
+  "real_only": {
+    "entries": 3,
+    "fn": 0,
+    "fp": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "tp": 77
+  },
+  "schema_version": "1",
+  "synthetic_only": {
+    "entries": 8,
+    "fn": 0,
+    "fp": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "tp": 251
+  }
+}

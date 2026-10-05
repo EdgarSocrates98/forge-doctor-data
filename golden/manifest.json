@@ -65,6 +65,30 @@
       "commit": null,
       "license": null,
       "shape": "Lake Formation cross-account grants in Terraform"
+    },
+    {
+      "name": "jaffle-shop-dbt",
+      "origin": "real",
+      "url": "https://github.com/dbt-labs/jaffle-shop-classic",
+      "commit": "fd7bfacae4f497ff044a6a0275268676bf1b64c3",
+      "license": "Apache-2.0",
+      "shape": "Canonical dbt example project: 3 staging + 2 marts models, schema.yml tests/docs, seeds"
+    },
+    {
+      "name": "airflow-example-dags",
+      "origin": "real",
+      "url": "https://github.com/apache/airflow",
+      "commit": "b93c3db6b1641b0840bd15ac7d05bc58ff2cccbf",
+      "license": "Apache-2.0",
+      "shape": "Five official Airflow 2.10.5 example DAGs (bash/python/branch/complex/task-group)"
+    },
+    {
+      "name": "terraform-aws-vpc",
+      "origin": "real",
+      "url": "https://github.com/terraform-aws-modules/terraform-aws-vpc",
+      "commit": "b3abd6df2ecf052451a361ed55b8f06f8742a795",
+      "license": "Apache-2.0",
+      "shape": "terraform-aws-modules VPC module root (main.tf, variables.tf, outputs.tf)"
     }
   ]
 }
