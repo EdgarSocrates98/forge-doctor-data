@@ -63,3 +63,23 @@ def test_merge_budget_breach_fails(tmp_path: Path) -> None:
         fleet.MergeResult(repos=2, entities=1, relationships=0, merge_ms=1.0, peak_mb=9999.0)
     ]
     assert fleet._check_merge_budget(results, budget) == 1
+
+
+def test_environment_block_has_required_provenance() -> None:
+    """Phase 6.3: every scale artifact carries env/CPU/RAM/Python/commit."""
+    env = fleet._environment()
+    for key in ("platform", "python", "cpu_count", "ram_gb", "commit", "recorded_at"):
+        assert key in env
+    assert env["cpu_count"] and env["cpu_count"] >= 1
+    assert env["generator"] == "tools/benchmarks/fleet.py"
+
+
+def test_p95_nearest_rank() -> None:
+    assert fleet._p95([1.0] * 18 + [10.0] * 2) == 10.0
+    assert fleet._p95([]) == 0.0
+    assert fleet._p95([5.0]) == 5.0
+
+
+def test_scan_result_reports_p95(tmp_path: Path) -> None:
+    result = fleet.measure_size(tmp_path, 2, seed=42)
+    assert result.cold_ms_p95 >= result.cold_ms_p50
