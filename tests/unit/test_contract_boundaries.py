@@ -14,6 +14,9 @@ CONTRACTS_DIR = Path(__file__).resolve().parents[2] / "src" / "forge_doctor_data
 
 # Vendor/domain terms forbidden in contract source. "spark" etc. may appear
 # in *data* at runtime (a Finding category) but never in the contract shape.
+# Phase 7.3 adds the API Doctor's surface (OpenAPI/GraphQL) and runtime
+# execution concepts (RequestExecution/QueryExecution) to the freeze: the
+# universal vocabulary must never learn a producer's domain objects.
 _FORBIDDEN_TERMS = (
     "spark",
     "iceberg",
@@ -33,6 +36,12 @@ _FORBIDDEN_TERMS = (
     "trino",
     "dbt",
     "lambda",
+    "openapi",
+    "graphql",
+    "requestexecution",
+    "queryexecution",
+    "request_execution",
+    "query_execution",
 )
 
 
