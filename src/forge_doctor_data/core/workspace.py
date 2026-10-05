@@ -230,21 +230,20 @@ def merge_repos(root: Path, repos: tuple[WorkspaceRepo, ...]) -> WorkspaceModel:
     impl_by_name: dict[str, str] = {}  # normalized job name -> repo name
     defines_target_repo: dict[str, str] = {}  # entity id -> repo that defines it
     invokes_seen: set[tuple[str, str]] = set()
-    sub_graphs: list[tuple[WorkspaceRepo, DataPlatformGraph]] = []
 
+    # Streaming merge (spec 269): each repo's sub-graph is consumed within
+    # its own iteration and released - peak memory is O(merged graph +
+    # largest single repo) instead of O(sum of all sub-graphs). Sub-graph
+    # edges are intra-repo by construction, so every DEFINES dst entity is
+    # already merged by the time its edges are folded in; only the small
+    # cross-repo name maps persist for the IMPLEMENTS/INVOKES passes.
     for repo in repos:
         merged.add_entity(_repo_entity(repo))
         repo_dir = root if repo.path == "." else root / repo.path
         sub = ProjectContext(root=repo_dir)
         g = build_platform_graph(sub)
-        sub_graphs.append((repo, g))
         for ent in g.entities():
             merged.add_entity(ent)
-        for stem in _glue_impl_names(sub):
-            impl_by_name.setdefault(stem, repo.name)
-
-    # pass 2: merge edges + repo-level DEFINES after every entity exists
-    for repo, g in sub_graphs:
         for rel in g.relationships():
             merged.add_relationship(rel)
             if rel.kind is RelKind.DEFINES:
@@ -262,6 +261,9 @@ def merge_repos(root: Path, repos: tuple[WorkspaceRepo, ...]) -> WorkspaceModel:
                     defines_target_repo.setdefault(rel.dst, repo.name)
             elif rel.kind is RelKind.INVOKES:
                 invokes_seen.add((repo.name, rel.dst))
+        for stem in _glue_impl_names(sub):
+            impl_by_name.setdefault(stem, repo.name)
+        del g, sub
 
     # IMPLEMENTS: glue code file whose normalized stem equals a defined job name.
     for dst, def_repo in sorted(defines_target_repo.items()):
