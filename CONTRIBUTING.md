@@ -3,6 +3,21 @@
 Thanks for helping improve Forge Doctor Data. The bar: simple > useful > correct >
 extensible. No speculative abstractions.
 
+## The claim-to-evidence rule
+
+No product capability claim ships without all three of:
+
+1. **implementation** — the code path exists and runs;
+2. **proof artifact** — a test, benchmark artifact, corpus metric, or
+   schema that demonstrates it;
+3. **regression gate** — a check that fails when the claim stops being
+   true.
+
+A claim with fewer than all three is a bug in the docs or the code.
+Examples of the rule at work: the validated fleet envelope is backed by
+`docs/benchmarks/` + `benchmarks.yml`; wire-contract stability is backed
+by `docs/schema-freeze.json` + the CI gate.
+
 ## Setup
 
 ```bash

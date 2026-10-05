@@ -108,10 +108,12 @@ def _fleet_envelope() -> dict[str, int | None]:
     if budget.exists():
         baseline = json.loads(budget.read_text(encoding="utf-8")).get("baseline", {})
         for key in ("scan", "merge"):
-            name = baseline.get(key, "") or ""
-            m = re.search(r"n(\d+)", name)
-            if m:
-                scale[key] = int(m.group(1))
+            names = baseline.get(key, "") or ""
+            if isinstance(names, str):
+                names = [names]
+            sizes = [int(s) for n in names for s in re.findall(r"n(\d+)", n)]
+            if sizes:
+                scale[key] = max(sizes)
     return scale
 
 

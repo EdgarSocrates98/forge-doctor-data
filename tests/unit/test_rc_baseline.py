@@ -114,5 +114,5 @@ def test_collect_baseline_shape() -> None:
     assert data["verification"] == {"test_count": 100, "coverage_percent": 85.0}
     assert data["corpus"]["golden_entries"] >= 11
     assert data["labs"]["scenario_count"] >= 60
-    assert data["fleet"]["scan_validated_envelope"] == 100
-    assert data["fleet"]["merge_validated_envelope"] == 150
+    assert data["fleet"]["scan_validated_envelope"] == 250
+    assert data["fleet"]["merge_validated_envelope"] == 500

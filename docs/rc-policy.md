@@ -96,7 +96,9 @@ already demonstrate.
 - Dirty trees are refused by default (`--allow-dirty` override).
 - Version disagreement between `pyproject.toml`, wheel, sdist, and the
   manifest fails the dry run.
-- Contract schema drift during RC fails `tools/rc_baseline.py --check`
-  and requires explicit approval per §1.
+- Wire-schema drift fails `tools/schema_freeze.py --check` against
+  `docs/schema-freeze.json` and requires explicit re-approval
+  (`--update --approve "<who> — <why>"`); a breaking change to a
+  frozen contract additionally follows §1.
 - Publishing is manual-only (`workflow_dispatch`) and prefers PyPI
   Trusted Publishing; see `docs/release.md`.
