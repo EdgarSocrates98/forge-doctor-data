@@ -111,6 +111,9 @@ def _trim_to_budget(payload: dict[str, object], budget: int) -> dict[str, object
     if len(json.dumps(payload, separators=(",", ":"), ensure_ascii=False)) <= max_chars:
         return payload
     trimmed = dict(payload)
+    # The marker is part of the serialized output: count it inside the
+    # budget, or a trimmed payload can exceed the cap by its own flag.
+    trimmed["truncated"] = True
     details = trimmed.get("details")
     if isinstance(details, dict):
         for key in ("relationships", "entities", "findings"):
@@ -130,7 +133,6 @@ def _trim_to_budget(payload: dict[str, object], budget: int) -> dict[str, object
                 and len(json.dumps(trimmed, separators=(",", ":"), ensure_ascii=False)) > max_chars
             ):
                 value.pop()
-    trimmed["truncated"] = True
     return trimmed
 
 
