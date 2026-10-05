@@ -92,7 +92,7 @@ def check(path: Path = FREEZE_PATH) -> list[str]:
 
 def update(path: Path = FREEZE_PATH, approve: str = "") -> dict[str, Any]:
     if not approve.strip():
-        raise ValueError("--update requires --approve \"<name> — <reason>\"")
+        raise ValueError('--update requires --approve "<name> — <reason>"')
     payload = {
         "kind": FREEZE_KIND,
         "schema_version": "1",
@@ -127,7 +127,7 @@ def main() -> int:
         for line in drift:
             print(f"  {line}", file=sys.stderr)
         print(
-            "re-approve: python tools/schema_freeze.py --update --approve \"<who> — <why>\"",
+            're-approve: python tools/schema_freeze.py --update --approve "<who> — <why>"',
             file=sys.stderr,
         )
         return 1

@@ -262,17 +262,13 @@ def _concept(
 
 
 def test_readiness_ready_when_all_direct() -> None:
-    ready = assess_readiness(
-        [_concept(MappingKind.DIRECT), _concept(MappingKind.DIRECT)], []
-    )
+    ready = assess_readiness([_concept(MappingKind.DIRECT), _concept(MappingKind.DIRECT)], [])
     assert ready.status == ReadinessStatus.READY
     assert ready.unknown_count == 0
 
 
 def test_readiness_partial_on_approximate() -> None:
-    ready = assess_readiness(
-        [_concept(MappingKind.DIRECT), _concept(MappingKind.APPROXIMATE)], []
-    )
+    ready = assess_readiness([_concept(MappingKind.DIRECT), _concept(MappingKind.APPROXIMATE)], [])
     assert ready.status == ReadinessStatus.PARTIAL
 
 
@@ -296,9 +292,7 @@ def test_readiness_insufficient_on_empty_and_unknown() -> None:
 
 
 def test_readiness_unknown_budget_counts_missing_evidence() -> None:
-    ready = assess_readiness(
-        [_concept(MappingKind.DIRECT, missing=("CAP_A", "CAP_B"))], []
-    )
+    ready = assess_readiness([_concept(MappingKind.DIRECT, missing=("CAP_A", "CAP_B"))], [])
     assert ready.unknown_count == 2
     assert any("CAP_A" in u for u in ready.unknowns)
     assert any("CAP_A" in r for r in ready.required_evidence)

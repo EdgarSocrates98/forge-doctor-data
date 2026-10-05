@@ -78,9 +78,7 @@ def test_isolated_loader_never_invokes_worker_for_untrusted(monkeypatch) -> None
         "describe_entry_point",
         lambda *a, **k: invoked.append("called") or [],
     )
-    checks, _errors = discovery.load_plugin_checks(
-        trusted=("other-dist",), execution="isolated"
-    )
+    checks, _errors = discovery.load_plugin_checks(trusted=("other-dist",), execution="isolated")
     assert invoked == []
     assert checks == []
 
@@ -195,9 +193,7 @@ def test_timeout_kills_child() -> None:
 def test_garbage_child_output_is_error_not_crash(monkeypatch) -> None:
     """A worker emitting non-JSON stdout (exit 0) fails as a protocol
     error, never propagating a raw JSONDecodeError."""
-    monkeypatch.setattr(
-        isolation, "_run_child", lambda *a, **k: ("not json at all", "")
-    )
+    monkeypatch.setattr(isolation, "_run_child", lambda *a, **k: ("not json at all", ""))
     with pytest.raises(RuntimeError, match="invalid JSON"):
         isolation._invoke(
             ["describe", "ep", "dist"], timeout_seconds=30.0, max_output_bytes=100_000
@@ -211,7 +207,9 @@ def test_worker_protocol_via_real_child() -> None:
         sys.executable,
         "-m",
         "forge_doctor_data.plugins.isolation",
-        "bogus-command", "ep", "dist",
+        "bogus-command",
+        "ep",
+        "dist",
     ]
     with pytest.raises(RuntimeError, match="isolated plugin failed"):
         isolation._run_child(cmd, timeout_seconds=30.0, max_output_bytes=100_000)
@@ -228,8 +226,11 @@ def test_nonzero_exit_reports_stderr() -> None:
 
 def _isolated_check() -> isolation.IsolatedCheck:
     return isolation.IsolatedCheck(
-        entry_point="evil", distribution="evil-dist", id="PLGBT009",
-        title="t", category="plugin",
+        entry_point="evil",
+        distribution="evil-dist",
+        id="PLGBT009",
+        title="t",
+        category="plugin",
     )
 
 
@@ -302,18 +303,14 @@ def test_describe_filters_rows_without_id(monkeypatch) -> None:
             "garbage",
         ],
     )
-    rows = isolation.describe_entry_point(
-        "x", None, timeout_seconds=5.0, max_output_bytes=10_000
-    )
+    rows = isolation.describe_entry_point("x", None, timeout_seconds=5.0, max_output_bytes=10_000)
     assert [r["id"] for r in rows] == ["PLGBT010"]
 
 
 def test_describe_rejects_non_list(monkeypatch) -> None:
     monkeypatch.setattr(isolation, "_invoke", lambda *a, **k: "nope")
     with pytest.raises(RuntimeError, match="must be an array"):
-        isolation.describe_entry_point(
-            "x", None, timeout_seconds=5.0, max_output_bytes=10_000
-        )
+        isolation.describe_entry_point("x", None, timeout_seconds=5.0, max_output_bytes=10_000)
 
 
 # --- worker protocol ------------------------------------------------------------
@@ -339,9 +336,7 @@ def test_worker_unknown_command() -> None:
 
 def test_descriptor_unsupported_api_version_rejected(monkeypatch) -> None:
     """api_version is negotiated before any check object is built."""
-    descriptor = PluginDescriptor(
-        name="future-plugin", version="9.9", api_version="99", checks=()
-    )
+    descriptor = PluginDescriptor(name="future-plugin", version="9.9", api_version="99", checks=())
     ep = _ep_with_dist("future", descriptor, dist_name="future-dist")
     monkeypatch.setattr(discovery, "iter_entry_points", lambda: [ep])
     checks, infos, _errors = discovery.load_plugins(trusted=("future-dist",))
@@ -351,7 +346,10 @@ def test_descriptor_unsupported_api_version_rejected(monkeypatch) -> None:
 
 def test_descriptor_with_non_check_member_rejected(monkeypatch) -> None:
     descriptor = PluginDescriptor(
-        name="sneaky", version="1.0", api_version="2", checks=("not-a-check",)  # type: ignore[arg-type]
+        name="sneaky",
+        version="1.0",
+        api_version="2",
+        checks=("not-a-check",),  # type: ignore[arg-type]
     )
     ep = _ep_with_dist("sneaky", descriptor, dist_name="sneaky-dist")
     monkeypatch.setattr(discovery, "iter_entry_points", lambda: [ep])
@@ -370,9 +368,7 @@ def test_strict_mode_denies_everything_not_trusted(monkeypatch) -> None:
     evil.load = lambda: spy.append("evil") or FakePluginCheck
     monkeypatch.setattr(discovery, "iter_entry_points", lambda: [good, evil])
     # strict: allow-identity alone grants nothing
-    checks, _infos, _errors = discovery.load_plugins(
-        allow=("evil-dist",), strict=True
-    )
+    checks, _infos, _errors = discovery.load_plugins(allow=("evil-dist",), strict=True)
     assert spy == []
     assert checks == []
 

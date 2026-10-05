@@ -24,11 +24,7 @@ import golden_metrics  # noqa: E402
 GOLDEN = ROOT / "golden"
 MANIFEST = json.loads((GOLDEN / "manifest.json").read_text(encoding="utf-8"))
 
-_REAL = [
-    e["name"]
-    for e in MANIFEST["entries"]
-    if e["origin"] in {"real", "real-oss"}
-]
+_REAL = [e["name"] for e in MANIFEST["entries"] if e["origin"] in {"real", "real-oss"}]
 
 
 def _prefixes(rows: list[dict]) -> set[str]:
@@ -59,13 +55,10 @@ def test_forbidden_findings_absent(entry: str) -> None:
     actual_ids = {r["check_id"] for r in actual}
     for prefix in gt["forbidden_findings"]["check_id_prefixes"]:
         assert prefix not in actual_prefixes, (
-            f"{entry}: forbidden family {prefix}* emitted findings - "
-            "cross-domain false positive"
+            f"{entry}: forbidden family {prefix}* emitted findings - cross-domain false positive"
         )
     for check_id in gt["forbidden_findings"]["check_ids"]:
-        assert check_id not in actual_ids, (
-            f"{entry}: forbidden check {check_id} fired"
-        )
+        assert check_id not in actual_ids, f"{entry}: forbidden check {check_id} fired"
 
 
 @pytest.mark.parametrize("entry", _REAL)
@@ -73,13 +66,10 @@ def test_expected_unknowns_silent(entry: str) -> None:
     """Declared unknowns are claims the evidence cannot support; the
     engine's honest output is silence."""
     gt = json.loads((GOLDEN / entry / "ground_truth.json").read_text(encoding="utf-8"))
-    actual_ids = {
-        r["check_id"] for r in golden_metrics._actual_findings(GOLDEN / entry / "repo")
-    }
+    actual_ids = {r["check_id"] for r in golden_metrics._actual_findings(GOLDEN / entry / "repo")}
     for decl in gt["expected_unknowns"]:
         assert decl["check_id"] not in actual_ids, (
-            f"{entry}: {decl['check_id']} fired but truth declares it "
-            f"unprovable ({decl['reason']})"
+            f"{entry}: {decl['check_id']} fired but truth declares it unprovable ({decl['reason']})"
         )
 
 
@@ -89,9 +79,7 @@ def test_expected_entities_and_edges(entry: str) -> None:
     recorded graph snapshot (entities may legitimately be empty, e.g.
     client-only Kafka evidence)."""
     gt = json.loads((GOLDEN / entry / "ground_truth.json").read_text(encoding="utf-8"))
-    graph = json.loads(
-        (GOLDEN / entry / "expected" / "graph.json").read_text(encoding="utf-8")
-    )
+    graph = json.loads((GOLDEN / entry / "expected" / "graph.json").read_text(encoding="utf-8"))
     domains = {n.get("domain") for n in graph["entities"]}
     kinds = {n.get("kind") for n in graph["entities"]}
     rels = {e.get("kind") for e in graph["relationships"]}

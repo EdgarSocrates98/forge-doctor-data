@@ -60,9 +60,7 @@ def _call_tool(name: str, arguments: dict, root: Path, req_id: int = 1) -> dict:
 
 
 @pytest.mark.parametrize(("tool", "arg", "extra"), _ROOT_ARG_TOOLS)
-def test_every_path_argument_is_confined(
-    tmp_path: Path, tool: str, arg: str, extra: dict
-) -> None:
+def test_every_path_argument_is_confined(tmp_path: Path, tool: str, arg: str, extra: dict) -> None:
     """A hosted server (--root set) must not let ANY path-shaped argument
     reach outside the sandbox - path confinement is per-argument, not
     per-tool."""
@@ -72,9 +70,7 @@ def test_every_path_argument_is_confined(
     args = dict(extra)
     args[arg] = str(tmp_path / "outside")
     out = _call_tool(tool, args, root=sandbox)
-    assert out.get("error", {}).get("code") == -32602, (
-        f"{tool}.{arg} escaped the sandbox: {out}"
-    )
+    assert out.get("error", {}).get("code") == -32602, f"{tool}.{arg} escaped the sandbox: {out}"
     assert "sandbox" in out["error"]["message"]
 
 
@@ -337,9 +333,7 @@ def test_unicode_and_control_chars_in_arguments() -> None:
 def test_tool_error_does_not_leak_traceback(tmp_path: Path) -> None:
     """isError payloads carry the exception message, never a traceback -
     stack frames are server internals, not wire data."""
-    out = _call_tool(
-        "explain_rule", {"check_id": "NOPE"}, root=tmp_path
-    )
+    out = _call_tool("explain_rule", {"check_id": "NOPE"}, root=tmp_path)
     text = out["result"]["content"][0]["text"]
     assert "Traceback" not in text
     assert 'File "' not in text
@@ -349,9 +343,7 @@ def test_error_message_does_not_echo_root(tmp_path: Path) -> None:
     """Sandbox errors name the escape attempt, not server internals."""
     sandbox = tmp_path / "project"
     sandbox.mkdir()
-    out = _call_tool(
-        "scan_project", {"path": "../x"}, root=sandbox
-    )
+    out = _call_tool("scan_project", {"path": "../x"}, root=sandbox)
     msg = out["error"]["message"]
     assert "sandbox" in msg
 

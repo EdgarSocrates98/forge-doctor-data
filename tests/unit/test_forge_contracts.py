@@ -102,9 +102,7 @@ def test_consumer_may_ignore_extensions_safely() -> None:
         extensions={"x-forge-data": {"runtime_hint": "glue5"}},
     ).to_dict()
     stripped = {k: v for k, v in wire.items() if not k.startswith("x-")}
-    decoded = Finding.from_dict(
-        {**{"title": "", "category": "", "message": ""}, **stripped}
-    )
+    decoded = Finding.from_dict({**{"title": "", "category": "", "message": ""}, **stripped})
     assert decoded.check_id == "GLUE001"
     assert decoded.severity == "warning"
 
@@ -194,11 +192,7 @@ def test_fixture_payloads_validate_against_schemas() -> None:
     from forge_doctor_data.contracts.schemas import FORGE_CONTRACT_SCHEMAS
 
     fixtures_dir = (
-        Path(__file__).resolve().parents[2]
-        / "src"
-        / "forge_doctor_data"
-        / "contracts"
-        / "fixtures"
+        Path(__file__).resolve().parents[2] / "src" / "forge_doctor_data" / "contracts" / "fixtures"
     )
     for fixture in sorted(fixtures_dir.glob("*.json")):
         payload = json.loads(fixture.read_text(encoding="utf-8"))

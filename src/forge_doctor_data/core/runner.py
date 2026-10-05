@@ -136,9 +136,7 @@ def _sanitize_produced(
     """Plugin checks can breach the return contract; breaches degrade to
     an internal-error finding instead of crashing the run."""
     if not isinstance(produced, (list, tuple)):
-        failures.append(
-            InternalFailure(check=check, traceback="check returned a non-list result")
-        )
+        failures.append(InternalFailure(check=check, traceback="check returned a non-list result"))
         return [_internal_error(check)]
     valid = [r for r in produced if isinstance(r, CheckResult)]
     if len(valid) != len(produced):

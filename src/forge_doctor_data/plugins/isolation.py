@@ -140,9 +140,7 @@ def _capped_drain(stream: Any, limit: int) -> tuple[str, bool]:
     return "".join(chunks), total > limit
 
 
-def _run_child(
-    cmd: list[str], *, timeout_seconds: float, max_output_bytes: int
-) -> tuple[str, str]:
+def _run_child(cmd: list[str], *, timeout_seconds: float, max_output_bytes: int) -> tuple[str, str]:
     """Spawn ``cmd``, drain stdout/stderr with hard byte caps, enforce the
     timeout. Returns ``(stdout, stderr)`` or raises ``RuntimeError``."""
     proc = subprocess.Popen(  # argv list, no shell
@@ -154,15 +152,11 @@ def _run_child(
     drained: dict[str, tuple[str, bool]] = {}
     threads = [
         threading.Thread(
-            target=lambda: drained.__setitem__(
-                "out", _capped_drain(proc.stdout, max_output_bytes)
-            ),
+            target=lambda: drained.__setitem__("out", _capped_drain(proc.stdout, max_output_bytes)),
             daemon=True,
         ),
         threading.Thread(
-            target=lambda: drained.__setitem__(
-                "err", _capped_drain(proc.stderr, max_output_bytes)
-            ),
+            target=lambda: drained.__setitem__("err", _capped_drain(proc.stderr, max_output_bytes)),
             daemon=True,
         ),
     ]

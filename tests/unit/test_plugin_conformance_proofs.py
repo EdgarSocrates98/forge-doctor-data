@@ -102,7 +102,7 @@ def test_isolated_describe_is_bounded() -> None:
 
     from forge_doctor_data.plugins import isolation
 
-    src = inspect.getsource(isolation._invoke)
+    src = inspect.getsource(isolation._run_child) + inspect.getsource(isolation._invoke)
     assert "timeout" in src and "max_output_bytes" in src
     sig = inspect.signature(isolation.describe_entry_point)
     assert "timeout_seconds" in sig.parameters

@@ -35,8 +35,7 @@ def test_current_digests_cover_both_families() -> None:
 def test_check_flags_content_drift(tmp_path: Path) -> None:
     frozen = tmp_path / "freeze.json"
     drifted = {
-        k: ("0" * 64 if i == 0 else v)
-        for i, (k, v) in enumerate(sf.current_digests().items())
+        k: ("0" * 64 if i == 0 else v) for i, (k, v) in enumerate(sf.current_digests().items())
     }
     frozen.write_text(
         json.dumps({"kind": sf.FREEZE_KIND, "schema_version": "1", "schemas": drifted})

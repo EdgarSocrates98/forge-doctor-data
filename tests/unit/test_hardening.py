@@ -200,9 +200,7 @@ def test_audit_pack_statuses(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
             "sources": ["https://example.com"],
         },
     }
-    monkeypatch.setattr(
-        knowledge, "list_packs", lambda: [(d, n, p) for (d, n), p in packs.items()]
-    )
+    monkeypatch.setattr(knowledge, "list_packs", lambda: [(d, n, p) for (d, n), p in packs.items()])
     monkeypatch.setattr(knowledge, "verify_pack", lambda d, n, today=None: [])
     rows = {r["domain"]: r for r in knowledge.audit_packs(today)}
     assert rows["fresh"]["status"] == "fresh"

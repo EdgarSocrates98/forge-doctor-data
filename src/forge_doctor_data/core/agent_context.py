@@ -144,16 +144,17 @@ def _trim_to_budget(payload: dict[str, object], budget: int) -> dict[str, object
     risks = trimmed.get("risks")
     details = trimmed.get("details")
     d_entities = details.get("entities") if isinstance(details, dict) else None
-    if isinstance(risks, list) or isinstance(d_entities, list):
+    risk_rows = risks if isinstance(risks, list) else []
+    entity_rows = d_entities if isinstance(d_entities, list) else []
+    if risk_rows or entity_rows:
         trimmed["evidence_refs"] = [
-            *(f"finding:{r['fingerprint']}" for r in risks or [] if r.get("fingerprint")),
-            *(f"entity:{e['id']}" for e in d_entities or [] if e.get("id")),
+            *(f"finding:{r['fingerprint']}" for r in risk_rows if r.get("fingerprint")),
+            *(f"entity:{e['id']}" for e in entity_rows if e.get("id")),
         ]
     refs = trimmed.get("evidence_refs")
     if isinstance(refs, list):
         while (
-            refs
-            and len(json.dumps(trimmed, separators=(",", ":"), ensure_ascii=False)) > max_chars
+            refs and len(json.dumps(trimmed, separators=(",", ":"), ensure_ascii=False)) > max_chars
         ):
             refs.pop()
     return trimmed

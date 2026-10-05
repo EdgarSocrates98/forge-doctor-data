@@ -377,9 +377,7 @@ def _config_evidence(ctx: ProjectContext) -> list[IcebergEvidence]:
                 else:
                     # `spark.sql.catalog.<name>.<prop>` — a catalog property
                     evidence.append(
-                        IcebergEvidence(
-                            "config", key, value.strip(), relative, line_no, "config"
-                        )
+                        IcebergEvidence("config", key, value.strip(), relative, line_no, "config")
                     )
             elif key.startswith(_CONF_SET_RE):
                 evidence.append(

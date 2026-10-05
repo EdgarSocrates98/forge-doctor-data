@@ -53,7 +53,7 @@ def test_real_oss_entries_have_provenance() -> None:
         assert len(entry["commit_sha"]) == 40, f"{entry['name']}: commit not pinned to sha"
         int(entry["commit_sha"], 16)  # must be hex
         assert entry["license"], f"{entry['name']}: no license"
-        assert ( _GOLDEN / entry["name"] / "repo" / "LICENSE").is_file(), (
+        assert (_GOLDEN / entry["name"] / "repo" / "LICENSE").is_file(), (
             f"{entry['name']}: no vendored LICENSE"
         )
 
@@ -74,11 +74,7 @@ def test_vendored_files_match_recorded_hashes() -> None:
     for entry in _MANIFEST["entries"]:
         repo = _GOLDEN / entry["name"] / "repo"
         recorded = {f["path"]: f for f in entry["vendored_files"]}
-        on_disk = {
-            p.relative_to(repo).as_posix()
-            for p in repo.rglob("*")
-            if p.is_file()
-        }
+        on_disk = {p.relative_to(repo).as_posix() for p in repo.rglob("*") if p.is_file()}
         assert set(recorded) == on_disk, (
             f"{entry['name']}: vendored_files drift "
             f"(missing={sorted(on_disk - set(recorded))}, "
@@ -104,9 +100,7 @@ def test_real_oss_entries_have_ground_truth() -> None:
     for entry in _MANIFEST["entries"]:
         if entry["origin"] != "real-oss":
             continue
-        gt = json.loads(
-            (_GOLDEN / entry["name"] / "ground_truth.json").read_text(encoding="utf-8")
-        )
+        gt = json.loads((_GOLDEN / entry["name"] / "ground_truth.json").read_text(encoding="utf-8"))
         for key in (
             "expected_findings",
             "forbidden_findings",

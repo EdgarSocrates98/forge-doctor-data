@@ -540,9 +540,7 @@ def read_snapshot(path: Path) -> Iterator[ExecutionSample]:
                 try:
                     yield ExecutionSample.from_dict(row)
                 except (TypeError, ValueError, AttributeError) as exc:
-                    raise ValueError(
-                        f"{path}:{lineno}: malformed sample row: {exc}"
-                    ) from exc
+                    raise ValueError(f"{path}:{lineno}: malformed sample row: {exc}") from exc
 
 
 def iter_samples(root: Path, kind: str | None = None) -> Iterator[ExecutionSample]:
