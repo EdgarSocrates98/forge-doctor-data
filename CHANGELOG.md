@@ -7,6 +7,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### v1.0 readiness consolidation (specs 265-273)
+
+Themed around one rule: trust > features, proof > breadth, contracts >
+coupling, real corpus > synthetic, 1.0 readiness > new vendors.
+
+#### Added
+
+- **forge-contracts/1 stabilization** — `UnknownFact` (honest UNKNOWN
+  carrying subject/kind/reason), `x-*` extension capture+re-emit,
+  `ContractVersion` range (`SUPPORTED_MIN`/`SUPPORTED_MAX`/`within_range`),
+  `HandoffBundle.bounded()` context-economy handoffs that record
+  truncation as facts instead of pretending completeness.
+- **Cross-doctor conformance** — published JSON Schemas for all 10
+  contract kinds (`contracts.schemas`), canonical bundled fixtures
+  shipped in the wheel, `contracts conformance [file|-] [--kind]
+  [--fixtures] [--json]` and `contracts schema [kind]` CLI. Two-layer
+  validation (schema shape + strict model decode) with kind
+  auto-detection; importable without any engine module.
+- **Real OSS corpus** — three vendored slices at pinned commits with
+  LICENSE: dbt-labs/jaffle-shop-classic, apache/airflow example DAGs
+  (2.10.5), terraform-aws-modules/terraform-aws-vpc.
+  `tools/golden_metrics.py` writes `golden/metrics.json`: finding-level
+  P/R per entry split by origin (P=1.0/R=1.0 on the real subset).
+- **Streaming fleet merge** — `merge_repos` releases each repo's
+  sub-graph per iteration; merge peak stays ~1MB flat through n=150.
+  `tools/benchmarks/fleet.py --merge` measures merge wall/peak; budget
+  keys `merge_ms_per_repo_max`/`merge_peak_mb_max` in
+  `docs/benchmarks/fleet-budget.json`.
+- **Public contract freeze** — `tools/api_surface.py` emits
+  `docs/api-surface.json`: stability classes (stable/wire/ux) over the
+  Python API (with signatures), plugin SDK, contracts vocabulary +
+  schemas + fixtures, legacy wire schemas, 13 MCP tools + protocol
+  versions, and the CLI surface. Pinned by test + CI.
+- **Release-candidate pipeline** — `tools/release_candidate.py` dry-run:
+  SBOM, SHA256SUMS, published schemas as release files, deterministic
+  release-manifest.json, in-toto/SLSA-lite provenance.json,
+  env-manifest.json. `release.yml` runs it post-build.
+- **Environment manifest** — `tools/env_manifest.py` reports CI/git/
+  runtime/pack/plugin determinism inputs; emitted in every CI leg.
+
+#### Fixed
+
+- CI bootstrap: Poetry is installed before any `cache: poetry` or
+  poetry-dependent step; `setup-python` no longer probes for a poetry
+  binary that doesn't exist yet. Manual dependency cache instead.
+- `HandoffBundle.from_dict` treats explicit `null` members
+  (results/findings/entities/relationships/capabilities/plans/unknowns)
+  as empty collections - a serialized-but-null member no longer crashes
+  the tolerant reader.
+
+#### Hardened
+
+- Contract null semantics frozen: missing-or-null on a required scalar
+  raises; collections decode missing/null/[] uniformly; optional
+  scalars keep the absent-vs-empty distinction.
+- Contract mutation gate: every single-field corruption of a valid
+  payload (delete/null/type-flip per required key, all 10 kinds,
+  >=100 mutations) is killed by conformance - asserted at 100%.
+- Architectural drift test pins the contracts boundary: no engine
+  imports, no vendor terms in contract source, frozen `__all__`.
+- Failure injection on the conformance path (truncated JSON, scalars,
+  wrong families, deep nesting, corrupt fleet manifests) fails
+  honestly without tracebacks.
+
 ## [0.9.0] - 2026-10-04
 
 Consolidation release: stable CLI surface, versioned contracts, typed

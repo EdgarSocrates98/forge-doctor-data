@@ -17,6 +17,10 @@ forge-doctor-data lab metrics     # precision/recall within noise budget
 forge-doctor-data golden run      # snapshot regression clean
 forge-doctor-data bench run .     # no perf regression vs recorded baseline
 forge-doctor-data knowledge verify  # all packs verified, none stale
+forge-doctor-data contracts conformance --fixtures  # forge-contracts/1 surface valid
+python tools/api_surface.py --check                 # no public API drift
+python tools/golden_metrics.py --check              # corpus metrics fresh
+python tools/release_candidate.py                   # RC artifact set builds
 ```
 
 CI mirrors this: `ci.yml` runs the quality gate on Python 3.11–3.13 and
