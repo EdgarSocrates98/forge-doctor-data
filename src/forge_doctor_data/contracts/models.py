@@ -122,6 +122,10 @@ class ContractModel:
     def to_dict(self) -> Json:  # pragma: no cover - overridden
         raise NotImplementedError
 
+    @staticmethod
+    def from_dict(d: Json) -> ContractModel:  # pragma: no cover - overridden
+        raise NotImplementedError
+
     def to_json(self) -> str:
         return json.dumps(self.to_dict(), sort_keys=True, ensure_ascii=False)
 

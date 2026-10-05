@@ -5,8 +5,9 @@ The vocabulary every Forge product speaks: ``Entity``, ``Relationship``,
 ``MigrationPlan``, ``RemediationPlan``, ``HandoffBundle``,
 ``DiagnosticManifest`` plus ``ContractVersion`` negotiation.
 Dependency-free and JSON-native so consumers never import engine
-internals. The engine converts via ``core/contract_adapters.py``; JSON
-Schemas in ``core.schemas`` remain the wire source of truth.
+internals. The engine converts via ``core/contract_adapters.py``; the
+published JSON Schemas in ``contracts.schemas`` are the wire source of
+truth for ``forge-contracts/1`` payloads.
 """
 
 from forge_doctor_data.contracts.models import (

@@ -530,6 +530,102 @@ def contracts_verify(
     console.print(f"[green]{label} satisfies contract '{contract}'[/green]")
 
 
+@contracts_app.command(name="schema")
+def contracts_schema(
+    name: Annotated[
+        str | None, typer.Argument(help="forge-contracts/1 kind; omit to list all.")
+    ] = None,
+) -> None:
+    """Dump the published forge-contracts/1 JSON Schemas."""
+    from forge_doctor_data.contracts.schemas import FORGE_CONTRACT_SCHEMAS
+
+    if name is None:
+        console = Console()
+        for key, item in FORGE_CONTRACT_SCHEMAS.items():
+            console.print(f"  [bold]{key}[/bold]  [dim]{item.get('title', '')}[/dim]")
+        return
+    found = FORGE_CONTRACT_SCHEMAS.get(name)
+    if found is None:
+        _stderr.print(
+            f"[red]Unknown kind:[/red] {name} (valid: {', '.join(sorted(FORGE_CONTRACT_SCHEMAS))})"
+        )
+        raise typer.Exit(INTERNAL_ERROR_EXIT)
+    typer.echo(json.dumps(found, indent=2))
+
+
+@contracts_app.command(name="conformance")
+def contracts_conformance(
+    payload: Annotated[
+        str, typer.Argument(help="JSON payload to check, '-' for stdin, or '--fixtures'.")
+    ] = "-",
+    kind: Annotated[
+        str | None, typer.Option("--kind", help="Contract kind; auto-detected when omitted.")
+    ] = None,
+    fixtures: Annotated[
+        bool, typer.Option("--fixtures", help="Check all bundled canonical fixtures.")
+    ] = False,
+    as_json: Annotated[bool, typer.Option("--json", help="Emit the verdict as JSON.")] = False,
+) -> None:
+    """Check a payload against forge-contracts/1 (spec 267).
+
+    Validates the payload twice: against the published JSON Schema for its
+    kind, and through the strict ``from_dict`` model decode. Exit code 1 on
+    any violation. Other Forge products (The Forger, Spark Forge, agents)
+    use this to prove they speak the same wire contract.
+    """
+    import sys
+
+    from forge_doctor_data.core.conformance import (
+        CONTRACT_KINDS,
+        check_conformance,
+        check_fixtures,
+    )
+
+    if kind is not None and kind not in CONTRACT_KINDS:
+        _stderr.print(f"[red]Unknown kind:[/red] {kind} (valid: {', '.join(CONTRACT_KINDS)})")
+        raise typer.Exit(INTERNAL_ERROR_EXIT)
+
+    console = Console()
+
+    if fixtures:
+        results = check_fixtures()
+        if as_json:
+            typer.echo(json.dumps({k: r.to_dict() for k, r in results.items()}, indent=2))
+        else:
+            for name, r in results.items():
+                mark = "[green]valid[/green]" if r.valid else "[red]INVALID[/red]"
+                console.print(f"  {mark} {name}")
+                for err in r.errors:
+                    console.print(f"    [red]{err}[/red]")
+        if not all(r.valid for r in results.values()):
+            raise typer.Exit(1)
+        return
+
+    label = "stdin"
+    try:
+        if payload == "-":
+            raw = sys.stdin.read()
+        else:
+            label = Path(payload).name
+            raw = Path(payload).read_text(encoding="utf-8")
+        data = json.loads(raw)
+    except (OSError, json.JSONDecodeError) as exc:
+        _stderr.print(f"[red]unreadable JSON:[/red] {exc}")
+        raise typer.Exit(1) from exc
+
+    result = check_conformance(data, kind)
+    if as_json:
+        typer.echo(json.dumps(result.to_dict(), indent=2))
+    else:
+        mark = "[green]valid[/green]" if result.valid else "[red]INVALID[/red]"
+        shown_kind = result.kind or "unknown"
+        console.print(f"{mark} {label} as [bold]{shown_kind}[/bold] (forge-contracts/1)")
+        for err in result.errors:
+            console.print(f"  [red]{err}[/red]")
+    if not result.valid:
+        raise typer.Exit(1)
+
+
 ontology_app = typer.Typer(
     name="ontology",
     help="Canonical platform vocabulary (entity/rel kinds, planes, domains).",
