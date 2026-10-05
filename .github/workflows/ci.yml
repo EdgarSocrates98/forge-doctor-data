@@ -39,7 +39,7 @@ jobs:
           poetry install --no-interaction
 
       - name: Environment manifest
-        run: python tools/env_manifest.py --output env-manifest.json
+        run: poetry run python tools/env_manifest.py --output env-manifest.json
 
       - name: Ruff
         run: poetry run ruff check .
@@ -80,7 +80,7 @@ jobs:
           poetry install --no-interaction
 
       - name: Environment manifest
-        run: python tools/env_manifest.py
+        run: poetry run python tools/env_manifest.py
 
       - name: Tests
         run: poetry run pytest --cov --cov-report=term-missing
@@ -112,7 +112,7 @@ jobs:
           poetry install --no-interaction
 
       - name: Environment manifest
-        run: python tools/env_manifest.py --output env-manifest.json
+        run: poetry run python tools/env_manifest.py --output env-manifest.json
 
       - name: Build package
         run: poetry build
@@ -240,7 +240,7 @@ jobs:
           poetry install --no-interaction
 
       - name: Environment manifest
-        run: python tools/env_manifest.py
+        run: poetry run python tools/env_manifest.py
 
       - name: Contract conformance
         run: poetry run forge-doctor-data schema contracts
@@ -249,7 +249,7 @@ jobs:
         run: poetry run forge-doctor-data contracts conformance --fixtures
 
       - name: Public API surface freeze
-        run: python tools/api_surface.py --check
+        run: poetry run python tools/api_surface.py --check
 
       - name: Doc drift (generated project status)
         run: poetry run forge-doctor-data project status --check
