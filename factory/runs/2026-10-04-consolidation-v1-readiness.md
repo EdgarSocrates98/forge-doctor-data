@@ -30,7 +30,7 @@ Program: `prompt_evo_consolidacao1.md` — TRUST > FEATURES, PROOF > BREADTH.
 | 10 Knowledge supply chain | `verify_pack` — provenance, staleness, dual pack layouts, cross-domain dependency links (iceberg→glue) | `46bb7c8` |
 | 11 Plugin ecosystem | `test_plugin_conformance_proofs.py` — trust-gate-before-load (AST), no-mutation, no-network; isolation trust contract documented | `6b53d70` |
 | 12 Security / supply chain | release-candidate SBOM + hashes + provenance; dep review via existing security workflow | `d221329` |
-| 13 Docs-as-contract | `test_doc_examples.py` — every fenced `forge-doctor-data …` line resolves against the real click tree (commands, subcommands, flags; `_GraphGroup`/`history` dispatch honored); `tools/*.py` refs exist | pending |
+| 13 Docs-as-contract | `test_doc_examples.py` — every fenced `forge-doctor-data …` line resolves against the real click tree (commands, subcommands, flags; `_GraphGroup`/`history` dispatch honored); `tools/*.py` refs exist | `67e6ef8` |
 | 14 Architectural drift | contracts→engine import ban + vendor-name ban (docstring-pruned AST) | `d5d54fa` |
 
 ## Notable defects caught by the new gates
