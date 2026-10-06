@@ -1,0 +1,502 @@
+<p align="center">
+  <img src="docs/assets/logo.png" alt="Forge Doctor Data" width="440">
+</p>
+
+# Forge Doctor Data
+
+Deterministic diagnostics for data engineering projects. One command inspects
+your repository, Python environment, packaging, dependencies, git hygiene,
+PySpark code, and local AWS setup — no daemons, no network calls, no AI.
+
+## Why it exists
+
+Data projects drift: a `collect()` slips into a hot path, `requirements.txt`
+and `poetry.lock` start coexisting, a `.env` gets committed, the Python in the
+venv no longer matches `requires-python`. These failures are cheap to catch and
+expensive to debug. Forge Doctor Data is a fast, offline, deterministic sensor that
+surfaces them with file:line precision — and explains when each pattern is
+actually fine.
+
+## Installation
+
+```bash
+pipx install forge-doctor-data
+```
+
+New here? Walk through [docs/getting-started.md](docs/getting-started.md) —
+install to a gated CI scan in five steps.
+
+Or from source:
+
+```bash
+git clone https://github.com/EdgarSocrates98/forge-doctor-data
+cd forge-doctor-data
+pipx install .
+```
+
+## Usage
+
+```bash
+forge-doctor-data scan .                 # full scan
+forge-doctor-data scan . --check spark   # one category
+forge-doctor-data scan . --ignore SPARK001
+forge-doctor-data scan . --format json   # stable machine-readable contract
+forge-doctor-data scan . --format html   # self-contained shareable report
+forge-doctor-data scan . --format sarif  # GitHub Code Scanning
+forge-doctor-data scan . --format agent  # compact bundle for agent consumers
+forge-doctor-data scan . --quiet         # only problems
+forge-doctor-data scan . --fail-on warning
+forge-doctor-data scan . --profile security   # severity profile
+forge-doctor-data scan . --files a.py b.py    # only these files (pre-commit)
+forge-doctor-data scan . --no-plugins         # skip external plugins
+forge-doctor-data scan . --watch         # re-scan on every file change
+forge-doctor-data scan . --save-baseline .fd-baseline.json
+forge-doctor-data scan . --baseline .fd-baseline.json   # only NEW findings fail
+forge-doctor-data scan . --baseline .fd.json --new-only # just the new ones
+forge-doctor-data scan . --save-baseline main       # named: .forge-doctor-data/baselines/main.json
+forge-doctor-data scan . --baseline main --new-only # per-branch baselines
+forge-doctor-data scan . --evidence-out audit/      # dated audit bundle (report+suppressions+packs)
+forge-doctor-data scan . --record --keep 30         # append a history snapshot, prune to 30
+forge-doctor-data history .              # recorded snapshots
+forge-doctor-data history diff --last    # new/resolved findings, entity+capability+drift deltas
+forge-doctor-data history trend          # finding counts over the series + debt trajectory
+forge-doctor-data diff old.json new.json     # diff two saved reports
+forge-doctor-data diff HEAD~1...HEAD         # diff across git refs
+forge-doctor-data compatibility --to 6.0     # Glue env + migration risks
+forge-doctor-data migrate glue --from 3.0 --to 4.0  # migration intelligence
+forge-doctor-data workspace .                # discover projects in a monorepo
+forge-doctor-data workspace scan --path .    # scan every nested project
+forge-doctor-data workspace inspect .        # cross-repo graph links (defines/implements/invokes)
+forge-doctor-data fleet inspect fleet.yml    # manifest-driven estate graph over many repos
+forge-doctor-data fleet query fleet.yml runtimes|dependents|findings|capability
+forge-doctor-data fleet report fleet.yml     # estate census + findings roll-up
+forge-doctor-data fleet portfolio fleet.yml  # platforms, duplication, complexity — facts not scores
+forge-doctor-data fleet regressions fleet.yml # regression dimensions shared across repos
+forge-doctor-data diff base...head --semantic  # entity diff + blast radius + capability/migration intel
+forge-doctor-data remediate .              # deterministic fix plans per finding/root cause
+forge-doctor-data fix .                    # preview/apply safety-classified text fixes
+forge-doctor-data root-cause .             # correlate findings into causal clusters
+forge-doctor-data runtime inspect .        # offline runtime evidence (exported artifacts)
+forge-doctor-data architecture drift .     # drift vs .forge-doctor-data/contract.yml
+forge-doctor-data contract validate .      # verify a platform contract file
+forge-doctor-data capabilities list .      # platform capability registry report
+forge-doctor-data capabilities graph .     # capability→evidence provenance subgraph
+forge-doctor-data twin inspect .           # digital twin: graph + invariant report
+forge-doctor-data twin export .            # deterministic twin snapshot artifact
+forge-doctor-data advise .                 # ranked, cited actions (decision intelligence)
+forge-doctor-data optimize .               # ranked optimization candidates + validation commands
+forge-doctor-data what-if . --change glue-version=5.1   # hypothetical-change evaluation
+forge-doctor-data what-if . --change platform=bigquery  # cross-platform re-target evaluation
+forge-doctor-data migrate plan .           # named deterministic migration plans
+forge-doctor-data migrate plan . --from snowflake --to bigquery  # cross-platform plan
+forge-doctor-data policy list .            # organization policy packs
+forge-doctor-data policy report .          # compliance: violations + suppression audit
+forge-doctor-data lab run                  # Forge Lab scenario suites + ground truth
+forge-doctor-data incident inspect         # incident windows over recorded runtime history
+forge-doctor-data reliability path .       # critical paths over data-flow edges + segment coverage
+forge-doctor-data golden run               # golden-repo snapshot regression
+forge-doctor-data bench run .              # performance & scale benchmark
+forge-doctor-data schema contracts         # JSON Schemas for output artifacts
+forge-doctor-data ontology                 # canonical vocabulary (entity/rel kinds, planes)
+forge-doctor-data ontology validate .      # graph conformance vs the vocabulary
+forge-doctor-data snowflake inspect .      # Snowflake warehouse model + vendor objects
+forge-doctor-data bigquery inspect .       # BigQuery datasets, partitions, slots, jobs
+forge-doctor-data redshift inspect .       # Redshift clusters, dist/sort keys, WLM, datashares
+forge-doctor-data dbt inspect .            # dbt models, sources, tests, ref/source lineage
+forge-doctor-data trino inspect .          # Trino catalogs, connectors, coordinator config, 3-part refs
+forge-doctor-data analytical inspect .     # ClickHouse/Pinot/Druid tables, engines, ingestion, indexes
+forge-doctor-data search inspect .         # OpenSearch/Elasticsearch templates, policies, domains
+forge-doctor-data catalog inspect .        # DataHub/OpenMetadata/Glue/Unity datasets, drift, recipes
+forge-doctor-data quality inspect .        # Deequ/GX/SodaCL/dbt suites, coverage, gate wiring
+forge-doctor-data cloud inspect .          # vendor-neutral multi-cloud abstraction view
+forge-doctor-data export . -f handoff      # portable bundle for downstream Forge tools
+forge-doctor-data contracts verify b.json  # validate a bundle against published contracts
+forge-doctor-data info                   # project stats, no checks
+forge-doctor-data init --name my-etl     # scaffold a new project
+forge-doctor-data repo                   # category shortcuts
+forge-doctor-data plugins                # built-in + external checks
+forge-doctor-data plugins init forge-doctor-data-x   # scaffold a plugin package
+forge-doctor-data plugins lock && forge-doctor-data plugins verify  # integrity pinning
+forge-doctor-data plugins install forge-doctor-data-x --dry-run     # pipx/pip wrapper
+forge-doctor-data checks                 # every rule id and title
+forge-doctor-data explain SPARK001       # why / when it's OK / how to fix
+forge-doctor-data explain SPARK001 --json    # rule metadata for agents
+forge-doctor-data trace SPARK001 src/job.py:42   # why this finding fired
+forge-doctor-data diagnose driver.log      # fingerprint log errors (offline)
+forge-doctor-data spark eventlog dir/      # executor loss, skew, spill, GC
+forge-doctor-data lineage                # static reads/writes graph
+forge-doctor-data schema diff old.avsc new.avsc  # breaking/compatible changes
+forge-doctor-data graph                  # project intelligence graph
+forge-doctor-data platform graph .       # canonical platform graph census (+ --json)
+forge-doctor-data platform blast-radius <entity> .  # semantic impact traversal
+forge-doctor-data suppressions           # audit governed exceptions
+forge-doctor-data iceberg inspect .      # Iceberg model summary (ops/maintenance/risks)
+forge-doctor-data iceberg merge .        # MERGE posture: source, ON cols, partition pruning
+forge-doctor-data iceberg files .        # write APIs + small-file risk
+forge-doctor-data iceberg compatibility  # runtime x Iceberg compat from the packs
+forge-doctor-data controlm inspect .     # Control-M workflows-as-code (folders/jobs/events/risks)
+forge-doctor-data airflow inspect .      # Airflow DAGs/tasks/sensors/providers + parse-time risks
+forge-doctor-data terraform inspect .    # providers/modules/backends/reference graph
+forge-doctor-data parquet inspect .      # Parquet dataset stats + codec/write risks
+forge-doctor-data stepfunctions inspect .# ASL machines: states, integrations, graph risks
+forge-doctor-data streaming inspect .    # streaming queries: source→sink, checkpoint, watermark
+forge-doctor-data streaming diagnose .   # progress-metrics diagnostics (rate/state/watermark)
+forge-doctor-data streaming semantics .  # derived delivery semantics per query
+forge-doctor-data dynamodb inspect .     # DynamoDB tables + access patterns
+forge-doctor-data neptune inspect .      # Neptune clusters + query shapes
+forge-doctor-data lakeformation inspect .# governance, cross-account shares, tag usage
+forge-doctor-data emr inspect .          # EMR EC2/Serverless/EKS deep model
+forge-doctor-data databricks inspect .   # jobs/clusters/DBR/UC + bundles
+forge-doctor-data delta inspect .        # Delta tables, ops, protocol features
+forge-doctor-data athena inspect .       # workgroups, queries, result locations
+forge-doctor-data lambda inspect .       # functions, triggers, runtimes, data-plane calls
+forge-doctor-data kafka inspect .        # MSK clusters/topics/consumer groups
+forge-doctor-data kinesis inspect .      # streams, EFO, Firehose
+forge-doctor-data flink inspect .        # Flink jobs, state, checkpoints, savepoints
+forge-doctor-data data-model inspect .   # cross-domain access-style inspection
+forge-doctor-data iac                    # IaC checks (Terraform/CloudFormation)
+forge-doctor-data cache                  # incremental-analysis stats
+forge-doctor-data sbom                   # CycloneDX 1.5 of the project
+forge-doctor-data knowledge verify       # pack freshness/provenance
+forge-doctor-data knowledge audit        # fresh/stale/expired/source status
+forge-doctor-data doctor                 # environment self-check
+forge-doctor-data mcp                    # JSON-RPC stdio server for agents
+forge-doctor-data agent manifest .       # compact domains, risks, capabilities, refs
+forge-doctor-data agent context . --budget 8000
+forge-doctor-data agent delta . --since context.json
+forge-doctor-data agent evidence entity:<id> .
+forge-doctor-data collector validate evidence.json
+forge-doctor-data inspect iceberg .      # convergent: inspect <domain> (alias of `iceberg inspect`)
+forge-doctor-data project status         # generated status; --check gates doc drift
+forge-doctor-data lsp                    # editor diagnostics (pip install .[lsp])
+forge-doctor-data version
+```
+
+One scan can emit several reports — `--emit` is repeatable and takes
+`FMT` (stdout) or `FMT:PATH`:
+
+```bash
+forge-doctor-data scan . --emit text --emit sarif:report.sarif --emit html:report.html
+```
+
+## Example output
+
+```text
+╭─ Forge Doctor Data ───────────────────────╮
+│ Project  /home/me/etl                │
+│ Version  1.0.0rc1                       │
+│  Checks  51                          │
+╰──────────────────────────────────────╯
+
+Python
+  ✓ PY001 Python version
+  ⚠ PY002 requires-python pyproject.toml
+      not declared
+      → Declare requires-python in pyproject.toml
+
+Spark
+  ⚠ SPARK001 collect() src/jobs/customer.py:182 NEW
+      collect() moves all rows to the driver; verify the volume is bounded.
+      [confidence: high]
+      > df_final.collect()
+
+╭─────────────── Summary ───────────────╮
+│ Passed 17   Info 3   Warnings 4   Errors 0   │
+│ 4 warning(s)                                 │
+│ baseline: +1 new, -2 fixed, 33 pre-existing  │
+╰──────────────────────────────────────────────╯
+```
+
+## Baselines
+
+Save a scan once, then compare every later run against it — new findings get
+a `NEW` marker and `--fail-on` only counts those, so pre-existing debt never
+breaks CI:
+
+```bash
+forge-doctor-data scan . --save-baseline .forge-doctor-data-baseline.json
+forge-doctor-data scan . --baseline .forge-doctor-data-baseline.json --fail-on warning
+```
+
+## HTML reports
+
+```bash
+forge-doctor-data scan . --format html --output report.html
+```
+
+Produces a single self-contained HTML file — same content as the terminal
+report, shareable with the team. `--no-color` (or `NO_COLOR=1`) disables ANSI
+colors; `--output` also works for plain text reports.
+
+## Checks
+
+| Category | IDs | Covers |
+|---|---|---|
+| repository | REP001–REP008 | pyproject/README/LICENSE/gitignore/tests/src layout/conflicting manifests/CI |
+| python | PY001–PY007 | interpreter vs `requires-python`, venv, pytest/ruff/type-checker config |
+| dependencies | DEP001–DEP006 | lock file, unrestricted deps, dev tools at runtime, duplicates |
+| git | GIT001–GIT003 | repo initialized, tracked `.env`, tracked caches |
+| spark | SPARK001–SPARK011 | `collect()`, `toPandas()`, `repartition(1)`, Python UDFs, actions in loops, cache w/o same-var unpersist, `.rdd`, Cartesian joins, global sort, `withColumn` in loops |
+| aws | AWS001–AWS004 | CLI present, region configured, credentials detected (values never shown) |
+| docker | DOCKER001–DOCKER004 | unpinned `FROM`, missing `USER`, secret-looking `ENV`/`ARG` names |
+| glue | GLUE001–GLUE004 | awsglue usage, EOL runtimes, job params, DynamicFrame/DataFrame mixing |
+| ci | CI001–CI004 | unpinned actions, missing python-version, missing test/lint steps |
+| sql | SQL000–SQL003 | `SELECT *`, cartesian/comma joins, non-sargable predicates — needs the `[sql]` extra |
+| iceberg | ICE000–ICE002, ICE008–ICE010, ICE012–ICE013, ICE020–ICE025 | IcebergProjectModel: format-version vs ops, maintenance gaps, catalog conflicts, Glue runtime compat, MERGE/write API risks |
+| controlm | CTM000–CTM004, CTM009–CTM010, CTM028, CTM051, CTM070 | ControlMModel: Automation API defs — events produced/consumed, calendars, site standards, execution targets, credentials (names only) |
+| airflow | AIR000–AIR004, AIR013, AIR021, AIR025, AIR040, AIR042, AIR100, AIR130 | AirflowModel: DAGs/tasks/edges/TaskFlow, parse-time calls, dynamic start_date, sensors (poke/deferrable/timeout), retries, providers vs pyproject |
+| terraform | TF000–TF003, TF020–TF022, TF130 | TerraformProjectModel: required_version/providers, module pinning, local backend, reference graph |
+| parquet | PARQ000, PARQ010, PARQ020–PARQ021, PARQ040–PARQ042 | ParquetProjectModel: write APIs, compression, small-file/dataset stats |
+| stepfunctions | SFN000, SFN002–SFN003, SFN005, SFN010, SFN020 | StepFunctionsModel: ASL states/graphs, unreachable/dead-end states, sync timeouts, Distributed Map on Express |
+| streaming | STREAM001–STREAM003, STREAM013–STREAM014, STREAM020, STREAM070, STREAM080 | StreamingProjectModel: Spark SS queries, checkpoint/watermark/stateful evidence, foreachBatch, derived delivery semantics |
+| iac | IAC rules | CloudFormation + cross-IaC checks |
+| dynamodb | DDB, DDBGT, DDBSTR rules | DynamoDBProjectModel: tables, indexes, streams, access patterns |
+| neptune | NEP, NEPA, NEPCD, NEPGT rules | NeptuneProjectModel: clusters, query shapes, explain ingest |
+| lakeformation | LF rules | LF permissions, cross-account shares, tag governance |
+| platforms | EMR, DBX, DELTA rules | deep EMR (EC2/Serverless/EKS), Databricks jobs/UC, Delta protocol/features |
+| serverless | ATH, LAM, SFN rules | Athena workgroups, Lambda functions/triggers, ASL machines |
+| streaming-bus | KFK, KIN, FLK, STREAM rules | Kafka/MSK, Kinesis/EFO/Firehose, Flink state/checkpoints |
+| graph | GRAPH rules | graph-model checks (queries, bulk loads, call sites) |
+| platform | PLAT rules | cross-domain correlation (e.g. PLAT008–PLAT011) |
+| architecture | ARCH rules | contract conformance + drift detection |
+| policy | POLICY rules | suppressions audit, org policy-pack violations |
+
+Full per-rule documentation (including *when it's OK*) lives in
+[docs/checks.md](docs/checks.md).
+
+## JSON output
+
+```bash
+forge-doctor-data scan . --format json
+```
+
+```json
+{
+  "tool": {"name": "forge-doctor-data", "version": "1.0.0rc1"},
+  "schema_version": "3.0",
+  "version": "1.0.0rc1",
+  "project": {"name": "etl"},
+  "summary": {"passed": 17, "info": 3, "warnings": 4, "errors": 0},
+  "results": [
+    {"check_id": "SPARK001", "severity": "warning", "category": "spark",
+     "file": "src/jobs/customer.py", "line": 182, "message": "...", "recommendation": "...",
+     "fingerprint": "7998e28bb13c13ac", "confidence": "high",
+     "evidence": "df_final.collect()", "tags": ["performance"],
+     "is_new": true}
+  ],
+  "baseline": {"new": 1, "fixed": 2, "existing": 33}
+}
+```
+
+The JSON contract is stable and meant for CI, GitHub, and agent consumers —
+`forge-doctor-data schema contracts` emits the JSON Schemas for every public
+artifact, `forge-doctor-data contracts verify` validates artifacts against
+them, and [docs/api.md](docs/api.md) +
+[docs/contracts.md](docs/contracts.md) record the versioning and
+interop rules.
+Every finding carries a stable `fingerprint`; optional fields (`confidence`,
+`evidence`, `evidence_kind`, `tags`, `docs_uri`, `source`, `fixable`,
+`column`, `end_line`, `end_column`) appear only when set. `is_new`/`baseline`
+appear only when `--baseline` is in use. `evidence_kind` classifies the fact's
+source plane (`static`/`config`/`observed_metadata`/`runtime`/`derived`).
+
+## SARIF & GitHub Code Scanning
+
+```bash
+forge-doctor-data scan . --format sarif -o forge-doctor-data.sarif
+```
+
+SARIF 2.1.0 with rules, locations, snippets, `partialFingerprints` and
+`fixes` — upload via `github/codeql-action/upload-sarif` or use the
+composite action in [action.yml](action.yml), which installs the CLI,
+scans, and uploads SARIF in one step.
+
+## Pre-commit
+
+[.pre-commit-hooks.yaml](.pre-commit-hooks.yaml) ships a `forge-doctor-data`
+hook; pre-commit feeds it the changed filenames via `--files`, so only the
+files under review produce findings.
+
+## Profiles
+
+`--profile` re-maps severities per audience: `default`, `strict`
+(info → warning), `security` (supply-chain findings escalate),
+`spark-performance`, `glue-migration`, `production` (strict + security).
+
+## Compatibility reports
+
+```bash
+forge-doctor-data compatibility . --to 6.0
+forge-doctor-data migrate glue --from 4.0 --to 6.0
+```
+
+Detects the project's Glue/Spark/Python/Java/Iceberg environment and lists
+migration risks from bundled **knowledge packs**
+(`src/forge_doctor_data/knowledge/*/`), so version facts evolve without engine
+changes. `migrate glue` adds real signals: version pins in code, DynamicFrame
+usage, dependencies, and Terraform/CloudFormation pins.
+
+## Runtime diagnosis
+
+```bash
+forge-doctor-data diagnose driver.log       # known-error fingerprinting
+forge-doctor-data spark eventlog dir/       # executor loss, skew, spill, GC
+forge-doctor-data spark plan plan.txt       # pathological physical-plan operators
+forge-doctor-data spark logs executor.log   # signatures + runtime patterns
+```
+
+Deterministic and offline: error signatures live in
+`knowledge/errors/*.json`; event logs/plans are parsed with the stdlib.
+
+## Data intelligence
+
+```bash
+forge-doctor-data lineage                   # datasets read/written per job
+forge-doctor-data lineage --format openlineage
+forge-doctor-data schema diff old.avsc new.avsc
+forge-doctor-data schema diff HEAD~1...HEAD --path .
+forge-doctor-data graph --format mermaid    # jobs + datasets + infra + DAGs
+```
+
+Static lineage and the intelligence graph are built from the shared semantic
+index — one `ast.parse` per file feeds Spark checks, Glue checks, lineage,
+and `trace`. No target code is ever imported or executed.
+
+## Incremental analysis & policy
+
+`--cache` (default on locally, **off in CI** unless explicit) stores
+per-file analysis facts in the platform user cache
+(`%LOCALAPPDATA%\forge-doctor-data\cache`, `~/Library/Caches/forge-doctor-data`,
+`$XDG_CACHE_HOME/forge-doctor-data`; override with `FORGE_DOCTOR_DATA_CACHE_DIR`) —
+never inside the scanned repo, so a hostile checkout can't poison it.
+Entries are keyed by repo + tool + analyzer schema version and carry
+dependency provenance: editing a producer module re-analyzes its
+importers. `forge-doctor-data cache` shows stats; `cache clean` removes it.
+`--stats` reports per-check timings and cache hit rate on stderr.
+
+```toml
+[tool.forge-doctor-data.policy]
+extends = "strict"          # base profile
+[tool.forge-doctor-data.policy.rules.SPARK001]
+severity = "error"          # per-rule override
+[tool.forge-doctor-data.policy.rules.CI002]
+enabled = false             # kill switch
+
+[[tool.forge-doctor-data.suppressions]]
+rule = "SPARK001"
+path = "src/legacy/**"      # glob-scoped
+reason = "migration in progress"
+owner = "@data"
+expires = "2026-12-31"      # past expiry reactivates the finding
+approved_by = "@sec-lead"   # governance sign-off (POLICY011 if a pack requires it)
+```
+
+`forge-doctor-data suppressions` audits every exception as ACTIVE / EXPIRED /
+UNUSED with owner and approver; expired ones emit `POLICY001` warnings
+instead of suppressing. A policy pack with `require_approval: true`
+makes unapproved suppressions emit `POLICY011` findings — and packs can
+`extends:` a shared org pack (child rules override by id).
+
+## Workspace
+
+`forge-doctor-data workspace --path <dir>` discovers nested `pyproject.toml`
+projects; `workspace scan` runs each and aggregates with a project prefix;
+`workspace diff base...head` compares findings per subproject.
+
+## Agent bundle
+
+`--format agent` emits a minimal `{id, sev, loc, fp}` per finding —
+built for LLM/agent consumers where every token counts; pair with
+`forge-doctor-data explain <ID> --json` for full rule metadata on demand.
+
+## Configuration
+
+Zero configuration works. Optional, in the scanned project's `pyproject.toml`:
+
+```toml
+[tool.forge-doctor-data]
+exclude = ["tests/fixtures/**"]
+ignore = ["SPARK001"]
+
+# Trust model: `trusted` gates BEFORE plugin code loads (distribution or
+# entry-point names only - check ids can't gate code that hasn't run).
+# `allow` additionally accepts check ids as a post-load filter.
+[tool.forge-doctor-data.plugins]
+trusted = ["forge-doctor-data-databricks"]
+
+# Post-load per-check filter (requires the plugin to load first).
+[tool.forge-doctor-data.plugins.checks]
+enabled = ["DBX001", "DBX002"]
+
+[tool.forge-doctor-data.aws]
+ignore = ["AWS002"]
+```
+
+## Exit codes
+
+`0` clean · `1` errors found (or `--fail-on warning` hit) · `2` internal/usage error.
+
+## Integrations
+
+- **MCP** (`forge-doctor-data mcp [--root DIR]`): zero-dependency JSON-RPC
+  stdio server — `scan_project`, `explain_rule`, `check_compatibility`,
+  `get_lineage`, `diagnose_log`, `diff_findings`, plus behavioral tools
+  `get_execution_baseline`, `get_regressions`, `get_runtime_correlations`,
+  `get_incident_explanation`, `get_critical_path`, `get_capacity_signals`,
+  `get_portfolio_summary`, and `forge-doctor-data://rules/ID` /
+  `forge-doctor-data://knowledge/D/N` resources. `--root` sandboxes every tool
+  path argument to that tree.
+- **LSP** (`pipx inject forge-doctor-data pygls lsprotocol`, `forge-doctor-data lsp`):
+  publishes diagnostics on open/change/save, using the workspace root and
+  unsaved-buffer contents (debounced; clears resolved findings).
+- **SBOM** (`forge-doctor-data sbom`): CycloneDX 1.5 covering all locked
+  dependencies (declared + transitive) with a dependency graph, plugins,
+  knowledge packs and forge-doctor-data itself; deterministic serial number.
+
+## Architecture
+
+```
+cli/ (Typer) → ScanService → runner → checks → semantic index/analyzers
+     → cache → renderers (Rich/JSON/JSONL/HTML/SARIF/agent)
+
+beside it: platform graph → capabilities / semantic diff + change intel /
+migration / what-if / workspace / fleet / history / contracts / lab /
+golden / bench / policy packs
+```
+
+Checks are small classes implementing a `Check` protocol
+(`id`/`title`/`category`/`run(ctx) -> list[CheckResult]`). They never print and
+never see the terminal. See [docs/architecture.md](docs/architecture.md).
+
+## Plugins
+
+External packages contribute checks via the `forge_doctor_data.checks` entry-point
+group — install with `pipx inject forge-doctor-data forge-doctor-data-<ext>`. A broken
+plugin degrades to a warning, never a crash.
+
+Plugins run in-process with the same privileges as the CLI — treat them as
+trusted code. `--no-plugins` disables them per run;
+`[tool.forge-doctor-data.plugins].allow` restricts which ones may load.
+Plugin findings carry a `source` field naming their distribution.
+
+## Development
+
+```bash
+git clone https://github.com/EdgarSocrates98/forge-doctor-data
+cd forge-doctor-data
+poetry install
+poetry run forge-doctor-data scan .
+poetry run pytest
+poetry run ruff check .
+poetry run mypy
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). New checks: implement the `Check`
+protocol, pick a stable id, register it in the category module's `CHECKS` list,
+add tests and a `docs/checks.md` entry.
+
+## License
+
+MIT — see [LICENSE](LICENSE).

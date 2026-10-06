@@ -1,0 +1,126 @@
+{
+  "entities": [
+    {
+      "domain": "dbt",
+      "file": "models/customers.sql",
+      "id": "dbt_model:dbt:customers",
+      "kind": "dbt_model",
+      "line": null
+    },
+    {
+      "domain": "dbt",
+      "file": "models/orders.sql",
+      "id": "dbt_model:dbt:orders",
+      "kind": "dbt_model",
+      "line": null
+    },
+    {
+      "domain": "dbt",
+      "file": "models/staging/stg_customers.sql",
+      "id": "dbt_model:dbt:stg_customers",
+      "kind": "dbt_model",
+      "line": null
+    },
+    {
+      "domain": "dbt",
+      "file": "models/staging/stg_orders.sql",
+      "id": "dbt_model:dbt:stg_orders",
+      "kind": "dbt_model",
+      "line": null
+    },
+    {
+      "domain": "dbt",
+      "file": "models/staging/stg_payments.sql",
+      "id": "dbt_model:dbt:stg_payments",
+      "kind": "dbt_model",
+      "line": null
+    },
+    {
+      "domain": "dbt",
+      "file": null,
+      "id": "table:dbt:customers",
+      "kind": "table",
+      "line": null
+    },
+    {
+      "domain": "dbt",
+      "file": null,
+      "id": "table:dbt:orders",
+      "kind": "table",
+      "line": null
+    },
+    {
+      "domain": "dbt",
+      "file": null,
+      "id": "table:dbt:stg_customers",
+      "kind": "table",
+      "line": null
+    },
+    {
+      "domain": "dbt",
+      "file": null,
+      "id": "table:dbt:stg_orders",
+      "kind": "table",
+      "line": null
+    },
+    {
+      "domain": "dbt",
+      "file": null,
+      "id": "table:dbt:stg_payments",
+      "kind": "table",
+      "line": null
+    }
+  ],
+  "relationships": [
+    {
+      "dst": "dbt_model:dbt:stg_customers",
+      "kind": "reads_from",
+      "src": "dbt_model:dbt:customers"
+    },
+    {
+      "dst": "dbt_model:dbt:stg_orders",
+      "kind": "reads_from",
+      "src": "dbt_model:dbt:customers"
+    },
+    {
+      "dst": "dbt_model:dbt:stg_orders",
+      "kind": "reads_from",
+      "src": "dbt_model:dbt:orders"
+    },
+    {
+      "dst": "dbt_model:dbt:stg_payments",
+      "kind": "reads_from",
+      "src": "dbt_model:dbt:customers"
+    },
+    {
+      "dst": "dbt_model:dbt:stg_payments",
+      "kind": "reads_from",
+      "src": "dbt_model:dbt:orders"
+    },
+    {
+      "dst": "table:dbt:customers",
+      "kind": "writes_to",
+      "src": "dbt_model:dbt:customers"
+    },
+    {
+      "dst": "table:dbt:orders",
+      "kind": "writes_to",
+      "src": "dbt_model:dbt:orders"
+    },
+    {
+      "dst": "table:dbt:stg_customers",
+      "kind": "writes_to",
+      "src": "dbt_model:dbt:stg_customers"
+    },
+    {
+      "dst": "table:dbt:stg_orders",
+      "kind": "writes_to",
+      "src": "dbt_model:dbt:stg_orders"
+    },
+    {
+      "dst": "table:dbt:stg_payments",
+      "kind": "writes_to",
+      "src": "dbt_model:dbt:stg_payments"
+    }
+  ]
+}

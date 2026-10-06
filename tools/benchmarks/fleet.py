@@ -1,0 +1,368 @@
+"""Spec-257 fleet-scale benchmark: cold/warm scan curves at N repos.
+
+Generates a deterministic synthetic workspace (seeded, offline) and
+measures per-repo cold and warm scan times plus aggregate wall time.
+Budgets in ``docs/performance-budgets.md`` must cite a recorded run.
+
+Usage:
+    python tools/benchmarks/fleet.py --sizes 10,50 --root .bench/fleet
+    python tools/benchmarks/fleet.py --sizes 10 --json
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import platform
+import random
+import statistics
+import subprocess
+import sys
+import time
+import tracemalloc
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+
+from forge_doctor_data.core.fleet import build_fleet_model, load_manifest
+from forge_doctor_data.core.service import ScanRequest, ScanService
+
+_PYSPARK_JOB = """import pyspark
+df = spark.table('{table}')
+df.filter(df.id > {threshold}).write.parquet('out/{i}')
+"""
+
+_SQL = """CREATE TABLE t{i} (id INT, d STRING) USING iceberg
+PARTITIONED BY (d);
+INSERT INTO t{i} SELECT * FROM s;
+"""
+
+_TF = """resource "aws_glue_job" "j{i}" {{
+  name = "job-{i}"
+  glue_version = "{glue}"
+}}
+"""
+
+
+def generate_repo(root: Path, i: int, rng: random.Random) -> Path:
+    """Create one deterministic synthetic repo: 3 files, seeded content."""
+    repo = root / f"repo-{i:04d}"
+    repo.mkdir(parents=True, exist_ok=True)
+    (repo / "job.py").write_text(
+        _PYSPARK_JOB.format(table=f"t{i}", threshold=rng.randint(0, 99), i=i),
+        encoding="utf-8",
+    )
+    (repo / "ddl.sql").write_text(_SQL.format(i=i), encoding="utf-8")
+    (repo / "main.tf").write_text(
+        _TF.format(i=i, glue=rng.choice(["4.0", "5.0"])), encoding="utf-8"
+    )
+    return repo
+
+
+def generate_workspace(root: Path, n: int, seed: int) -> list[Path]:
+    rng = random.Random(seed)
+    return [generate_repo(root, i, rng) for i in range(n)]
+
+
+@dataclass(frozen=True)
+class SizeResult:
+    repos: int
+    files: int
+    cold_ms_mean: float
+    cold_ms_p50: float
+    cold_ms_p95: float
+    warm_ms_mean: float
+    findings_mean: float
+    peak_mb: float
+    wall_s: float
+
+
+@dataclass(frozen=True)
+class MergeResult:
+    repos: int
+    entities: int
+    relationships: int
+    merge_ms: float
+    peak_mb: float
+
+
+def measure_merge(root: Path, n: int, seed: int) -> MergeResult:
+    """Streaming-merge N repos via a fleet manifest; time + peak memory."""
+    workspace = root / f"m{n}"
+    repos = generate_workspace(workspace, n, seed)
+    manifest_path = workspace / "fleet.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "fleet": f"bench-{n}",
+                "repos": [{"path": r.name, "name": r.name} for r in sorted(repos)],
+            }
+        ),
+        encoding="utf-8",
+    )
+    manifest = load_manifest(manifest_path)
+    tracemalloc.start()
+    t0 = time.perf_counter()
+    model = build_fleet_model(manifest)
+    merge_ms = (time.perf_counter() - t0) * 1000
+    _, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    return MergeResult(
+        repos=n,
+        entities=len(model.graph.entities()),
+        relationships=len(model.graph.relationships()),
+        merge_ms=round(merge_ms, 1),
+        peak_mb=round(peak / 1e6, 1),
+    )
+
+
+def _p95(values: list[float]) -> float:
+    """Nearest-rank p95 (deterministic for n >= 1)."""
+    if not values:
+        return 0.0
+    ordered = sorted(values)
+    idx = max(0, min(len(ordered) - 1, int(0.95 * len(ordered))))
+    return round(ordered[idx], 1)
+
+
+def _environment() -> dict[str, object]:
+    """Provenance block every scale artifact must carry (phase 6.3):
+    environment, CPU, RAM, Python, and the commit that produced it."""
+    try:
+        commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        ).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        commit = "unknown"
+    return {
+        "recorded_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "platform": platform.platform(),
+        "machine": platform.machine(),
+        "python": platform.python_version(),
+        "cpu_count": os.cpu_count(),
+        "ram_gb": _total_ram_gb(),
+        "commit": commit,
+        "generator": "tools/benchmarks/fleet.py",
+    }
+
+
+def _total_ram_gb() -> float | None:
+    """Physical RAM without third-party deps; None when unobservable."""
+    try:
+        if sys.platform.startswith("win"):
+            import ctypes
+
+            class _MemStatus(ctypes.Structure):
+                _fields_ = [
+                    ("dwLength", ctypes.c_ulong),
+                    ("dwMemoryLoad", ctypes.c_ulong),
+                    ("ullTotalPhys", ctypes.c_ulonglong),
+                    ("ullAvailPhys", ctypes.c_ulonglong),
+                    ("ullTotalPageFile", ctypes.c_ulonglong),
+                    ("ullAvailPageFile", ctypes.c_ulonglong),
+                    ("ullTotalVirtual", ctypes.c_ulonglong),
+                    ("ullAvailVirtual", ctypes.c_ulonglong),
+                    ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+                ]
+
+            status = _MemStatus()
+            status.dwLength = ctypes.sizeof(_MemStatus)
+            ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status))  # type: ignore[attr-defined]
+            return round(status.ullTotalPhys / 1e9, 1)
+        pages = os.sysconf("SC_PHYS_PAGES")
+        page_size = os.sysconf("SC_PAGE_SIZE")
+        return round(pages * page_size / 1e9, 1)
+    except (OSError, ValueError, AttributeError):
+        return None
+
+
+def measure_size(root: Path, n: int, seed: int) -> SizeResult:
+    """Cold-scan every repo once, then warm-scan (cache hot) and time both."""
+    repos = generate_workspace(root / f"n{n}", n, seed)
+    service = ScanService()
+    cold: list[float] = []
+    warm: list[float] = []
+    findings: list[int] = []
+    tracemalloc.start()
+    t0 = time.perf_counter()
+    for repo in repos:
+        t = time.perf_counter()
+        outcome = service.run(ScanRequest(path=repo, cache=True))
+        cold.append((time.perf_counter() - t) * 1000)
+        findings.append(len(outcome.report.results))
+    for repo in repos:
+        t = time.perf_counter()
+        service.run(ScanRequest(path=repo, cache=True))
+        warm.append((time.perf_counter() - t) * 1000)
+    wall = time.perf_counter() - t0
+    _, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    return SizeResult(
+        repos=n,
+        files=n * 3,
+        cold_ms_mean=round(statistics.fmean(cold), 1),
+        cold_ms_p50=round(statistics.median(cold), 1),
+        cold_ms_p95=_p95(cold),
+        warm_ms_mean=round(statistics.fmean(warm), 1),
+        findings_mean=round(statistics.fmean(findings), 1),
+        peak_mb=round(peak / 1e6, 1),
+        wall_s=round(wall, 2),
+    )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--sizes", default="10", help="comma-separated repo counts")
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--root",
+        type=Path,
+        default=Path(".bench/fleet"),
+        help="workspace root — must NOT live under .pytest_tmp (pytest rotates "
+        "and deletes that tree mid-run)",
+    )
+    parser.add_argument("--out", type=Path, default=None, help="write JSON results")
+    parser.add_argument(
+        "--budget",
+        type=Path,
+        default=None,
+        help=(
+            'JSON budget, e.g. {"cold_ms_p50_max": 800, '
+            '"ms_per_repo_wall_max": 1500}. A breached key fails the run; '
+            "absent keys report 'unknown' and are not gated."
+        ),
+    )
+    parser.add_argument("--json", action="store_true", help="print JSON to stdout")
+    parser.add_argument(
+        "--merge",
+        action="store_true",
+        help="measure the fleet manifest merge path instead of per-repo scans",
+    )
+    args = parser.parse_args()
+
+    sizes = [int(s) for s in args.sizes.split(",") if s.strip()]
+    if args.merge:
+        results = [measure_merge(args.root, n, args.seed) for n in sizes]
+        payload = {
+            "benchmark": "fleet-merge",
+            "seed": args.seed,
+            "environment": _environment(),
+            "sizes": [asdict(r) for r in results],
+        }
+        text = json.dumps(payload, indent=2)
+        if args.out is not None:
+            args.out.write_text(text + "\n", encoding="utf-8")
+        print(text)
+        if not args.json:
+            for r in results:
+                print(
+                    f"n={r.repos:>5} entities={r.entities:>6} edges={r.relationships:>6} "
+                    f"merge={r.merge_ms:>9.1f}ms peak={r.peak_mb:>7.1f}MB",
+                    file=sys.stderr,
+                )
+        if args.budget is not None:
+            sys.exit(_check_merge_budget(results, args.budget))
+        return
+
+    results = [measure_size(args.root, n, args.seed) for n in sizes]
+    payload = {
+        "benchmark": "fleet",
+        "seed": args.seed,
+        "environment": _environment(),
+        "sizes": [asdict(r) for r in results],
+    }
+    text = json.dumps(payload, indent=2)
+    if args.out is not None:
+        args.out.write_text(text + "\n", encoding="utf-8")
+    print(text)
+    if not args.json:
+        for r in results:
+            print(
+                f"n={r.repos:>5} files={r.files:>5} "
+                f"cold={r.cold_ms_p50:>8.1f}ms/repo warm={r.warm_ms_mean:>7.1f}ms/repo "
+                f"peak={r.peak_mb:>6.1f}MB wall={r.wall_s:>6.1f}s",
+                file=sys.stderr,
+            )
+    if args.budget is not None:
+        sys.exit(_check_budget(results, args.budget))
+
+
+def _check_budget(results: list[SizeResult], budget_path: Path) -> int:
+    """Gate measured curves against a JSON budget file.
+
+    Reports per-key PASS/FAIL/unknown; a key absent from the budget is
+    'unknown' (per docs/performance-budgets.md - no invented budgets).
+    Exit 1 if any measured size breaches.
+    """
+    budget = json.loads(budget_path.read_text(encoding="utf-8"))
+    worst = 0
+    for r in results:
+        measured = {
+            "cold_ms_p50_max": r.cold_ms_p50,
+            "cold_ms_mean_max": r.cold_ms_mean,
+            "warm_ms_mean_max": r.warm_ms_mean,
+            "ms_per_repo_wall_max": (r.wall_s * 1000) / r.repos if r.repos else 0.0,
+            "peak_mb_max": r.peak_mb,
+        }
+        for key, value in measured.items():
+            limit = budget.get(key)
+            if limit is None:
+                continue
+            ok = value <= limit
+            worst = worst or (not ok)
+            print(
+                f"budget n={r.repos} {key}: {value:.1f} {'<=' if ok else '>'} "
+                f"{limit} -> {'PASS' if ok else 'FAIL'}",
+                file=sys.stderr,
+            )
+    absent = [k for k in _BUDGET_KEYS if k not in budget]
+    for key in absent:
+        print(f"budget {key}: unknown (not in budget file)", file=sys.stderr)
+    return int(worst)
+
+
+_BUDGET_KEYS = (
+    "cold_ms_p50_max",
+    "cold_ms_mean_max",
+    "warm_ms_mean_max",
+    "ms_per_repo_wall_max",
+    "peak_mb_max",
+)
+
+_MERGE_BUDGET_KEYS = ("merge_ms_per_repo_max", "merge_peak_mb_max")
+
+
+def _check_merge_budget(results: list[MergeResult], budget_path: Path) -> int:
+    """Gate merge curves against JSON budget keys (unknown when absent)."""
+    budget = json.loads(budget_path.read_text(encoding="utf-8"))
+    worst = 0
+    for r in results:
+        measured = {
+            "merge_ms_per_repo_max": r.merge_ms / r.repos if r.repos else 0.0,
+            "merge_peak_mb_max": r.peak_mb,
+        }
+        for key, value in measured.items():
+            limit = budget.get(key)
+            if limit is None:
+                continue
+            ok = value <= limit
+            worst = worst or (not ok)
+            print(
+                f"budget n={r.repos} {key}: {value:.1f} {'<=' if ok else '>'} "
+                f"{limit} -> {'PASS' if ok else 'FAIL'}",
+                file=sys.stderr,
+            )
+    for key in _MERGE_BUDGET_KEYS:
+        if key not in budget:
+            print(f"budget {key}: unknown (not in budget file)", file=sys.stderr)
+    return int(worst)
+
+
+if __name__ == "__main__":
+    main()

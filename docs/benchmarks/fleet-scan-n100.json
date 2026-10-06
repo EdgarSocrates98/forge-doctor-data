@@ -1,0 +1,16 @@
+{
+  "benchmark": "fleet",
+  "seed": 42,
+  "sizes": [
+    {
+      "repos": 100,
+      "files": 300,
+      "cold_ms_mean": 432.6,
+      "cold_ms_p50": 341.9,
+      "warm_ms_mean": 334.6,
+      "findings_mean": 80.0,
+      "peak_mb": 12.1,
+      "wall_s": 76.72
+    }
+  ]
+}

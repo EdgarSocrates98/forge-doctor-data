@@ -1,0 +1,39 @@
+{
+  "entities": [
+    {
+      "domain": "aws",
+      "file": "examples/complete/main.tf",
+      "id": "infrastructure_resource:aws:aws_lakeformation_permissions.default",
+      "kind": "infrastructure_resource",
+      "line": 44
+    },
+    {
+      "domain": "aws",
+      "file": "examples/complete/main.tf",
+      "id": "infrastructure_resource:aws:aws_s3_object.job_script",
+      "kind": "infrastructure_resource",
+      "line": 105
+    },
+    {
+      "domain": "glue",
+      "file": "examples/complete/main.tf",
+      "id": "catalog:glue:module",
+      "kind": "catalog",
+      "line": 44
+    },
+    {
+      "domain": "lakeformation",
+      "file": "examples/complete/main.tf",
+      "id": "principal:lakeformation:local.role_arn",
+      "kind": "principal",
+      "line": 44
+    }
+  ],
+  "relationships": [
+    {
+      "dst": "catalog:glue:module",
+      "kind": "governs",
+      "src": "principal:lakeformation:local.role_arn"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+name: security
+
+on:
+  pull_request:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-audit:
+    name: dependency-audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install audit tooling
+        run: |
+          pipx install "poetry>=2.2,<3"
+          pipx inject poetry poetry-plugin-export
+          python -m pip install --upgrade pip pip-audit
+      - name: Export locked dependencies
+        run: poetry export --format requirements.txt --without-hashes --all-extras --with dev --output requirements-audit.txt
+      - name: Audit locked project dependencies
+        run: pip-audit --requirement requirements-audit.txt --no-deps --strict
+
+  workflow-hygiene:
+    name: workflow-hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check workflow policy
+        run: python tools/check_workflows.py

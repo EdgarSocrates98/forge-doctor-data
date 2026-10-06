@@ -1,0 +1,15 @@
+{
+  "name": "lf-emr-iceberg",
+  "description": "EMR cluster writing Iceberg via Glue catalog with LF grant",
+  "expected_findings": [
+    "EMR000",
+    "ICE008",
+    "ICE012",
+    "LF010"
+  ],
+  "forbidden_findings": [],
+  "expected_graph_edges": [
+    "governs|catalog:iceberg:lake->table:iceberg:lake.db.events",
+    "writes|query:sql:job.py:6->table:iceberg:lake.db.events"
+  ]
+}

@@ -1,0 +1,1377 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [1.0.0-rc1] - 2026-10-05
+
+Release candidate. The public surface is frozen, the real-world
+corpus is provenanced, trust boundaries are tested, and the release
+pipeline is reproducible — see `docs/releases/1.0.0-rc1.md`.
+
+### RC hardening program (specs 274-284)
+
+#### Added
+
+- **RC baseline + contract freeze** — `tools/rc_baseline.py` records
+  version, API surface, test count, coverage, and release gates into
+  `docs/rc-baseline.json`; `docs/rc-policy.md` defines the RC rules
+  (no-feature rule, defect categories P0-P3, allowed-change list).
+- **Real OSS corpus (10 slices)** — jaffle-shop, airflow example DAGs,
+  terraform-aws-vpc, spark examples, spark-iceberg env, kafka clients,
+  pyflink examples, trino dev-etc, elasticsearch TF module, glue TF
+  example — every slice pinned to a 40-char commit SHA with vendored
+  LICENSE and per-file sha256. `ground_truth.json` per slice;
+  `golden/metrics.json` reports precision/recall per domain and per
+  origin (P=R=1.0 on real and synthetic).
+- **MCP boundary hardening** — sandbox confinement for every
+  path-shaped tool argument, strict resource-URI segment validation,
+  malformed-envelope `-32602`/`argument` normalization, deep-JSON
+  resilience in the stdio loop; 53-test boundary suite.
+- **Plugin trust-boundary hardening** — discovery trust filtering,
+  isolated-process timeout + bounded output capture, invalid-result
+  containment (runner converts contract breaches into internal-error
+  findings instead of crashing).
+- **What-if / migration proofs** — byte-identical determinism,
+  no-mutation of observed state, exhaustive concept-registry sweep
+  (missing evidence or declared gaps never yield `DIRECT`), readiness
+  verdicts with counted unknown budgets.
+- **Hardening §12-18 suite** — streaming history readers survive
+  corrupt snapshots deterministically, retention + daily compaction,
+  pack provenance audit statuses, cross-surface output consistency
+  (API/CLI/handoff), bounded handoffs that keep highest-severity
+  findings and record truncation as `UnknownFact`, deterministic
+  errors on every public surface, filesystem-write confinement,
+  path-traversal rejection.
+- **Scale envelope** — measured scan n=250 and merge n=250/n=500 with
+  full environment provenance per artifact (recorded_at, platform,
+  cpu, ram, python, commit); `benchmarks.yml` scheduled gate;
+  validated envelope documented honestly (n=1000 unproven).
+- **forge-contracts manifesto** — `docs/forge-contracts.md`: universal
+  vocabulary, domain prohibition (incl. OpenAPI/GraphQL/QueryExecution),
+  x-* extension rules, negotiation window, engine-free conformance kit.
+- **RC pipeline gates** — dirty-tree refusal (`--allow-dirty`
+  override), wheel+sdist requirement, `SOURCE_DATE_EPOCH` derived from
+  HEAD commit, SHA256SUMS re-verification, `tools/schema_freeze.py`
+  schema-freeze gate wired into CI.
+
+#### Fixed
+
+- `ICE012` no longer treats nested `spark.sql.catalog.<name>.<key>`
+  properties as separate catalog implementations (real-world FP on
+  the databricks spark-iceberg slice).
+- `SRCH004` resolves module-local Terraform variable defaults for
+  encryption attributes; unprovable expressions now report `unknown`
+  instead of claiming missing encryption.
+- `ScanService` rejects non-directory scan paths with
+  `ScanRequestError` — the API previously returned a plausible report
+  for a missing path (false trust).
+- `HandoffBundle.bounded()` keeps findings severity-first under
+  truncation instead of list-position order.
+- `agent_context` ranks findings error>warning>info for budget
+  trimming; `evidence_refs` resync to surviving rows.
+- `load_pack` validates path segments — `load_pack_ref` traversal can
+  no longer escape the knowledge directory.
+
+### v1.0 readiness consolidation (specs 265-273)
+
+Themed around one rule: trust > features, proof > breadth, contracts >
+coupling, real corpus > synthetic, 1.0 readiness > new vendors.
+
+#### Added
+
+- **forge-contracts/1 stabilization** — `UnknownFact` (honest UNKNOWN
+  carrying subject/kind/reason), `x-*` extension capture+re-emit,
+  `ContractVersion` range (`SUPPORTED_MIN`/`SUPPORTED_MAX`/`within_range`),
+  `HandoffBundle.bounded()` context-economy handoffs that record
+  truncation as facts instead of pretending completeness.
+- **Cross-doctor conformance** — published JSON Schemas for all 10
+  contract kinds (`contracts.schemas`), canonical bundled fixtures
+  shipped in the wheel, `contracts conformance [file|-] [--kind]
+  [--fixtures] [--json]` and `contracts schema [kind]` CLI. Two-layer
+  validation (schema shape + strict model decode) with kind
+  auto-detection; importable without any engine module.
+- **Real OSS corpus** — three vendored slices at pinned commits with
+  LICENSE: dbt-labs/jaffle-shop-classic, apache/airflow example DAGs
+  (2.10.5), terraform-aws-modules/terraform-aws-vpc.
+  `tools/golden_metrics.py` writes `golden/metrics.json`: finding-level
+  P/R per entry split by origin (P=1.0/R=1.0 on the real subset).
+- **Streaming fleet merge** — `merge_repos` releases each repo's
+  sub-graph per iteration; merge peak stays ~1MB flat through n=150.
+  `tools/benchmarks/fleet.py --merge` measures merge wall/peak; budget
+  keys `merge_ms_per_repo_max`/`merge_peak_mb_max` in
+  `docs/benchmarks/fleet-budget.json`.
+- **Public contract freeze** — `tools/api_surface.py` emits
+  `docs/api-surface.json`: stability classes (stable/wire/ux) over the
+  Python API (with signatures), plugin SDK, contracts vocabulary +
+  schemas + fixtures, legacy wire schemas, 13 MCP tools + protocol
+  versions, and the CLI surface. Pinned by test + CI.
+- **Release-candidate pipeline** — `tools/release_candidate.py` dry-run:
+  SBOM, SHA256SUMS, published schemas as release files, deterministic
+  release-manifest.json, in-toto/SLSA-lite provenance.json,
+  env-manifest.json. `release.yml` runs it post-build.
+- **Environment manifest** — `tools/env_manifest.py` reports CI/git/
+  runtime/pack/plugin determinism inputs; emitted in every CI leg.
+
+#### Fixed
+
+- CI bootstrap: Poetry is installed before any `cache: poetry` or
+  poetry-dependent step; `setup-python` no longer probes for a poetry
+  binary that doesn't exist yet. Manual dependency cache instead.
+- `HandoffBundle.from_dict` treats explicit `null` members
+  (results/findings/entities/relationships/capabilities/plans/unknowns)
+  as empty collections - a serialized-but-null member no longer crashes
+  the tolerant reader.
+
+#### Hardened
+
+- Contract null semantics frozen: missing-or-null on a required scalar
+  raises; collections decode missing/null/[] uniformly; optional
+  scalars keep the absent-vs-empty distinction.
+- Contract mutation gate: every single-field corruption of a valid
+  payload (delete/null/type-flip per required key, all 10 kinds,
+  >=100 mutations) is killed by conformance - asserted at 100%.
+- Architectural drift test pins the contracts boundary: no engine
+  imports, no vendor terms in contract source, frozen `__all__`.
+- Failure injection on the conformance path (truncated JSON, scalars,
+  wrong families, deep nesting, corrupt fleet manifests) fails
+  honestly without tracebacks.
+
+## [0.9.0] - 2026-10-04
+
+Consolidation release: stable CLI surface, versioned contracts, typed
+public API, deterministic evidence model, offline-first scan, plugin
+SDK v2, agent context protocol, and Loop-Factory-driven hardening.
+Everything below was delivered under `Unreleased` while the 0.x line
+was being hardened toward the 1.0 public-contract freeze.
+
+### Added (roadmap-2: production readiness)
+
+- **Forge Lab** — `forge-doctor-data lab list|run|report|metrics`:
+  reproducible scenario suites under `labs/` with `expected.json`
+  ground truth plus per-domain precision/recall/FPR/parser-coverage
+  metrics (`allowed_findings` + `labs/_defaults.json` noise budgets).
+- **Golden repositories** — `forge-doctor-data golden list|run|update`:
+  `golden/<name>/repo` + `expected/` snapshots pin full engine output
+  (findings, graph, root causes, remediations, migrations) for
+  regression gating. 8-repo seed corpus.
+- **Performance benchmark** — `forge-doctor-data bench run [--files N]`
+  measures cold/warm scan time, AST parse count, graph build, pack load,
+  and peak memory; `--budget` enforces portable ratio/count budgets.
+- **Workspace intelligence** — `forge-doctor-data workspace inspect` builds a
+  `WorkspaceModel`: marker-based repo discovery, per-repo platform
+  graphs merged by canonical entity id, and cross-repo `DEFINES` /
+  `IMPLEMENTS` / `INVOKES` links from `repo:workspace:<name>` entities.
+- **Semantic diff** — `forge-doctor-data diff <base>...<head> --semantic`:
+  entity-level `added`/`removed`/`modified`/`touched` changes, blast
+  radius via dependency-aware traversal, and a deterministic
+  low/medium/high risk classification with reasons — CI-gateable PR
+  intelligence without an LLM.
+- Terraform typed entities propagate version attrs (`glue_version`,
+  `runtime`, `engine_version`, `release_label`, `format_version`,
+  `spark_version`); `add_entity` merges duplicate-id entities instead of
+  discarding later producers' attrs.
+- **Organization policy packs** — declarative `forbid`/`require` rules
+  in `.forge-doctor-data/policy/*.yml|*.json` (or `policy_packs` config):
+  file-pattern rules, terraform attr checks (`equals`/`matches`/
+  `present`), required files, required file content. Findings carry org
+  rule ids; invalid packs surface as `POLICY010`. New commands:
+  `forge-doctor-data policy list|eval|validate`.
+- **Public API** — `forge_doctor_data.api` is the stable SDK surface
+  (`scan`, `platform_graph`, `capabilities_evaluate`, `what_if`,
+  `migrate_plans`, `version`, `SCHEMA_VERSION`, re-exported
+  `ScanReport`/`ScanOptions`/`DataPlatformGraph`); `SCHEMA_VERSION` is
+  now the single constant behind every `schema_version` JSON key.
+  `forge-doctor-data schema contracts [name]` publishes JSON Schemas for the
+  public artifacts; `docs/api.md` records the semver/stability rules.
+- **Docs completeness** — README usage now covers every command group
+  (domain `inspect` CLIs, `lab`/`golden`/`bench`, `policy`, `what-if`,
+  `remediate`, `root-cause`, `runtime`, `contract`/`architecture`,
+  `capabilities`, `schema contracts`, semantic `diff`); the checks table
+  covers all 28 categories; stale `schema_version` in the JSON example
+  fixed. New `docs/getting-started.md` onboarding path; CONTRIBUTING
+  documents knowledge packs, lab scenarios, golden repos, and policy
+  packs. `test_docs.py` enforces docs coverage deterministically —
+  every command, check id, and category must be documented, and doc
+  links must resolve.
+- **v1.0 release hardening** — `SCAN_SCHEMA_VERSION` (`"3.0"`) exported
+  beside `SCHEMA_VERSION` (`"1.0"`): the scan JSON report and the newer
+  artifact family are two independent contracts, now documented as such.
+  Published JSON Schemas corrected to match real output
+  (`scan-report`: tool/project/summary objects; `golden-snapshot`: row
+  arrays + graph object) and enforced by contract tests. CI smoke
+  strengthened: contract-shape asserts plus `schema contracts`,
+  `explain`, `checks` on the installed wheel. New `docs/release.md`
+  v1.0 pre-flight checklist.
+- **Plugin SDK & ecosystem** — `forge_doctor_data.sdk` is the stable
+  author-facing surface (Check/CheckBase/CheckResult/PluginDescriptor/
+  ProjectContext/api versions, `__all__` pinned); `plugins init`
+  scaffolds a complete plugin package; `plugins lock`/`verify` pin and
+  audit installed-plugin integrity via content digests; `plugins
+  install` wraps `pipx inject`/`pip` with post-install validation;
+  `[tool.forge-doctor-data.plugins] mode = "strict"` adds default-deny trust
+  (only `trusted` may load — `allow` identities no longer suffice).
+- **Enterprise governance** — policy packs gain layering (`extends:` a
+  named or path-referenced pack; child rules override the parent's on
+  id collision; cycles/missing refs surface as `POLICY010`) and
+  `require_approval`, under which suppressions missing `approved_by`
+  emit `POLICY011` findings. `suppressions` records/report show the
+  approver. `forge-doctor-data policy report` summarizes compliance (packs,
+  violations by rule, suppression audit; `--format json`). `--baseline`
+  /`--save-baseline` accept bare names (`main`) that resolve to
+  `.forge-doctor-data/baselines/<name>.json` for per-branch baselines.
+  `scan --evidence-out <dir>` writes a dated audit bundle
+  (`report.json` + `suppressions.json` + `packs.json`).
+- **Fleet intelligence** — `forge-doctor-data fleet` merges a manifest of
+  repositories (`fleet.yml`/`fleet.json` paths, or `root:`/directory
+  workspace discovery) into one estate graph via the same
+  DEFINES/IMPLEMENTS/INVOKES merge as `workspace`. Queries:
+  `fleet query <m> runtimes` (entities by domain + versioned attrs),
+  `capability <id>` (per-entity registry buckets), `dependents <glob>`
+  (dependency-aware blast radius incl. cross-repo links), `findings
+  <check-id|glob>` (per-repo scan). `fleet report` = estate census +
+  findings roll-up; text + JSON. See `docs/fleet.md`.
+- **Historical intelligence** — `scan --record [--keep N]` appends a
+  compact snapshot to `.forge-doctor-data/history/<utc>.json` (summary
+  counts, finding fingerprints, entity census, capability states, ARCH
+  drift ids). `forge-doctor-data history` lists snapshots; `history diff
+  <a> <b>`/`--last` reports new/resolved findings (fingerprint join
+  key), entity adds/removals, capability transitions, drift changes;
+  `history trend` shows per-category counts over the series + a debt
+  trajectory. History commands never re-scan; snapshots are only
+  written on `--record`.
+- **CLI UX** — top-level `--help` groups the 60+ commands into panels
+  (Scan & findings / Platform intelligence / Estate & change / Quality
+  gates / Setup & integrations); scan options grouped into Scope &
+  filters / Output / Gates & baselines / Runtime / History & evidence
+  with a runnable `Examples:` epilog; bare `forge-doctor-data` prints help;
+  groups with a bare-invoke default advertise it ("Bare: …"); category
+  section headers render proper names (AWS, CI, IaC, DynamoDB…).
+- **Change intelligence** — `diff --semantic` now reports capability
+  transitions (capability registry evaluated against each ref's
+  observed per-domain versions, e.g. `LAKEFORMATION_FGAC: conditional
+  -> supported` on a Glue 4.0 -> 5.0 bump) and migration requirements:
+  version moves in entity attrs (`*_version`/`runtime`/`dbr`) are
+  matched against the domain `compatibility` knowledge packs to list
+  required changes and HIGH-severity blockers per changed entity.
+  `diff --semantic -f json` emits `capabilities` +
+  `migration_requirements`; absent or uncovered versions report
+  `unknown`, never fabricated steps. Exit-code semantics unchanged.
+- **Incremental analysis** — `forge-doctor-data scan --incremental` reuses
+  per-check results from the previous scan for checks whose declared
+  evidence domains are untouched by the file changes detected since
+  then. `core/incremental.py` defines the evidence-domain vocabulary
+  (`terraform`, `spark`, `airflow`, `env`, `host`, …), a per-module
+  declared-domain map (`MODULE_DOMAINS`, overridable per check via
+  `Check.evidence_domains`), file→domain classification, mtime+size
+  change detection, and a versioned `ResultStore` in the user cache
+  dir. Cross-domain/unbounded checks (platform rules, contracts,
+  migrations, what-if) always rerun, preserving the full-scan output
+  contract — verified by tests asserting identical result sets between
+  incremental and full scans. `--stats` reports
+  `incremental: N file(s) changed, X checks rerun, Y reused`; watch
+  mode inherits incremental when enabled.
+- **Safe-fix intelligence** — `forge-doctor-data fix <path>` produces
+  safety-classified fix proposals (`core/fixes.py`): `safe`
+  deterministic text transforms (declare `requires-python`, append
+  ignore patterns to `.gitignore`, create a default `.gitignore`),
+  `review-required` proposals applied only with `--apply --class
+  review`, and `manual-only` guidance rows for IaC/IAM/LF-class
+  findings which have no apply path at all. Dry-run prints unified
+  diffs; `--apply` re-reads targets and aborts stale sources; `--json`
+  emits an audit record. No git ops, no commits — version control is
+  the rollback.
+- **Experiment engine** — `forge-doctor-data lab experiment <scenario>
+  --hypothesis <name>` applies a named deterministic transform
+  (`bump-glue-version`, `partition-data`, `add-checkpoint`,
+  `increase-trigger-interval`) to a temporary copy of a lab fixture,
+  rescans it hermetically, and reports a before/after comparison:
+  findings resolved/introduced by fingerprint, severity deltas, file
+  counts, and a verdict (`improved` | `regressed` | `neutral`) with
+  reasons. `--json` emits both sides plus deltas. The original
+  fixture is never touched; hypotheses are pure file edits — no live
+  runtime measurement, no subprocesses.
+- **Knowledge supply chain** — the `knowledge` group gains
+  `new <domain> [--kind]` (pack scaffold with provenance + positive
+  examples), `diff <a> <b>` (semantic entry diff — added/removed/
+  changed rows keyed by section:id, meta fields excluded),
+  `test` (conformance: structure, `re:` compile, examples match a
+  pattern, capability assertions re-evaluate per declared version via
+  the real registry), and `publish <domain> [--bump]` (freshness
+  checklist + optional pack_version/verified_at rewrite; dry-run only,
+  distribution stays manual). Entries relying only on `re:` patterns
+  without an `examples` fixture report as warnings.
+- **Ecosystem contracts** — the published contract set grows to the full
+  interop surface: `evidence`, `finding`, `capability-report`,
+  `platform-graph`, `remediation-plan`, and `handoff-bundle` join the
+  existing `scan-report`/`policy-pack`/`lab-expected`/`golden-snapshot`
+  schemas (`forge-doctor-data schema contracts <name>`). New commands:
+  `forge-doctor-data export <path> --format handoff` emits a portable JSON
+  bundle (`{contract, contract_version, schema_version, tool, project,
+  summary, results, graph, capabilities, plans}`) with stable keys and
+  deterministic ordering for downstream Forge tools, and
+  `forge-doctor-data contracts list|verify <bundle>` validates an artifact
+  file or stdin against the published schemas via a dependency-free
+  subset validator (`core/contract_check.py`). `plan_to_dict()` moves to
+  `core/remediation.py` so `remediate --json` and handoff bundles share
+  one serializer. `docs/contracts.md` is the interop spec.
+- **Platform ontology** — `core/ontology.py` is the canonical vocabulary
+  registry: every entity kind, relationship kind, evidence plane,
+  evidence domain, producer domain, and capability family carries a
+  documented definition. `forge-doctor-data ontology` prints it
+  (`-f json` for the stable machine shape); `forge-doctor-data ontology
+  validate <path>` conformance-checks a project's graph — free-text
+  producer domains outside the vocabulary are diagnostics. The
+  `platform-graph` contract now pins `kind`/`evidence_kind` to the
+  vocabulary enums, so `contracts verify` enforces ontology conformance.
+  `docs/ontology.md` tables are test-verified against the module.
+- **Capability graph** — every evaluated capability now carries its
+  deciding evidence: `CapabilityResult` gains `entry_id`,
+  `matched_when`, and `missing_evidence` (for `unknown` — the versions
+  or when-attrs that would decide). `forge-doctor-data capabilities graph
+  <path>` renders the provenance subgraph: `capability` entities
+  `EVIDENCED_BY` their deciding `knowledge_pack` entities plus the
+  platform entities that supplied the evaluated version; `--json`
+  emits it in `platform-graph` contract shape. `capabilities list
+  --json --provenance` adds `{status, provenance}` rows opt-in
+  (default shape unchanged); `capabilities explain` reports
+  `entry_id`/`matched_when`/`missing_evidence`. Ontology gains
+  `capability`/`knowledge_pack` kinds, `EVIDENCED_BY` rel, and the
+  `knowledge` producer domain (additive vocabulary).
+- **Formal digital twin** — `core/twin.py` assembles the platform graph
+  plus a deterministic invariant suite (I1 dangling endpoints, I2
+  canonical id shape, I3 evidence-plane binding, I4 finding-file
+  resolution under root, I5 attr-completeness as informational gaps).
+  `forge-doctor-data twin inspect <path>` prints the summary + invariant
+  report and exits 1 on hard violations; `twin export` emits the
+  deterministic snapshot artifact (`entities`/`relationships` +
+  `invariants_ok`/`summary` header — satisfies the `platform-graph`
+  contract). Validation reports; it never mutates the graph.
+- **Decision intelligence** — `forge-doctor-data advise <path>` merges
+  existing signals into one ranked, fully-cited action list
+  (`core/decisions.py`): severity, confidence, cluster membership
+  (+runtime-confirmed boost), fix safety class, remediation plan
+  presence, policy violations, and graph blast radius. The score is the
+  literal sum of documented breakdown terms; every row cites
+  fingerprints and entity ids; ties break deterministically on
+  fingerprint. `-f json` emits a stable shape; `--top N` truncates.
+  Advisory only — it points at `fix`/`remediate`, never applies.
+- **Optimization intelligence** — `forge-doctor-data optimize <path>`
+  enumerates the optimizations the platform is eligible for
+  (`core/optimize.py`): finding-backed candidates reuse the experiment
+  vocabulary (`partition-data`, `add-checkpoint`,
+  `increase-trigger-interval`), and observed platform versions older
+  than a compatibility pack's declared targets produce upgrade
+  candidates (`glue-version-upgrade`). Every candidate cites its
+  evidence, gives a static cost proxy (never live numbers), a
+  confidence label from the evidence planes present, and the exact
+  `lab experiment`/`what-if` command that validates it. Dedupe per
+  (optimization, file); no evidence, no candidates.
+- **Warehouse project model** (spec 212, roadmap-4 wave 1a) —
+  `analyzers/warehouse_model.py` is the vendor-neutral semantic core
+  the vendor adapters populate: Terraform `snowflake_*` /
+  `google_bigquery_*` / `aws_redshift*` resources and warehouse-dialect
+  SQL DDL normalize to compute, database/schema, table, view, query,
+  and workload-management facts. Graph adapter emits new ontology
+  kinds (`warehouse`, `warehouse_compute`, `view`, `schema`) with
+  `CONTAINS`/`READS_FROM`/`WRITES_TO` edges; the capability registry
+  gains the `warehouse` family (`SQL_QUERY` supported; vendor-specific
+  capabilities honest `unknown` until packs land). Generic `WARE###`
+  checks: `WARE001` surface census, `WARE010` unprofiled table,
+  `WARE020` view→unknown base, `WARE030` compute without WLM. New lab
+  scenario `labs/warehouse/redshift-cluster`.
+- **Snowflake adapter** (spec 213, roadmap-4 wave 1b) —
+  `analyzers/snowflake_model.py` populates a vendor detail model from
+  Snowflake DDL (`CREATE WAREHOUSE|DATABASE|SCHEMA|TABLE|STAGE|PIPE|
+  STREAM|TASK`, plus embedded `COPY INTO`), Terraform `snowflake_*`
+  resources, and observed `snowflake/` / `.forge-doctor-data/evidence/` /
+  `information_schema*` JSON/CSV exports (unknown shapes recorded, not
+  dropped). Facts merge into `WarehouseProjectModel` (deduped against
+  Terraform rows) and the graph adapter emits Snowflake stages, streams,
+  pipes, tasks, and principals with `CONTAINS`/`READS_FROM`/`WRITES_TO`
+  edges. Query-history exports become `EvidenceKind.RUNTIME` rows.
+  Checks `SNOW001`–`SNOW005` cover missing `auto_suspend`, asymmetric
+  `auto_resume`, unclustered large tables, public/insecure `COPY INTO`
+  stages, and `SELECT *` in persisted DDL. New command
+  `forge-doctor-data snowflake inspect`, capability pack `snowflake.json`
+  (time travel, zero-copy clone, Snowpipe, streams/tasks, clustering,
+  result caching, multi-cluster warehouses), and labs
+  `labs/snowflake/no-auto-suspend` + adversarial `generic-sql`.
+- **BigQuery adapter** (spec 214, roadmap-4 wave 1c) —
+  `analyzers/bigquery_model.py` populates a vendor detail model from
+  BigQuery DDL (`CREATE SCHEMA|TABLE|VIEW|MATERIALIZED VIEW|EXTERNAL
+  TABLE|RESERVATION` with `PARTITION BY`/`CLUSTER BY`/`OPTIONS(...)`),
+  Terraform `google_bigquery_*`/`google_biglake_*` resources (nested
+  `time_partitioning`/`clustering`/`access.view` blocks mined from the
+  resource body), and observed `INFORMATION_SCHEMA` exports (tables,
+  partitions, jobs-by-project — claimed only with a positive BigQuery
+  field signal in shared evidence dirs). `CLUSTER BY` alone is not a
+  marker (Snowflake shares it). Checks `BQ001`–`BQ005`: unpartitioned
+  large tables, partition-filter-less queries (authored=warning,
+  observed jobs=error), `SELECT *` cost risk, public datasets /
+  undocumented authorized views, and materialized views over mutable
+  bases without `max_staleness`. `BigQueryJobsAdapter` ingests
+  `INFORMATION_SCHEMA.JOBS` exports as runtime evidence (bytes
+  processed/billed, slot-ms). New command `forge-doctor-data bigquery
+  inspect`, capability pack `bigquery.json` (partitioning, clustering,
+  BI Engine, slots vs on-demand, time travel, BigLake, DML quotas),
+  labs `labs/bigquery/unpartitioned` + adversarial `plain-sql`.
+- **Redshift adapter** (spec 215, roadmap-4 wave 1d) —
+  `analyzers/redshift_model.py` populates a vendor detail model from
+  Redshift DDL (`CREATE TABLE ... DISTSTYLE|DISTKEY|SORTKEY|ENCODE`,
+  `CREATE EXTERNAL SCHEMA|TABLE` Spectrum, materialized views,
+  datashares), Terraform `aws_redshift*` resources (provisioned
+  clusters, Serverless workgroups/namespaces, parameter/subnet groups —
+  `parameter{}` blocks mined for WLM/`auto_analyze`), and observed
+  `SVV_*`/`STL_*` exports (claimed only with a positive field signal in
+  shared dirs). `VACUUM`/`ANALYZE` alone never attribute — Postgres
+  shares them. Checks `RS001`–`RS005`: large EVEN/ALL-distributed
+  tables under joins, unsorted tables behind range predicates, ATO
+  disabled with observed skew, public/unencrypted clusters, and manual
+  maintenance scripts on ATO-eligible compute. STL/SVV-derived findings
+  carry `evidence_kind=observed_metadata`. `RedshiftQueryLogAdapter`
+  ingests STL_QUERY exports as runtime evidence (exec + WLM queue
+  times). New command `forge-doctor-data redshift inspect`, capability pack
+  `redshift.json` (Spectrum, datashares, RA3 managed storage,
+  Serverless RPU, concurrency scaling, auto MVs, dist/sort keys), labs
+  `labs/redshift/public-cluster` + `skewed-even` + adversarial
+  `postgres`.
+- **dbt adapter** (spec 216, roadmap-4 wave 2a) —
+  `analyzers/dbt_model.py` builds a `DbtProjectModel` from
+  `dbt_project.yml` (required gate), `profiles.yml` (key names only —
+  env-var secrets never surfaced), `schema.yml` properties files
+  (sources + freshness, model/column tests, exposures), model `.sql`
+  (`config(materialized=...)`, `unique_key`, `is_incremental()`,
+  `ref()`/`source()`), seeds, snapshots, singular tests, macros, and the
+  observed artifacts `target/manifest.json` + `run_results.json`. dbt is
+  never executed — artifacts are read only. Graph integration adds
+  `dbt_model` entities with `READS_FROM` (`ref`/`source`) and
+  `WRITES_TO` (materialized output) edges, linking to warehouse
+  entities by tail-name match when adapters 213–215 already claimed
+  them. Checks `DBT001`–`DBT005`: models without tests, incremental
+  models without `unique_key`, sources without freshness, declared-but-
+  unused sources, and low documentation coverage. New command
+  `forge-doctor-data dbt inspect`, labs `labs/dbt/basic-project` +
+  adversarial `plain-dir`.
+- **Data contracts + schema evolution** (spec 217, roadmap-4 wave 2b) —
+  `analyzers/datacontract_model.py` discovers `datacontract.yml`,
+  `*.odcs.*`, or marker-keyed YAML/JSON contract files; datacontract-cli
+  and ODCS normalize to a minimal subset (id, owner, servers, schema
+  fields+types, SLA properties, quality terms) with unknown top-level
+  keys recorded as parsed-but-unchecked. `DCTR001`–`DCTR003`: missing
+  schema section, production server without SLA, and field type drift
+  vs detected real schemas (CREATE TABLE defs, Terraform BigQuery
+  `schema`, observed column exports — findings carry the detected
+  plane). Graph: `data_contract` entities `GOVERNS` their relations;
+  declared fields land as `field.<name>` attrs so `diff --semantic`
+  surfaces per-field evolution — removed/narrowed fields classify as
+  breaking (`DCTR004` section + `contract_changes` JSON, risk HIGH)
+  with blast radius to consumers. Blast radius now also traverses
+  `READS_FROM`/`WRITES_TO` edges (dbt lineage participates in impact).
+  Labs `labs/datacontract/{drifted-prod,no-schema,not-a-contract}`.
+- **Trino adapter** (spec 218, roadmap-4 wave 3) —
+  `analyzers/trino_model.py` builds a `TrinoProjectModel` from
+  `etc/catalog/*.properties` (`connector.name=` is the attribution
+  marker), `config.properties` (coordinator/worker flags, memory
+  limits, spill keys, `resource-groups.config-file`), `node.properties`,
+  `jvm.config`, authored SQL `catalog.schema.table` three-part refs,
+  and optional observed cluster exports (`trino/` or
+  `.forge-doctor-data/evidence/` JSON with coordinator/nodeVersion signal).
+  `.properties` parsing is a deterministic `key=value` + comments
+  subset — no JVM. Checks `TRINO001`–`TRINO005`: hive catalog without
+  metastore, coordinator without spill-to-disk while writes exist,
+  test connectors (`tpch`/`jmx`/`system`…) in a deployment with data
+  catalogs, multi-catalog deployment without resource groups, and
+  three-part SQL referencing an undeclared catalog (MEDIUM confidence —
+  other vendors share the syntax). Capability pack `trino.json` adds
+  per-connector surfaces (reads/writes/pushdown/transactions) gated on
+  the `connector` attribute plus spill/resource-group/event-listener
+  facts. Graph: `catalog:trino:*` entities `CONTAINS` referenced
+  `table:trino:*`. New command `forge-doctor-data trino inspect`, labs
+  `labs/trino/{prod-cluster,plain-props}`. Presto semantics deferred
+  per spec.
+- **Analytical engines** (spec 219, roadmap-4 wave 3b) —
+  `analyzers/analytical_model.py` builds a shared
+  `AnalyticalEngineModel` with three thin adapters: ClickHouse
+  (`ENGINE=` family allowlist on authored DDL — MySQL `ENGINE=InnoDB`
+  never attributes), Pinot (`*.table.json`/`*.schema.json` marker
+  keys), and Druid (`ingestionSpec`/`dataSchema`+`ioConfig` JSON).
+  Observed metadata only from exported artifacts under engine dirs or
+  `.forge-doctor-data/evidence/`. Checks `CH001`–`CH004` (MergeTree without
+  ORDER BY, Replicated without keeper config, Distributed without
+  local shard, Kafka ingestion without dedupe plan), `PIN001`–`PIN003`
+  (realtime without retention, filtered high-card dim without inverted
+  index — MEDIUM, group-by-heavy observed queries without star-tree —
+  MEDIUM), `DRU001`–`DRU002` (datasource without partitionsSpec,
+  rollup disabled on wide dims+metrics). Graph: `table:<engine>:*`
+  entities + `schema:pinot:*`. New command `forge-doctor-data analytical
+  inspect`, labs `labs/clickhouse/unkeyed`, `labs/pinot/rt-gap`,
+  `labs/druid/unpartitioned`, adversarial `labs/analytical/plain-json`.
+  StarRocks/Doris deferred — the model assumes no closed membership.
+- **Search platforms** (spec 220, roadmap-4 wave 3c) —
+  `analyzers/search_model.py` builds a `SearchPlatformModel` over
+  compound-gated JSON evidence (index templates/mappings with
+  `index_patterns`/`settings.index.*`, ISM policies → opensearch, ILM
+  policies → elasticsearch, ingest pipelines) plus Terraform domain
+  resources and observed cluster exports. Vendor attribution uses key
+  shape, then filename/dir conventions; ambiguous evidence gets the
+  `search` marker. Shared `SRCH` check family per the spec's open
+  question: `SRCH001` prod template without replicas, `SRCH002`
+  wildcard/`logs-*` pattern without ISM/ILM coverage, `SRCH003`
+  mapping field-explosion risk, `SRCH004` Terraform domain without
+  encryption/TLS. Capability pack `search.json` covers vector/kNN per
+  vendor+version (ES `version >= 8.0` gated), ISM-vs-ILM, serverless
+  variants. Graph: `table:search:*` + `infrastructure_resource:search:*`.
+  New command `forge-doctor-data search inspect`, labs
+  `labs/search/{prod-no-replicas,adversarial}` — the adversarial case
+  pins that a bare `"mappings"` key never attributes.
+- **Metadata catalogs** (spec 221, roadmap-4 wave 3d) —
+  `analyzers/metadata_model.py` builds a `MetadataEstateModel` over
+  vendor-gated catalog exports: DataHub (`*.datahub.json` filenames or
+  `urn:li:`/`entityUrn` shapes → dataset URN, platform, environment,
+  owners, description, tags, glossary terms, schema fields, upstream
+  lineage), OpenMetadata (`*.ometa.json` filenames or
+  `fullyQualifiedName`/`entityType` shape), plus Glue/Unity presence and
+  coverage signals under `glue*/`/`unity*/` path hints only. Ingestion
+  recipes contribute connector *types* only — credentials, hosts, and
+  connection blocks are never ingested. `META` check family: `META001`
+  stale catalog entry (declared but absent from the platform graph),
+  `META002` coverage gap (detected entity with no catalog record,
+  grouped/capped), `META003` ownerless dataset, `META004` prod asset
+  without description/tags, `META005` declared lineage contradicting
+  detected graph lineage — every drift finding names which side
+  (declared vs detected) drives it; both directions are findings, not
+  auto-fixes. Catalog datasets join the graph as `dataset:metadata:*`
+  entities (domain `metadata`, excluded from coverage self-matching).
+  New command `forge-doctor-data catalog inspect`, labs
+  `labs/catalog/{stale-entry,adversarial}` — generic JSON without vendor
+  evidence stays silent.
+- **Data quality evidence** (spec 222, roadmap-4 wave 5) —
+  `analyzers/quality_model.py` builds a `DataQualityModel` over
+  engine-gated quality evidence: Great Expectations
+  `expectations/*.json` suites (columns via `kwargs.column`, target via
+  `data_asset_name`/suite-name convention), `checkpoints/*` gates and
+  `uncommitted/validations/` observed runs; SodaCL `checks for
+  <dataset>:` blocks; Deequ `VerificationSuite`/`Check(` analyzer calls
+  in code (always wired — the suite is the pipeline); dbt schema +
+  singular tests via the spec-216 model, wired by `dbt test|build`/
+  `Dbt*Operator` invocations. `DQ` checks: `DQ001` prod-signaled table
+  with zero expectations while a practice exists (medium confidence),
+  `DQ002` suite never wired to a gate (capped + summary), `DQ003`
+  suite targeting a table absent from the detected graph, `DQ004`
+  expectation on a column the detected contract schema no longer
+  carries (silent when the schema is unknown). New command
+  `forge-doctor-data quality inspect`, labs
+  `labs/quality/{gx-unwired,contract-drift,soda-covered,adversarial}` —
+  a bare CI `checks:` key never attributes SodaCL.
+- **Multi-cloud abstractions** (spec 223, roadmap-4 wave 6) —
+  `analyzers/abstractions.py` builds `CloudAbstractionModel`: a
+  vendor-neutral *view* over existing entities (nothing is replaced) —
+  `object_storage` ← s3/storage_account/adls_gen2/gcs, `stream` ←
+  kinesis/eventhubs/pubsub/msk/kafka, `compute_engine` ←
+  emr/synapse/databricks/dataproc/glue, `catalog` ←
+  glue/purview/unity/datacatalog, `operational_store` ←
+  dynamodb/cosmosdb/bigtable, `warehouse` ← redshift/synapse_sql/
+  bigquery/snowflake. Terraform `azurerm_*`/`google_*` data-platform
+  resources now feed the view (storage accounts, ADLS filesystems,
+  Event Hubs, Pub/Sub, Dataproc, BigQuery datasets, Cosmos DB, Synapse,
+  Purview); warehouse-domain graph entities fold in via their
+  `platform` attr. Attribute normalization is shallow per the spec's
+  open question (name/region/encryption/public + bounded passthrough).
+  `CLOUD001` reports platform entities with no abstraction mapping
+  (internal blind-spot signal); `CLOUD002` flags single-cloud
+  abstraction kinds in mixed estates lacking a declared replication/
+  migration link. Capability pack `cloud.json` answers cloud-agnostic
+  questions — `capabilities_evaluate("object_storage", "VERSIONING",
+  attributes={"service": "gcs"})` resolves the per-cloud surface.
+  New command `forge-doctor-data cloud inspect`, labs
+  `labs/cloud/{azure-only,gcp-only,mixed-parity,linked}`.
+- **Cross-platform migration** (spec 224, roadmap-4 wave 7) —
+  `migrate plan --from <platform> --to <platform>` and
+  `what-if --change platform=<target>` on the abstraction layer.
+  `core/crossmigration.py` builds a deterministic plan document
+  (text + `--format json`): entity map via the spec-223 abstractions
+  (snowflake stage→gcs, stream→pubsub, task→dataproc, warehouse→
+  bigquery…), per-entity advisory notes with confidence, capability
+  deltas from the knowledge packs (lost/gained/equivalent/review), and
+  stages ordered catalog → schema → data → compute → consumers.
+  Plan-scoped `MIGR` findings: `MIGR001` capability or service with no
+  target equivalent (error), `MIGR002` semantic difference needing
+  manual review, `MIGR003` downstream consumers with no target link.
+  No transpiled-DDL claims — notes are advisory with evidence links.
+  Warehouse-domain vendor objects (stages/streams/tasks) now fold into
+  the abstraction view (`storage_location`/`stream`/`task` kinds).
+  Lab `labs/migration/snowflake-to-bigquery` exercises the full path.
+
+### Added (step-10 consolidation)
+
+- **Agent context protocol** — `forge-doctor-data agent manifest|context|
+  delta|evidence`: deterministic, summary-first agent handoffs with
+  `--budget` token trimming, fingerprint-based `delta --since`, and lazy
+  `evidence` lookups. No model or network calls in the core.
+- **Evidence collectors** — `forge-doctor-data collector validate|inspect`:
+  the `forge-doctor-data/evidence-bundle@1` contract (collector
+  name/version, sorted records, provenance) so external runtimes hand
+  evidence to the engine without touching the offline `scan` path.
+- **Pluggable execution stores** — `ExecutionStore` protocol with
+  `JsonlStore` (default) and `SQLiteStore` for execution history.
+- **Plugin subprocess isolation** — `plugins.execution = "isolated"`
+  runs untrusted checks in a child process (timeout + output cap +
+  JSON protocol). Documented as process isolation, not an OS sandbox.
+- **Deterministic project status** — `forge-doctor-data project status
+  [--write|--check]` regenerates `docs/project-status.md` from live
+  registries (commands, checks, contracts, MCP tools, knowledge
+  domains, factory state); the forge-gates CI job diffs it so doc
+  drift fails the build.
+- **Richer scan telemetry** — `scan --stats` now reports files scanned,
+  wall time, tracemalloc memory peak, cache hit rate, incremental reuse
+  and top check timings; `--stats-format json` emits it machine-readably
+  on stderr.
+- **Supply chain** — `.github/workflows/security.yml` gate, `SECURITY.md`,
+  CODEOWNERS, dependabot, deterministic CycloneDX SBOM in the release
+  workflow, and `tools/verify_release.py` release-metadata checks.
+- **Policies** — `docs/deprecation.md`, `docs/performance-budgets.md`,
+  `docs/architecture-boundaries.md`, `docs/plugin-isolation.md`,
+  `docs/agent-context.md`, `docs/collectors.md`.
+- **`knowledge audit`** — pack classification (`fresh`, `stale`,
+  `expired`, `invalid_source`, `unverified`) with a dedicated command.
+- **Versioned contracts package** — `forge_doctor_data.contracts`:
+  `handoff-bundle`-shaped dataclasses (`Finding`, `Entity`,
+  `Relationship`, `Capability`, `RemediationPlan`, `HandoffBundle`)
+  with `to_dict`/`from_dict`, a `forge-contracts/N` version line, and
+  `core/contract_adapters.py` mapping engine reports onto them.
+- **MCP protocol adapters** — `integrations/mcp_protocol.py` negotiates
+  legacy and modern `initialize` shapes; an official-SDK conformance
+  suite (`tests/integration/test_mcp_conformance.py`) pins both.
+- **`inspect <domain>` aliases** — `forge-doctor-data inspect iceberg`,
+  `inspect airflow`, and 30+ more converge onto the per-domain
+  `<domain> inspect` commands (see `docs/deprecation.md`).
+- **Metamorphic/mutation suite** — `tests/integration/test_mutations.py`
+  proves detrimental mutations surface the expected check ids
+  (collect(), single-partition write, checkpoint removal, Glue runtime
+  downgrade, Iceberg format-version/partition regressions, DynamicFrame
+  mixing) plus a byte-identical determinism invariant.
+- **Integration flows** — `tests/integration/test_flows.py` covers
+  scan→baseline→diff, runtime evidence→history→regression/correlation,
+  workspace/fleet/portfolio, and handoff→contract-verify→typed consumer.
+- **Fleet benchmark** — `tools/benchmarks/fleet.py` generates a seeded
+  synthetic workspace and measures cold/warm per-repo scan curves;
+  `--budget <json>` gates measured keys and reports `unknown` for
+  unbudgeted ones. n=10/50 runs recorded in
+  `docs/performance-budgets.md`.
+- **Versioned corpus manifest** — `golden/manifest.json` indexes every
+  vendored slice with provenance (`origin`, upstream `url`/`commit`/
+  `license` required for `real` entries); `docs/corpus.md` documents
+  the review path.
+- **Architecture consolidation** — `experiments_v2`, `migration_v2`,
+  `optimize`/`optimize_v2` folded into bounded packages
+  (`core/experiments`, `core/migration`, `core/optimization`); the old
+  module paths remain as compatibility facades.
+- **Policies (continued)** — `docs/governance.md` (protected-main
+  ruleset + stable required checks), `docs/domain-gate.md` (P26 new
+  domain admission), `docs/testing.md` (test pyramid).
+
+### Changed (step-10 consolidation)
+
+- CI split into stable required-check jobs (`static-analysis`,
+  `unit-tests-{3.11,3.12,3.13}`, `package-build`, `platform-smoke-*`,
+  `forge-gates`) with Poetry caching and wheel/CLI smoke.
+- `what_if`/`migrate_plans` API returns are fully typed; cache write
+  failures disable caching instead of failing scans.
+- `_bench_history.py` moved to `tools/benchmarks/history.py` so
+  experiment scripts never break quality gates.
+
+### Fixed
+
+- **Lab/golden host-state leak** — scans now support `ScanOptions.hermetic`,
+  hiding host state (env vars, `~/.aws`, PATH tools, ancestor git repos,
+  the PATH interpreter) so lab and golden results depend only on project
+  files. Fixes CI-only `AWS002` precision regressions when the runner has
+  no AWS region configured; `ctx.home`/`ctx.which` route host reads, and
+  hermetic git scoping still honors a scenario's own `git init`.
+- **Published JSON Schemas contradicted real output** — `scan-report`
+  declared `tool`/`project` as strings (actually objects) and
+  `golden-snapshot` declared a single object with a `tool` key
+  (actually row arrays + a bare entities/relationships object). Both
+  corrected and now enforced by tests validating renderer output and
+  every committed snapshot against the published schemas.
+- **Delta false positive** — generic SQL DML (`MERGE`/`UPDATE`/`DELETE`/
+  `OPTIMIZE`/`VACUUM`) is no longer attributed to Delta without any
+  project-level delta signal; self-evident syntax (`USING DELTA`,
+  `table_changes(`) still counts.
+- **Airflow bare operator calls** — `SomeOperator(task_id=...)` as a
+  bare expression inside `with DAG(...)` (context-manager binding) is
+  now collected as a task; previously only `var = Operator(...)` assigns
+  were seen, so orchestrator targets and edges were missed.
+- **Migration planner crash** — `databricks-runtime-upgrade` iterated
+  DBR dict keys then indexed them (`TypeError`); now iterates values
+  correctly (caught by the golden corpus).
+- **Handoff bundle deserialization** — `HandoffBundle.from_dict` now
+  normalizes the emitted wire form: capabilities as a
+  `{platform: {cap: status}}` mapping, remediation actions as objects
+  (descriptions extracted), integer `contract_version`, and explicit
+  `null` arrays (`results`/`entities`/`relationships`) tolerated.
+
+A full platform evolution: semantic fingerprints, a real plugin SDK,
+policy-as-code, incremental analysis, runtime diagnosis, data intelligence,
+and the integration surface (MCP/LSP/SBOM/intelligence graph) - followed
+by a hardening cycle on the trust boundary, cache, and integrations.
+
+### Fixed (hardening)
+
+- **Plugin trust boundary** — `trusted`/identity `allow` entries gate
+  *before* `ep.load()`; untrusted plugins never execute code.
+  `checks.enabled`/`disabled` filter post-load. `FORGE_DOCTOR_DATA_NO_PLUGINS`
+  is an env kill-switch.
+- **Cache moved out of the repo** — scan cache now lives in the platform
+  user cache (`%LOCALAPPDATA%`/`~/Library/Caches`/`$XDG_CACHE_HOME`,
+  `FORGE_DOCTOR_DATA_CACHE_DIR` override), keyed by repo + tool + schema
+  version. Auto-disabled in CI unless `--cache`. Dependency-aware
+  invalidation: editing a producer module re-analyzes its importers.
+- **Spark cross-file propagation** — producer functions bound across
+  modules now reach a fixpoint and resolve qualified names; a Polars or
+  plain-Python `df` name no longer counts as Spark evidence.
+- **Baseline validation** — missing/corrupt/foreign-fingerprint-version
+  baselines fail loudly (exit 2) instead of silently marking all findings
+  NEW.
+- **Avro nullable** — `default` no longer marks a field nullable (spec:
+  only `null` unions/literals do).
+- **MCP hardening** — `--root DIR` sandbox confines tool paths;
+  `initialize` negotiates protocolVersion; `server/discover` alias;
+  notifications get no response.
+- **LSP** — workspace root (not file parent), percent/drive URI decoding,
+  unsaved-buffer overlay, debounced changes, stale diagnostics cleared.
+- **SBOM v2** — all locked packages (transitives included) become
+  components with a real `dependencies` graph; `serialNumber` is derived
+  from project name+version (path-independent); no hardcoded vendor.
+- **OpenLineage** — `lineage --format openlineage` emits spec-shaped
+  RunEvents (eventType/eventTime/producer/schemaURL/run.runId).
+- **Action** — `install` input; the repo dogfoods its own checkout.
+- **`__version__`** — single-sourced from installed dist metadata.
+
+### Changed (hardening)
+
+- **ScanService** (`core/service.py`) — one pipeline for CLI, MCP, and
+  LSP: plugins, profile, policy/suppressions, baseline, cache.
+
+### Changed (UX)
+
+- **Console scan output** — categories render worst-first (errors, then
+  warnings, then info-only), with per-category severity badges
+  (`Sql  4 warning, 1 info`); wrapped messages/evidence/recommendations now
+  align under the finding indent instead of wrapping to column 0;
+  a trailing tip points at `explain <ID>` for the worst finding.
+- **`checks`** prints the total + category count footer;
+  **`iceberg inspect`** risks sort by severity (not lexically) and wrap
+  cleanly.
+- **`inspect` findings block** — the severity-sorted risk section is now
+  one shared renderer (`cli/common.render_findings`) used by iceberg,
+  parquet, terraform, stepfunctions, streaming, airflow and controlm —
+  consistent ordering, `:line` elided when unknown, messages aligned
+  under the finding indent.
+
+### Added (0.8.0 — data intelligence)
+
+- **DataPlatformGraph (core)** — `core/platform_graph.py`: canonical
+  `Entity`/`Relationship` model (15 entity kinds, 10 relationship kinds)
+  with `kind:domain:identifier` stable ids, `EvidenceKind`-tagged edges,
+  cycle-safe reachability, dedup, and deterministic `to_dict()`.
+- **Graph identity hardening** — canonical table identity no longer
+  depends on the producing model: SQL/streaming table refs whose first
+  qualifier is a catalog configured with an iceberg impl resolve to the
+  same `table:iceberg:` node the iceberg adapter mints. `StreamingQuery`
+  gains `source_identifier`/`sink_identifier` (literal `toTable`/`start`/
+  `table`/`load`/`option` targets); unidentified endpoints mint
+  `dataset:<fmt>:<fmt>` markers instead of fake table nodes.
+  `platform blast-radius` now traverses edges in their *impact*
+  direction (DEPENDS_ON/READS/CONSUMES/STORED_IN inbound; INVOKES/
+  DEFINES/GOVERNS/TRIGGERS outbound; WRITES/PRODUCES both ways).
+- **Platform graph population** — `analyzers/platform_graph_builder.py`
+  fuses all seven domain models (airflow/control-m/stepfunctions/
+  streaming/sql/iceberg/parquet/terraform) into the canonical graph via
+  unidirectional adapters; edges carry the EvidenceKind of their source
+  fact. Cross-domain joins are deterministic identity only — a Terraform
+  `aws_sfn_state_machine` block and its embedded ASL definition converge
+  on one `workflow:stepfunctions:` node. `forge-doctor-data platform graph`
+  (census + `--json`) and `platform blast-radius <entity>` (reachability).
+- **Evidence classification** — every finding now carries
+  `evidence_kind` (`static`/`config`/`observed_metadata`/`runtime`/
+  `derived`): the source plane its fact came from. Exposed in JSON
+  output and `explain`; excluded from fingerprints. Built-in check
+  categories are tagged; untagged plugin findings omit the field.
+- **Streaming Intelligence (stage 1)** — `StreamingProjectModel`
+  reconstructs Spark Structured Streaming queries from the AST index:
+  stream-variable lineage (`df = spark.readStream…` → `agg = df.…` →
+  `q = agg.writeStream…` merge into one logical query), source/sink
+  format classification (kafka/kinesis/files/delta/iceberg/rate), output
+  mode, trigger, checkpoint (literal vs dynamically-composed),
+  watermark, stateful ops, `foreachBatch` sinks. New `streaming`
+  category: STREAM001 anchor, STREAM002 missing checkpoint, STREAM003
+  temp checkpoint path, STREAM013 shared checkpoint, STREAM014 dynamic
+  checkpoint, STREAM020 stateful-without-watermark (pack-driven op
+  table), STREAM070 foreachBatch. New `forge-doctor-data streaming inspect` +
+  `knowledge/streaming/spark/stateful_ops.json`.
+- **Step Functions Doctor (stage 1)** — `StepFunctionsModel` parses ASL
+  offline (stdlib JSON only): `*.asl.json`/`*.states.json`/`*.sfn.json`,
+  any `*.json` carrying `StartAt`+`States`, Terraform
+  `aws_sfn_state_machine` definitions (quoted or heredoc), and CFN
+  `AWS::StepFunctions::StateMachine` `DefinitionString`. States expose
+  type/next/end/choices+default/retry/catch/resource-arn/timeout/
+  heartbeat/map-mode; Map `Iterator`/`ItemProcessor` bodies model as
+  nested graphs. New `stepfunctions` category: SFN000 anchor, SFN002
+  unreachable state, SFN003 dead-end path, SFN005 Choice without
+  Default, SFN010 sync/callback task without TimeoutSeconds, SFN020
+  Distributed Map inside an EXPRESS machine. New
+  `forge-doctor-data stepfunctions inspect` +
+  `knowledge/stepfunctions/integrations.json` (service-integration arn
+  map with sync/callback support flags).
+- **Parquet Doctor (stage 1)** — `ParquetProjectModel` fuses AST-index
+  evidence (`read.parquet`/`write.parquet`/`format("parquet")`/
+  `option("compression",…)`/`spark.sql.parquet.*`) with on-disk
+  `*.parquet` stats (count, total, median, p95 — `stat` sizes only).
+  New `parquet` category: PARQ000 anchor, PARQ010 repartition-before-write,
+  PARQ020 uncompressed write, PARQ021 mixed codecs, PARQ040/041/042
+  dataset-level small-file/excessive-count/size-skew (thresholds from
+  `knowledge/parquet/format.json`). New `forge-doctor-data parquet inspect`.
+- **Terraform Doctor (stage 1)** — `TerraformProjectModel` extends
+  `hcl_lite` to a full block-level model: `terraform` internals
+  (`required_version`, `required_providers`, `backend`), providers with
+  aliases, modules (local/registry/git), resources, data, variables,
+  outputs, `moved`/`import`/`check` blocks, and a reference graph between
+  addresses (`aws_iam_role.glue`, `module.vpc`, `var.env`). New `terraform`
+  category: TF000 anchor, TF001 missing required_version, TF002
+  unconstrained provider, TF003 unbounded constraint, TF020 local module,
+  TF021 registry module unpinned, TF022 mutable git ref, TF130 local
+  backend. New `forge-doctor-data terraform inspect` + `knowledge/terraform/`
+  packs (language feature floors, provider source map).
+- **Airflow Doctor (stage 1)** — `AirflowProjectModel`: index-flagged
+  `airflow*` files get one targeted AST pass — `with DAG(...)`/`@dag`/
+  `DAG()` definitions, `*Operator`/`*Sensor`/`@task` tasks, `>>`/`<<`/
+  `set_*`/`chain`/`cross_downstream` edges, TaskFlow wiring by call,
+  provider imports, and parse-time external calls. New `airflow` category:
+  AIR000 anchor, AIR002 duplicate dag_id, AIR003 empty DAG, AIR004 orphan
+  task, AIR013 dynamic start_date, AIR021/AIR025 parse-time external +
+  `Variable.get` calls, AIR040/AIR042 sensor poke-mode/timeout, AIR100
+  retries without delay, AIR130 undeclared provider. New
+  `forge-doctor-data airflow inspect` + `knowledge/airflow/` and
+  `errors/airflow` packs (feeds `diagnose`).
+- **Control-M Doctor (stage 1)** — `ControlMModel` parses Automation API
+  JSON definitions (folders, jobs, events, calendars, site standards,
+  `Defaults` inheritance) plus `ctm` CLI and `automation-api` references —
+  stdlib-only, fully offline. New `controlm` category: CTM000 anchor,
+  CTM002 no execution target, CTM003 duplicate names, CTM004 never-firing
+  job, CTM009/CTM010 event produce/consume mismatches, CTM028 undefined
+  calendar, CTM051 missing required metadata, CTM070 credential literals
+  (names only — values never emitted). New `forge-doctor-data controlm inspect`
+  command group + `knowledge/controlm/` and `knowledge/errors/controlm`
+  packs (the latter feeds `diagnose`).
+- **Iceberg Doctor** — `IcebergProjectModel` fuses evidence from the AST
+  index (catalog configs, `USING iceberg`, `writeTo` chains), `SqlIndex`
+  (CREATE USING/TBLPROPERTIES/MERGE/CALL maintenance), `spark-defaults.conf`/
+  `*.properties`, and IaC (Glue version pins, S3 Tables). New `iceberg`
+  category: ICE000 anchor, ICE001 format-version vs ops, ICE002 unpartitioned
+  MERGE, ICE008-010 maintenance gaps, ICE012 catalog conflicts, ICE013 Glue
+  runtime compat. Stage 2 adds MERGE reconstruction (`merge_detail`/`merge_on`
+  evidence — target, source, target-side ON columns), partition-transform
+  specs (`PARTITIONED BY` parsed to `partition.<col>` evidence), write-API
+  classification (`write_api` v2/legacy/legacy_catalog), catalog-impl typing,
+  and small-file write patterns: ICE020 legacy writer API, ICE021 insertInto
+  on a cataloged table, ICE022 row-level ops without
+  `IcebergSparkSessionExtensions`, ICE023 MERGE ON-cols missing partition
+  columns, ICE024 repartition/coalesce-before-write, ICE025 feature-vs-format
+  floors (`merge-on-read` needs v2, deletion-vectors/row-lineage need v3 —
+  driven by `knowledge/iceberg/spec.json`). New `forge-doctor-data iceberg
+  merge|files` subcommands, plus the existing `iceberg inspect|maintenance|
+  compatibility` group and `knowledge/iceberg/` packs.
+- **SQL first-class** — optional `[sql]` extra (sqlglot): `SqlIndex` parses
+  every `*.sql` file and every `*.sql("...")` literal found by the semantic
+  index into statement facts (reads/writes/projection/joins/dialect).
+  New `sql` category: SQL000 surface anchor, SQL001 `SELECT *`, SQL002
+  cartesian/comma joins, SQL003 non-sargable predicates. Unparseable
+  statements are counted, never fatal; without the extra the category is
+  absent and `explain SQL###` points at `forge-doctor-data[sql]`.
+- **Lake Formation pack + diagnose correlation** — `knowledge/lakeformation/`
+  covers credential vending (GetTemporaryCredentialsForTableV2), FGAC,
+  resource links, RAM/cross-account, hybrid access, IAMAllowedPrincipals,
+  LF-tags, DATA_LOCATION_ACCESS, and registered-location requirements; each
+  entry carries signature patterns + causes + fix hints. `diagnose` now
+  accepts `--path` and, when a vending-family signature matches and repo
+  evidence shows Glue >=5.x + LF/FGAC config + a write op, appends the
+  vending/write-path conflict correlation line. Error signatures gained
+  optional `fixes`/`families` fields. New `lakeformation` category: LF000
+  anchor, LF001 resource link without RAM share, LF002 IAMAllowedPrincipals
+  alongside FGAC tags (hybrid-access ambiguity).
+- **Capability Engine** (`core/capabilities.py`) — a versioned platform
+  capability registry so checks stop hardcoding service facts.
+  `CapabilityStatus` is a four-state answer (SUPPORTED / UNSUPPORTED /
+  CONDITIONAL / UNKNOWN): uncovered versions and platforms resolve to
+  UNKNOWN — absence of proof is never proof of absence. Facts live in
+  `knowledge/capabilities/*.json` (schema 2, per-entry `source`,
+  `when`-gated variants, `versions` maps, attribute `conditions`); packs
+  missing sources are rejected at load and surfaced via
+  `registry.validation_issues`. Seeds cover Glue↔Iceberg row-level ops,
+  Iceberg format-version gating, DynamoDB (transactions, streams, GSI/LSI,
+  global-table MREC/MRSC semantics), Neptune (Gremlin/openCypher/SPARQL,
+  bulk loader, explain/profile, global database, paradigm-vs-language
+  incompatibility), and paradigm-level graph capabilities. Checks reach it
+  via `ctx.capabilities`; CLI: `forge-doctor-data capabilities list|explain`
+  (`--json`, `--version`, `--variant`, `--attr`). ICE001 now consults the
+  registry for its format-version floor — first migrated check.
+- **Graph Intelligence** (`analyzers/graph_model.py` +
+  `analyzers/graph_queries.py`) — paradigm-aware graph model: property
+  graph (Gremlin/openCypher) is never conflated with RDF (SPARQL);
+  paradigms land as `property_graph`/`rdf`/`unknown` from evidence.
+  Static shape extractors cover `.cypher`/`.cql`/`.sparql`/`.rq` files,
+  `.gremlin` scripts, Neptune bulk-load CSV headers, RDF data files, and
+  Python call sites (`g.V()` chains via the dotted-call index, query
+  strings handed to client methods) — nothing is executed, unparsed or
+  dynamic queries degrade to `parsed=False` honestly. Traversals record
+  start selectivity, steps, directions, hop counts/bounds, filters and
+  position, projection size, writes, vertex/edge labels, properties, and
+  edge endpoints. New `graph` category: GRAPH001 anchor, GRAPH002
+  disconnected components, GRAPH003 orphan vertex, GRAPH004 edge with
+  undefined endpoint type, GRAPH005 direction inconsistency, GRAPH006
+  redundant relationship modeling, GRAPH007 generic edge label,
+  GRAPH008/009 INFO-gated property fan-out and supernode candidates,
+  GRAPH010 relational-shape artifacts, GRAPH020–025 traversal-shape
+  family (unselective start, unbounded result, unbounded variable
+  length, high fan-out, late filtering, repeated pattern), plus local
+  extensions GRAPH026 (full-graph starts) and GRAPH030 (mixed paradigms).
+  `knowledge/graph/` packs (property-graph, rdf, modeling, algorithms;
+  schema 2 + sources). CLI: `forge-doctor-data graph inspect|schema|
+  traversals`; the prior project-intelligence dump stays reachable as
+  `forge-doctor-data graph <path>` (unchanged) and `graph project`.
+- **DynamoDB Intelligence** (`analyzers/dynamodb_model.py`) — tables
+  from Terraform `aws_dynamodb_table` (nested gsi/lsi/replica/ttl/pitr/
+  encryption blocks), CloudFormation `AWS::DynamoDB::*` (incl.
+  `MultiRegionConsistency` MRSC detection), and boto3 bindings in code;
+  access operations extracted at the AST level so keyword presence is
+  exact (`KeyConditionExpression`, `FilterExpression`,
+  `ProjectionExpression`, `ConsistentRead`, `IndexName`, `TableName`),
+  with Key-dict literals and `PREFIX#{id}` f-string patterns decoded.
+  Streams carry view type + consumers (event-source mappings) +
+  idempotency signals; global tables carry mode (mrec default / mrsc)
+  + regions; single-table entity prefixes are reconstructed from
+  `PREFIX#` key conventions. New `dynamodb` category: DDB001 anchor,
+  DDB002-010 access-pattern family (scan on latency path, unfiltered
+  scan, poor-cardinality/hot/constant PKs, time-only SK, GSI duplicates
+  /hot keys/count-vs-usage), DDBSTR001-005 streams family (no consumer,
+  no idempotency, duplicate consumers, recovery window, replicated
+  global events), DDBGT001/002/005 multi-region signals and DDBGT003 —
+  transactions on MRSC resolve UNSUPPORTED via the capability registry
+  (ERROR). All static-risk framing; single-table structure reported,
+  never recommended. `knowledge/dynamodb/` packs (indexes,
+  transactions, limits, modeling, streams, global-tables; schema 2 +
+  sources). CLI: `forge-doctor-data dynamodb inspect|access-patterns|
+  indexes|streams|global-tables|capacity`.
+- **Neptune Intelligence** (`analyzers/neptune_model.py`,
+  `neptune_queries.py`, `neptune_explain.py`) — `NeptuneProjectModel`
+  separates Neptune Database from Neptune Analytics; clusters, instances,
+  subnet/parameter groups, global clusters from Terraform +
+  CloudFormation; endpoints, `neptunedata`/`neptune-graph` bindings,
+  `start_loader_job` calls, IAM-auth hints from code. Query shapes reuse
+  the Graph Intelligence extractors (no parsers duplicated). New
+  `neptune` category: NEP001 anchor, NEP010 language↔paradigm
+  incompatibility via the capability registry (DERIVED + source),
+  NEP020-024 traversal checks per language, NEP030-033 ingestion checks,
+  NEP040-045 infra/topology checks, NEPGT001-003 global-database checks,
+  NEPA001-002 analytics checks, NEPCD001 stream-fed mutation
+  idempotency. `neptune explain <file>` classifies exported
+  explain/profile artifacts STATIC/OBSERVED_METADATA/RUNTIME and flags
+  large intermediates, broad starts, late filters — offline only.
+  `knowledge/neptune/` packs (products, engines, ingestion, features,
+  query-languages, bulk-loader, global-database, explain, analytics,
+  compatibility; schema 2 + sources). CLI: `forge-doctor-data neptune
+  inspect|schema|queries|ingest|explain|analyze-explain|compatibility`;
+  `forge-doctor-data data-model inspect` reports the access-style breakdown
+  as facts only. Platform graph gained DynamoDB adapters (table
+  PRODUCES stream, stream TRIGGERS lambda, code READS/WRITES table) and
+  Neptune adapters (`graph:neptune:<cluster>`, loader READS S3 / WRITES
+  graph, lambda WRITES via handler-module join) — `blast-radius` spans
+  Terraform → DynamoDB → stream → Lambda → Neptune.
+- **Cross-Domain Rule Engine** (`core/crossdomain.py` +
+  `checks/platform_rules.py`) — PLAT### findings derived from multiple
+  semantic models, canonical-graph edges, and the capability registry.
+  Each rule declares the entity/relationship/capability prerequisites it
+  needs and fires only when all are present (no fuzzy joins); findings
+  list their contributing facts. First rules: PLAT001 retrying
+  orchestration task + append-only sink, PLAT002 runtime/config
+  capability incompatibility, PLAT003 continuous writer + maintenance
+  gap, PLAT004 duplicate orchestration ownership, PLAT005 IaC runtime vs
+  source assumptions, PLAT006 table-format/consumer mismatch, PLAT007
+  microbatch side-effect idempotency risk. `AirflowTask`/`AirflowDag`
+  gained `target`/`default_retries`; the Airflow adapter now emits
+  task→compute-job INVOKES edges for orchestrating operators
+  (GlueJobOperator, LambdaInvoke*, StepFunction*, EMR, Databricks).
+  CLI: `forge-doctor-data platform findings` (also runs inside `scan` under
+  the `platform` category).
+- **Runtime Evidence layer** — `core/runtime_evidence.py` normalizes
+  exported artifacts into `RuntimeEvidenceModel` (executions, metrics,
+  errors, timings, throughput, lag, retries, resource usage, state,
+  identifiers); `analyzers/runtime_evidence.py` ships seven offline
+  adapters (Spark event log, Structured Streaming progress, Athena
+  stats, Lambda REPORT, Step Functions history, Glue logs, Neptune
+  explain/profile) behind ordered first-match dispatch. Identity joins
+  use demonstrable keys only (ARN/job/query/execution id). CLI:
+  `runtime inspect|diagnose <artifact>` and `streaming progress <file>`.
+- **Finding promotion + root-cause clustering** — `core/diagnosis.py`
+  correlates scan findings with runtime evidence. `FindingPromotion`
+  keeps `base_fingerprint` correlation (originals never mutate) and a
+  deterministic `promotion_id`; levels CONFIRMED (requires exact
+  identity join), STRONGLY_SUPPORTED (targeted rule, domain-only), and
+  POSSIBLE (shared-domain errors — corroboration, never confirmation).
+  `FindingCluster` evaluates deterministic causal chains — micro-batch →
+  commit amplification → small files → consumer overhead, and
+  join/shuffle key → skew → spill → long stage — emitting root causes,
+  symptoms, related findings, affected entities, evidence, and causal
+  edges. CLI: `forge-doctor-data root-cause . --runtime artifact.json`
+  (`--json` supported).
+- **Deterministic remediation planning** — `core/remediation.py` maps
+  findings and root-cause clusters to ordered `RemediationPlan`s from
+  the new `knowledge/remediation/` packs (spark, parquet, iceberg,
+  streaming, platform families + the RC_* chains; schema-2 provenance).
+  Plans are advisory only — what/where/why/how-to-validate; nothing is
+  patched, committed, applied, or deployed. CLI:
+  `forge-doctor-data remediate . [--root-cause <id>]` (`--json`).
+- **Architecture contract + drift** — `core/contract.py` parses a
+  versioned `platform-contract.yml` (pipelines with compute platform/
+  version, storage format, orchestration, SLA, semantics, ownership,
+  approved capabilities; governance.allowed_dependencies). `pyyaml` when
+  installed, else a strict minimal parser for the documented shape.
+  `detect_drift` compares desired vs declared/implemented/runtime planes
+  and emits ARCH001-008 drift (platform mismatch, version drift, format
+  drift, undeclared dependency, SLA violation via identity join,
+  idempotency-without-evidence, multi-owner resources, features outside
+  approved capabilities). ARCH### also run as scan checks when a
+  contract exists. CLI: `contract validate <file>` and
+  `architecture drift . [--runtime artifact]`.
+- **Lake Formation deep intelligence** — `analyzers/lakeformation_model.py`
+  builds a `LakeFormationProjectModel` (principals, admins, grants,
+  databases/tables/columns, data locations, resource links, LF tags,
+  data-cells filters, RAM shares, IAM `lakeformation:` policy actions,
+  boto3 `grant_permissions`/`register_resource`/`create_database`
+  TargetDatabase call-sites) with nested-block HCL extraction and
+  producer/consumer cross-account resolution. Checks LF010-LF018 cover
+  missing data-lake settings, `IAMAllowedPrincipals` defaults, dangling
+  resource links, external grants without RAM, unregistered data
+  locations, LF-TBAC coverage, unused filters, hybrid overlap, and
+  grant-option escalation. FGAC/FTA capability facts live in
+  `knowledge/capabilities/lakeformation.json`. Platform graph gains
+  principal → GOVERNS edges and resource-link DEPENDS_ON edges. CLI:
+  `lakeformation inspect|permissions|graph|cross-account|compatibility|findings`.
+- **EMR + Databricks + Delta deep intelligence** — first-class models
+  (`analyzers/emr_model.py`, `databricks_model.py`, `delta_model.py`)
+  built from Terraform/CloudFormation/boto3/code evidence, offline only.
+  EMR splits EC2 clusters (release label, fleets, spot/on-demand,
+  autoscaling/dynamic allocation, roles, bootstrap, logging, security
+  config, step failure actions), EMR Serverless applications (release,
+  engine, capacity caps, auto-stop), and EMR on EKS virtual clusters.
+  Databricks covers jobs (task counts, job vs existing clusters,
+  notebook/pipeline tasks), clusters (DBR version, autoscale, spot,
+  serverless), SQL warehouses, pipelines, Unity Catalog objects
+  (catalog/schema/external location/storage credential/volume), asset
+  bundles, and sdk/dbutils/notebook evidence. Delta captures tables,
+  ops (MERGE/UPDATE/DELETE/OPTIMIZE/VACUUM/RESTORE/CLUSTER BY),
+  table features (deletion vectors, CDF, liquid clustering, column
+  mapping, schema evolution, identity columns), reader/writer
+  protocol floors, read/write/streaming counts, and CDF consumers.
+  Checks: EMR000-007, DBX000-006, DELTA000-004. Cross-domain rules:
+  PLAT008 (EMR Iceberg writes under Lake Formation without an
+  LF-integrated security configuration) and PLAT009 (Databricks
+  runtime below a detected Delta feature's protocol floor) —
+  capability-gated, fact-attributed. The platform graph gains
+  `compute_job:emr|databricks`, UC catalog/location/principal, and
+  `table:delta` entities with per-op WRITES edges. New packs:
+  `knowledge/capabilities/{emr,databricks,delta}.json`,
+  `knowledge/{emr/releases,databricks/runtime,delta/features}.json`.
+  CLI: `emr|databricks|delta inspect|findings`, `delta features`.
+- **Athena + Lambda + Step Functions deep intelligence** —
+  `analyzers/athena_model.py` (workgroups with engine version,
+  enforced result location, bytes-scanned cutoff, encryption;
+  catalogs, databases, named/prepared queries; CTAS/UNLOAD/PREPARE
+  SQL ops; Iceberg DDL; boto3 `athena` call-sites) and
+  `analyzers/lambda_model.py` (functions with runtime/arch/memory/
+  timeout/ephemeral storage/reserved+provisioned concurrency/layers/
+  VPC/DLQ/tracing; event sources incl. stream/sqs/s3/sns/schedule
+  kinds with TF-ref + ARN resolution; invoke-config destinations;
+  layer versions; boto3 `lambda` calls; idempotency-library imports).
+  `StepFunctionsModel` deepened: per-machine `QueryLanguage`
+  (JSONPath/JSONata), per-state payload keys, retry `MaxAttempts` +
+  `ErrorEquals` sets, Lambda `target` extraction
+  (`Parameters.FunctionName`), and Distributed Map
+  `MaxConcurrency`/`ToleratedFailurePercentage`. Checks: ATH000-005,
+  LAM000-005, SFN030-032. Cross-domain: PLAT010 (SFN + client-side
+  Athena poller → `.sync` candidate) and PLAT011 (Distributed Map
+  `MaxConcurrency` > the invoked Lambda's reserved concurrency).
+  Platform graph gains `compute_job:athena`, `query:athena`,
+  `catalog:athena`, stream→lambda TRIGGERS edges, and
+  function→destination INVOKES edges. Packs:
+  `capabilities/{athena,lambda}.json`, `athena/engines.json`,
+  `lambda/runtimes.json`, `stepfunctions/query-languages.json`.
+  CLI: `athena|lambda inspect|findings`; `stepfunctions inspect`
+  shows query language, retry attempts, map detail, payload keys.
+- **Streaming runtime + Kafka/Kinesis/Flink deep intelligence** —
+  `analyzers/kafka_model.py` (MSK provisioned/serverless clusters with
+  encryption-in-transit, client auth, broker counts; topics with
+  partitions/replication/config keys; SS `subscribe`/`startingOffsets`/
+  `maxOffsetsPerTrigger`/`failOnDataLoss`/`kafka.group.id` options;
+  `KafkaConsumer`/`KafkaProducer`/`SchemaRegistryClient` call sites;
+  consumer groups; schema-registry and TLS/SASL presence),
+  `analyzers/kinesis_model.py` (streams with shards/stream_mode/
+  retention/encryption; EFO consumers; Firehose; managed-Flink
+  KinesisAnalyticsV2 apps; SS kinesis options; boto3 `kinesis` calls
+  with StreamName/Consumer literals), `analyzers/flink_model.py`
+  (StreamExecutionEnvironment jobs; sources; keyed state; windows;
+  timers; checkpointing + `CheckpointingMode`; savepoints; parallelism;
+  sinks; managed apps). `core/delivery.py` derives delivery semantics
+  (`at-most-once`/`at-least-once`/`effectively-once`/
+  `exactly-once-claim`/`unknown`) from source+checkpoint+engine+sink+
+  idempotency — a checkpoint alone never claims exactly-once.
+  `analyzers/streaming_runtime.py` diagnoses progress batch series:
+  SRATE001 rate imbalance, SSTATE002 state growth, SWM003 watermark
+  lag, SCKPT004 commit instability, SKFK005 source offset backlog,
+  SDUR006 slow batches. Checks: KFK000-006, KIN000-003, FLK000-004,
+  STREAM080 (derived semantics per query). Runtime adapters:
+  `flink_checkpoints` (checkpoint history + `CheckpointFailed` errors)
+  and `stream_metrics` (`MillisBehindLatest`/records-lag exports).
+  Platform graph: `stream:kafka:*`, `stream:kinesis:*`,
+  `stream:firehose:*`, `compute_job:flink:*`, `principal:kafka:group:*`,
+  `principal:kinesis:*` + EFO→stream CONSUMES edges. Packs:
+  `streaming/delivery`, `kafka/config`, `kinesis/config`,
+  `flink/config`, `capabilities/{kafka,kinesis,flink}`. CLI:
+  `kafka|kinesis|flink inspect|findings`, `streaming diagnose`,
+  `streaming semantics`.
+- **What-if + migration planning** — `core/whatif.py`
+  (`WhatIfChange`/`evaluate_change`): `--change target=value`
+  (`glue-version`, `iceberg-format-version`, `databricks-runtime`,
+  `lambda-runtime`, `emr-release`) evaluates affected graph entities,
+  capability status transitions (lost caps = blockers, gained =
+  enablers), domain-pack compatibility notes, contract version-pin
+  conflicts, and honest `unknown` entries where packs lack facts.
+  `core/migration.py` (`MigrationPlan`, `plan_migrations`): named
+  advisory paths — `glue-4-to-5`, `iceberg-v1-to-v2`,
+  `databricks-runtime-upgrade`, `parquet-to-delta`,
+  `parquet-to-iceberg`, `streaming-modernize`,
+  `lambda-runtime-upgrade` — each carrying affected entities,
+  blockers, warnings, required changes, validation steps, and
+  rollback considerations. Plans are generated, never executed;
+  insufficient pack facts surface as UNKNOWN. CLI: `what-if
+  --change ... [--assume fact]`, `migrate plan`.
+
+### Added (0.7.0)
+
+- **Fingerprint v3** — semantic identity `check_id|file|symbol|anchor` from
+  the AST: findings survive line moves and message rewording. Baseline format
+  2 with strict `fingerprint_version` validation — an incompatible baseline
+  fails loudly instead of flipping every finding to NEW.
+- **Contract v3** — JSON/agent output carries
+  `{tool:{name,version}, schema_version:"3.0", project:{name}}`; absolute
+  project root is opt-in via `--show-root`. `jsonl` format emits one finding
+  per line.
+- **Single-scan `--emit FMT[:PATH]`** — repeatable; one analysis renders to
+  many targets (stdout + SARIF + HTML in one pass). The composite action now
+  produces text + SARIF from a single scan.
+- **Plugin SDK v2** — `PluginIdentity(distribution, version, api_version,
+  entry_point)` stamped on loaded checks; allowlist matches check id,
+  distribution, or entry point (never class names). `plugins list|validate|
+  doctor` inspect health.
+- **Policy-as-code** — `[tool.forge-doctor-data.policy] extends/rules` and
+  `[[tool.forge-doctor-data.suppressions]]` (scoped, owned, expiring). Expired
+  suppressions reactivate findings and emit `POLICY001`; `suppressions`
+  audits ACTIVE/EXPIRED/UNUSED with match counts.
+- **Semantic index** — one `ast.parse` per file powers Spark and Glue
+  checks; cross-file producer propagation (`from reader import load_orders`).
+- **Incremental cache** — the user cache dir (never the scanned repo)
+  persists per-file sha256 → analyzer facts with dependency provenance;
+  `--cache/--no-cache`, `forge-doctor-data cache` stats + `cache clean`; off by
+  default in CI. `--watch` uses `watchfiles` when the extra is installed and
+  snapshot polling otherwise. `--stats` prints per-check timings and cache
+  hit rate.
+- **`forge-doctor-data trace ID FILE:LINE`** — explains one finding: evidence,
+  enclosing symbol, receiver classification, assignment chain, imports;
+  `--json` for agents.
+- **`forge-doctor-data diagnose FILE|-`** — deterministic log fingerprinting via
+  `knowledge/errors/` packs (spark, glue, iceberg, lakeformation, databricks,
+  python); substring + `re:` regex patterns, occurrence counts, causes.
+- **Spark runtime doctor** — `spark eventlog` (executor loss, task skew,
+  shuffle spill, GC pressure, single-task stages, retries, scheduler delay),
+  `spark plan` (cartesian products, BNLJ, single-partition exchanges, global
+  sorts, join-strategy mix), `spark logs` (error packs + runtime patterns).
+- **Static lineage** — `forge-doctor-data lineage` detects `spark.read.*`,
+  `read.format().load()`, `spark.sql` FROM/JOIN/INSERT, `saveAsTable`,
+  `insertInto`, `writeTo`, `write.<fmt>()`, Glue `from_catalog`; renders
+  text/json/dot/mermaid plus an OpenLineage-shaped `--format openlineage`.
+- **`forge-doctor-data schema diff`** — Avro, JSON Schema, SQL DDL, dbt
+  `schema.yml` (optional `pyyaml`); classifies added/dropped/type/nullability
+  changes and rename candidates; works on files or `base...head` git ranges.
+- **IaC checks (IAC001–004)** — dependency-free Terraform/HCL-lite and
+  CloudFormation (JSON + mined YAML) parsing: Glue version aging, worker
+  sanity, CFN Glue/Lambda/EMR runtimes. IaC pins feed `compatibility`.
+- **`forge-doctor-data migrate glue`** — combines knowledge-pack version deltas
+  with real project signals (code pins, DynamicFrame usage, dependencies,
+  IaC) grouped Runtime/Code/Dependencies/Infrastructure.
+- **Workspace orchestration** — `workspace` (discovery), `workspace scan`
+  (aggregate, per-project prefix, text/json/sarif), `workspace diff
+  base...head` (per-subproject added/fixed counts).
+- **Knowledge provenance** — packs carry `schema_version: 2` +
+  `pack_version`/`verified_at`/`sources`; `knowledge list|info|verify`
+  (stale > 90d flagged).
+- **`forge-doctor-data sbom`** — CycloneDX 1.5: project deps, plugins, knowledge
+  packs, the tool itself.
+- **`forge-doctor-data mcp`** — zero-dependency JSON-RPC stdio server:
+  `initialize`, `tools/list`+`tools/call` (scan_project, explain_rule,
+  check_compatibility, get_lineage, diagnose_log, diff_findings),
+  `resources/list`+`resources/read` (`forge-doctor-data://rules/ID`,
+  `forge-doctor-data://knowledge/DOMAIN/NAME`), `ping`, notifications tolerated.
+- **`forge-doctor-data lsp`** — optional `pygls`-based stdio server mapping
+  findings to `publishDiagnostics` (severity, `source: forge-doctor-data`, check
+  id code) on open/change/save; mapping logic is unit-tested without pygls.
+- **`forge-doctor-data graph`** — Project Intelligence Graph: repo, job, dataset,
+  IaC, orchestrator nodes with contains/reads/writes/deploys/triggers edges;
+  json/dot/mermaid.
+- **`forge-doctor-data doctor`** — environment health: git, config validity,
+  plugin status, cache dir writability, knowledge pack freshness.
+- **Exact-duplicate dedup** in the runner; per-check timing instrumentation.
+
+### Changed
+
+- `forge_doctor_data/cli.py` is now the `forge_doctor_data/cli/` package
+  (`app`/`common`/`scan`/`diff`/`workspace`/`compatibility`/`plugins`/`misc`);
+  the `forge_doctor_data.cli:app` entry point is unchanged.
+- `workspace`/`spark`/`cache`/`plugins`/`knowledge`/`schema`/`migrate` are
+  command groups; category scans keep the same flags.
+- Poetry >= 2.2 required; extras: `watch` (watchfiles), `lsp` (pygls +
+  lsprotocol), `schemas` (pyyaml).
+- CI: quality matrix on 3.11–3.13 preserved; added cross-platform smoke
+  (Ubuntu/Windows/macOS wheel install + scan) and a dogfood job that runs
+  the composite action on this repo.
+
+## [0.3.0] - 2026-09-30
+
+### Added
+
+- **Finding Model v2**: `CheckResult` gains `confidence`, `fingerprint`
+  (auto-derived stable identity), `evidence` (triggering source line),
+  `tags`, `docs_uri`, `source` (plugin distribution), `fixable`, and
+  `column`/`end_line`/`end_column`. All serialize in JSON when set.
+- `--format sarif` — SARIF 2.1.0 for GitHub Code Scanning: rules with
+  tags, locations with evidence snippets, `partialFingerprints`, `fixes`.
+- `--format agent` — compact `{id, sev, loc, fp}` bundle for agent
+  consumers; `explain <ID> --json` exposes rule metadata on demand.
+- `forge-doctor-data diff` — compares findings by fingerprint across two saved
+  reports, a report vs a git ref, or a `base...head` range (scanned in a
+  temporary detached worktree); exit 1 when new findings exist.
+- `forge-doctor-data compatibility` — detects Glue/Spark/Python/Java/Iceberg
+  environment and prints migration risks (`--from`/`--to`).
+- `forge-doctor-data workspace` — discovers nested `pyproject.toml` projects.
+- **Knowledge packs** under `forge_doctor_data/knowledge/`: Glue version status
+  through **Glue 6.0** (Spark 4.1.1, Python 3.13, Java 17, Iceberg 1.11.0),
+  Glue runtime map, Glue/Python compatibility — shipped inside the wheel.
+- **Profiles** (`--profile`): `default`, `strict`, `security`,
+  `spark-performance`, `glue-migration`, `production`.
+- `--new-only` (requires `--baseline`), `--files` filtering (pre-commit),
+  `--no-plugins`, and `[tool.forge-doctor-data.plugins].allow` trust list.
+- Spark AST v2: alias and symbol tracking (`import ... as`,
+  `df = spark.read...`, chained-call receivers) — Spark findings now carry
+  receiver `confidence`; SPARK006 pairs `unpersist()` per variable.
+- New Spark checks: SPARK008 `.rdd` access, SPARK009 Cartesian joins,
+  SPARK010 global sort, SPARK011 `withColumn` in loops.
+- `action.yml` composite GitHub Action (scan + SARIF upload);
+  `.pre-commit-hooks.yaml` for pre-commit consumers.
+- Release workflow: PyPI Trusted Publishing (OIDC) + PEP 740 attestations
+  (disabled until the PyPI project exists).
+
+### Fixed
+
+- `--output` now writes json/sarif/agent payloads to a file (previously
+  always printed to stdout).
+- Chained-call receivers (`orders.filter().collect()`) resolve to their
+  root DataFrame — `confidence` now reaches `high` as intended.
+- `--check` with only unknown categories exits 2 with the valid list;
+  mixed valid/unknown warns but runs. `--fail-on` validated up front.
+- CI002 grades refs honestly: full SHA quiet, version tag INFO, floating
+  ref/no-@ WARNING (`security` profile escalates tags to warnings).
+- `.tokensave/` removed from git index; `DataDoctorConfig` fully renamed
+  to `ForgeDoctorDataConfig` (old name kept as deprecated alias).
+- GLUE002 no longer recommends "4.0/5.x" — knowledge pack drives status
+  and the `compatibility` command provides migration guidance.
+
+## [0.2.0] - 2026-09-29
+
+### Added
+
+- `forge-doctor-data explain <CHECK_ID>` — renders a rule's why/when-OK/fix from
+  code-level attributes (`CheckBase.why`, `.when_ok`, `.fix`) populated for
+  all built-in checks; works for plugin checks too.
+- New categories: **docker** (DOCKER001-004 — unpinned `FROM`, missing
+  `USER`, secret-looking `ENV`/`ARG` names), **glue** (GLUE001-004 — AST:
+  awsglue usage, EOL runtimes, `getResolvedOptions`, DynamicFrame mixing),
+  **ci** (CI001-004 — unpinned actions, python-version, test/lint steps).
+- `examples/plugin/` — minimal installable plugin (`forge-doctor-data-example`)
+  + `docs/plugins.md` SDK guide.
+- Console output degrades non-UTF glyphs to ASCII on legacy encodings
+  (Windows cp1252).
+- `forge-doctor-data init` — scaffolds a PEP 621/Poetry project (`--name`,
+  `--force`); never overwrites existing files unless forced.
+- `forge-doctor-data info` — instant project stats: files, lines, top types,
+  git state, detected tooling (no checks run).
+- Baselines: `--save-baseline PATH` records a scan, `--baseline PATH`
+  diffs against it — findings render a `NEW` marker, JSON gains
+  `is_new`/`baseline`, and `--fail-on` only counts **new** findings so
+  pre-existing debt does not break CI.
+- `--format html` — self-contained shareable report (`--output PATH`,
+  defaults to `forge-doctor-data-report.html`).
+- `--output/-o` — also writes text reports to a file.
+- `--watch/-w` — re-scans whenever project files change (polling, Ctrl+C
+  exits with the last scan's code).
+- `--no-color` flag (the `NO_COLOR` env var was already honored by Rich).
+- Console redesign: header panel (project/version/check count),
+  spinner while scanning, grouped categories, color-coded summary panel
+  with baseline diff, Rich tables for `checks`/`plugins`/`explain`.
+- Shell completion via `forge-doctor-data --install-completion`.
+
+### Fixed
+
+- `git ls-files` paths are now scoped/stripped to the scanned root
+  (subdirectory scans reported repo-root-relative paths).
+- subprocess probes use `errors="replace"` — non-ASCII output no longer
+  crashes the git checks on cp1252 consoles.
+- `file` fields render POSIX separators in JSON and console output —
+  the contract is now identical across platforms.
+- DEP005 only runs `poetry check --lock` on Poetry-managed projects.
+- `--format` is validated before the scan runs.
+- Console no longer duplicates a file location equal to the rule title.
+- `.pytest_tmp` added to default traversal exclusions; `aws --version`
+  probe timeout raised to 15s.
+
+### Changed
+
+- Renamed the project `data-doctor` → `forge-doctor-data` (module, CLI, PyPI name,
+  `[tool.forge-doctor-data]` config section, `forge_doctor_data.checks` entry-point
+  group) to avoid the `vision-data-doctor` CLI collision and pair with the
+  future Spark Forge ecosystem.
+- DEP005 now runs `poetry check --lock` when Poetry is on PATH (definitive
+  PASS/WARNING) and falls back to the mtime heuristic (INFO) otherwise.
+- DEP006 poetry probe timeout raised to 30s — the pipx shim cold-starts
+  slowly on Windows and previously produced a false "failed" INFO.
+
+## [0.1.0] - 2026-09-28
+
+### Added
+
+- `forge-doctor-data scan` engine: layered architecture (CLI → runner → checks →
+  analyzers → context → renderers) with stable check ids.
+- 6 check categories, 35 rules: repository (REP), python (PY),
+  dependencies/poetry (DEP), git (GIT), spark AST analysis (SPARK), local AWS
+  config (AWS).
+- Rich console output, stable `--format json` contract, `--quiet`,
+  `--ignore`, `--check`, `--fail-on`, `--verbose`.
+- `[tool.forge-doctor-data]` configuration with `exclude` globs and `ignore` lists.
+- Plugin discovery via the `forge_doctor_data.checks` entry-point group.
+- `plugins`, `checks`, `version` commands; `--version` flag.
+- Exit codes: 0 clean, 1 errors, 2 internal.
+- CI (lint/format/type/test/build matrix) and manual release workflow.

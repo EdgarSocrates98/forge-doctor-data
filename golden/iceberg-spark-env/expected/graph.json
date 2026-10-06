@@ -1,0 +1,12 @@
+{
+  "entities": [
+    {
+      "domain": "iceberg",
+      "file": null,
+      "id": "catalog:iceberg:demo",
+      "kind": "catalog",
+      "line": null
+    }
+  ],
+  "relationships": []
+}

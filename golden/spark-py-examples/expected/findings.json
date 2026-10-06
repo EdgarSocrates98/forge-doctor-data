@@ -1,0 +1,198 @@
+[
+  {
+    "check_id": "AWS001",
+    "file": null,
+    "fingerprint": "5fab4cbb7c1789a4",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "AWS002",
+    "file": null,
+    "fingerprint": "10679ac97bf915c3",
+    "line": null,
+    "severity": "warning"
+  },
+  {
+    "check_id": "AWS003",
+    "file": null,
+    "fingerprint": "9907f7abe0b0b0a9",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "AWS004",
+    "file": null,
+    "fingerprint": "187ab1da4763c9d9",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "CI001",
+    "file": null,
+    "fingerprint": "0cb325d0289fb66d",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "DOCKER001",
+    "file": null,
+    "fingerprint": "bf2a460222517ce8",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "GIT001",
+    "file": null,
+    "fingerprint": "b3f9dc1de5f22a12",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "GLUE001",
+    "file": null,
+    "fingerprint": "16d08bd0509fa060",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "PY001",
+    "file": null,
+    "fingerprint": "bf8c2f0a829deba0",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "PY002",
+    "file": null,
+    "fingerprint": "a2e865a251367d42",
+    "line": null,
+    "severity": "warning"
+  },
+  {
+    "check_id": "PY004",
+    "file": null,
+    "fingerprint": "d9f9a29dc2e03400",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "PY005",
+    "file": null,
+    "fingerprint": "48df1b867efb74d3",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "PY006",
+    "file": null,
+    "fingerprint": "50ddde4835c70cf5",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "PY007",
+    "file": null,
+    "fingerprint": "04cd4f11df1aa40f",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "REP001",
+    "file": null,
+    "fingerprint": "33a76d4405a5381d",
+    "line": null,
+    "severity": "warning"
+  },
+  {
+    "check_id": "REP002",
+    "file": null,
+    "fingerprint": "3d719653fe98ce8b",
+    "line": null,
+    "severity": "warning"
+  },
+  {
+    "check_id": "REP004",
+    "file": null,
+    "fingerprint": "e611f9937049dd9f",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "REP005",
+    "file": null,
+    "fingerprint": "0328a57b8e551c1a",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "REP006",
+    "file": null,
+    "fingerprint": "79fb83ecd787e626",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "REP008",
+    "file": null,
+    "fingerprint": "5b330714830e6e77",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "SPARK001",
+    "file": "examples/src/main/python/sql/basic.py",
+    "fingerprint": "80730c90797dd03d",
+    "line": 157,
+    "severity": "warning"
+  },
+  {
+    "check_id": "SPARK001",
+    "file": "examples/src/main/python/wordcount.py",
+    "fingerprint": "47f0a47ca81d05fe",
+    "line": 37,
+    "severity": "warning"
+  },
+  {
+    "check_id": "SPARK008",
+    "file": "examples/src/main/python/sql/basic.py",
+    "fingerprint": "64bb93fc2f376e37",
+    "line": 157,
+    "severity": "info"
+  },
+  {
+    "check_id": "SPARK008",
+    "file": "examples/src/main/python/wordcount.py",
+    "fingerprint": "35d4d81180d1f7bb",
+    "line": 33,
+    "severity": "info"
+  },
+  {
+    "check_id": "SQL000",
+    "file": null,
+    "fingerprint": "605ed4484859555c",
+    "line": null,
+    "severity": "info"
+  },
+  {
+    "check_id": "SQL001",
+    "file": "examples/src/main/python/sql/basic.py",
+    "fingerprint": "600bbada7f15d6f6",
+    "line": 118,
+    "severity": "warning"
+  },
+  {
+    "check_id": "SQL001",
+    "file": "examples/src/main/python/sql/basic.py",
+    "fingerprint": "ce90cf59da509aee",
+    "line": 102,
+    "severity": "warning"
+  },
+  {
+    "check_id": "WARE001",
+    "file": null,
+    "fingerprint": "0b964f16f58ce27a",
+    "line": null,
+    "severity": "info"
+  }
+]

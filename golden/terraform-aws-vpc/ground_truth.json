@@ -1,0 +1,64 @@
+{
+  "entry": "terraform-aws-vpc",
+  "expected_edges": {
+    "kinds": []
+  },
+  "expected_entities": {
+    "domains": [
+      "aws"
+    ],
+    "kinds": [
+      "infrastructure_resource"
+    ]
+  },
+  "expected_findings": {
+    "check_id_prefixes": [
+      "TF"
+    ],
+    "check_ids": []
+  },
+  "expected_unknowns": [
+    {
+      "check_id": "TF002",
+      "reason": "child module declares required_providers in versions.tf; no provider block to evaluate"
+    }
+  ],
+  "forbidden_findings": {
+    "check_id_prefixes": [
+      "AIR",
+      "DBT",
+      "DBX",
+      "TRINO",
+      "SRCH",
+      "FLK",
+      "KFK",
+      "KIN",
+      "STREAM",
+      "SNOW",
+      "PARQ",
+      "DCTR",
+      "NEP",
+      "NEPA",
+      "NEPCD",
+      "NEPGT",
+      "CTM",
+      "DELTA",
+      "EMR",
+      "SFN",
+      "BQ",
+      "ATH",
+      "AZ",
+      "GCP",
+      "DRU",
+      "CH",
+      "PIN",
+      "LAM",
+      "DDBGT",
+      "DDBSTR",
+      "ICE"
+    ],
+    "check_ids": []
+  },
+  "notes": "terraform-aws-modules VPC module root - mainstream AWS data IaC.",
+  "schema_version": "1"
+}

@@ -1,0 +1,1027 @@
+{
+  "entities": [
+    {
+      "domain": "airflow",
+      "file": "dags/example_bash_operator.py",
+      "id": "task:airflow:",
+      "kind": "task",
+      "line": 53
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_bash_operator.py",
+      "id": "task:airflow:also_run_this",
+      "kind": "task",
+      "line": 60
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_bash_operator.py",
+      "id": "task:airflow:run_after_loop",
+      "kind": "task",
+      "line": 44
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_bash_operator.py",
+      "id": "task:airflow:run_this_last",
+      "kind": "task",
+      "line": 39
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_bash_operator.py",
+      "id": "task:airflow:this_will_skip",
+      "kind": "task",
+      "line": 68
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_bash_operator.py",
+      "id": "workflow:airflow:example_bash_operator",
+      "kind": "workflow",
+      "line": 30
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_branch_operator.py",
+      "id": "task:airflow:branching",
+      "kind": "task",
+      "line": 67
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_branch_operator.py",
+      "id": "task:airflow:branching_ext_python",
+      "kind": "task",
+      "line": 100
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_branch_operator.py",
+      "id": "task:airflow:branching_venv",
+      "kind": "task",
+      "line": 142
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_branch_operator.py",
+      "id": "task:airflow:join",
+      "kind": "task",
+      "line": 74
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_branch_operator.py",
+      "id": "task:airflow:join_ext_python",
+      "kind": "task",
+      "line": 109
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_branch_operator.py",
+      "id": "task:airflow:join_venv",
+      "kind": "task",
+      "line": 152
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_branch_operator.py",
+      "id": "task:airflow:run_this_first",
+      "kind": "task",
+      "line": 58
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_entry_gcs",
+      "kind": "task",
+      "line": 48
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_entry_gcs_result",
+      "kind": "task",
+      "line": 50
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_entry_gcs_result2",
+      "kind": "task",
+      "line": 54
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_entry_group",
+      "kind": "task",
+      "line": 38
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_entry_group_result",
+      "kind": "task",
+      "line": 40
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_entry_group_result2",
+      "kind": "task",
+      "line": 44
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_tag",
+      "kind": "task",
+      "line": 58
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_tag_result",
+      "kind": "task",
+      "line": 60
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_tag_result2",
+      "kind": "task",
+      "line": 62
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_tag_template",
+      "kind": "task",
+      "line": 64
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_tag_template_field",
+      "kind": "task",
+      "line": 74
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_tag_template_field_result",
+      "kind": "task",
+      "line": 78
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_tag_template_field_result2",
+      "kind": "task",
+      "line": 82
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_tag_template_result",
+      "kind": "task",
+      "line": 66
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:create_tag_template_result2",
+      "kind": "task",
+      "line": 70
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:delete_entry",
+      "kind": "task",
+      "line": 87
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:delete_entry_group",
+      "kind": "task",
+      "line": 90
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:delete_tag",
+      "kind": "task",
+      "line": 93
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:delete_tag_template",
+      "kind": "task",
+      "line": 100
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:delete_tag_template_field",
+      "kind": "task",
+      "line": 96
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:get_entry",
+      "kind": "task",
+      "line": 109
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:get_entry_group",
+      "kind": "task",
+      "line": 103
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:get_entry_group_result",
+      "kind": "task",
+      "line": 105
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:get_entry_result",
+      "kind": "task",
+      "line": 111
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:get_tag_template",
+      "kind": "task",
+      "line": 113
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:get_tag_template_result",
+      "kind": "task",
+      "line": 115
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:list_tags",
+      "kind": "task",
+      "line": 120
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:list_tags_result",
+      "kind": "task",
+      "line": 122
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:lookup_entry",
+      "kind": "task",
+      "line": 125
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:lookup_entry_result",
+      "kind": "task",
+      "line": 127
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:rename_tag_template_field",
+      "kind": "task",
+      "line": 130
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:search_catalog",
+      "kind": "task",
+      "line": 135
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:search_catalog_result",
+      "kind": "task",
+      "line": 137
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:update_entry",
+      "kind": "task",
+      "line": 142
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:update_tag",
+      "kind": "task",
+      "line": 144
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:update_tag_template",
+      "kind": "task",
+      "line": 146
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "task:airflow:update_tag_template_field",
+      "kind": "task",
+      "line": 148
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_complex.py",
+      "id": "workflow:airflow:example_complex",
+      "kind": "workflow",
+      "line": 30
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_python_operator.py",
+      "id": "task:airflow:external_python",
+      "kind": "task",
+      "line": 144
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_python_operator.py",
+      "id": "task:airflow:log_sql_query",
+      "kind": "task",
+      "line": 70
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_python_operator.py",
+      "id": "task:airflow:print_the_context",
+      "kind": "task",
+      "line": 63
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_python_operator.py",
+      "id": "task:airflow:virtualenv_python",
+      "kind": "task",
+      "line": 116
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_python_operator.py",
+      "id": "workflow:airflow:example_python_operator",
+      "kind": "workflow",
+      "line": 45
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_task_group.py",
+      "id": "task:airflow:end",
+      "kind": "task",
+      "line": 63
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_task_group.py",
+      "id": "task:airflow:start",
+      "kind": "task",
+      "line": 37
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_task_group.py",
+      "id": "task:airflow:task_1",
+      "kind": "task",
+      "line": 41
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_task_group.py",
+      "id": "task:airflow:task_2",
+      "kind": "task",
+      "line": 42
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_task_group.py",
+      "id": "task:airflow:task_3",
+      "kind": "task",
+      "line": 43
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_task_group.py",
+      "id": "task:airflow:task_4",
+      "kind": "task",
+      "line": 56
+    },
+    {
+      "domain": "airflow",
+      "file": "dags/example_task_group.py",
+      "id": "workflow:airflow:example_task_group",
+      "kind": "workflow",
+      "line": 30
+    }
+  ],
+  "relationships": [
+    {
+      "dst": "task:airflow:",
+      "kind": "depends_on",
+      "src": "task:airflow:"
+    },
+    {
+      "dst": "task:airflow:",
+      "kind": "depends_on",
+      "src": "task:airflow:join"
+    },
+    {
+      "dst": "task:airflow:",
+      "kind": "depends_on",
+      "src": "task:airflow:join_ext_python"
+    },
+    {
+      "dst": "task:airflow:",
+      "kind": "depends_on",
+      "src": "task:airflow:join_venv"
+    },
+    {
+      "dst": "task:airflow:",
+      "kind": "depends_on",
+      "src": "task:airflow:run_after_loop"
+    },
+    {
+      "dst": "task:airflow:",
+      "kind": "depends_on",
+      "src": "task:airflow:virtualenv_python"
+    },
+    {
+      "dst": "task:airflow:",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_bash_operator"
+    },
+    {
+      "dst": "task:airflow:",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_python_operator"
+    },
+    {
+      "dst": "task:airflow:also_run_this",
+      "kind": "depends_on",
+      "src": "task:airflow:run_this_last"
+    },
+    {
+      "dst": "task:airflow:also_run_this",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_bash_operator"
+    },
+    {
+      "dst": "task:airflow:create_entry_gcs",
+      "kind": "depends_on",
+      "src": "task:airflow:create_entry_gcs_result"
+    },
+    {
+      "dst": "task:airflow:create_entry_gcs",
+      "kind": "depends_on",
+      "src": "task:airflow:create_entry_gcs_result2"
+    },
+    {
+      "dst": "task:airflow:create_entry_gcs",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_entry"
+    },
+    {
+      "dst": "task:airflow:create_entry_gcs",
+      "kind": "depends_on",
+      "src": "task:airflow:get_entry"
+    },
+    {
+      "dst": "task:airflow:create_entry_gcs",
+      "kind": "depends_on",
+      "src": "task:airflow:lookup_entry"
+    },
+    {
+      "dst": "task:airflow:create_entry_gcs",
+      "kind": "depends_on",
+      "src": "task:airflow:update_entry"
+    },
+    {
+      "dst": "task:airflow:create_entry_gcs",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_entry_gcs_result",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_entry_gcs_result2",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_entry_group",
+      "kind": "depends_on",
+      "src": "task:airflow:create_entry_group_result"
+    },
+    {
+      "dst": "task:airflow:create_entry_group",
+      "kind": "depends_on",
+      "src": "task:airflow:create_entry_group_result2"
+    },
+    {
+      "dst": "task:airflow:create_entry_group",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_entry_group"
+    },
+    {
+      "dst": "task:airflow:create_entry_group",
+      "kind": "depends_on",
+      "src": "task:airflow:get_entry_group"
+    },
+    {
+      "dst": "task:airflow:create_entry_group",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_entry_group_result",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_entry_group_result2",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_tag",
+      "kind": "depends_on",
+      "src": "task:airflow:create_tag_result"
+    },
+    {
+      "dst": "task:airflow:create_tag",
+      "kind": "depends_on",
+      "src": "task:airflow:create_tag_result2"
+    },
+    {
+      "dst": "task:airflow:create_tag",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_tag"
+    },
+    {
+      "dst": "task:airflow:create_tag",
+      "kind": "depends_on",
+      "src": "task:airflow:list_tags"
+    },
+    {
+      "dst": "task:airflow:create_tag",
+      "kind": "depends_on",
+      "src": "task:airflow:update_tag"
+    },
+    {
+      "dst": "task:airflow:create_tag",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_tag_result",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_tag_result2",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_tag_template",
+      "kind": "depends_on",
+      "src": "task:airflow:create_tag_template_result"
+    },
+    {
+      "dst": "task:airflow:create_tag_template",
+      "kind": "depends_on",
+      "src": "task:airflow:create_tag_template_result2"
+    },
+    {
+      "dst": "task:airflow:create_tag_template",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_tag_template_field"
+    },
+    {
+      "dst": "task:airflow:create_tag_template",
+      "kind": "depends_on",
+      "src": "task:airflow:get_tag_template"
+    },
+    {
+      "dst": "task:airflow:create_tag_template",
+      "kind": "depends_on",
+      "src": "task:airflow:update_tag_template"
+    },
+    {
+      "dst": "task:airflow:create_tag_template",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_tag_template_field",
+      "kind": "depends_on",
+      "src": "task:airflow:create_tag_template_field_result"
+    },
+    {
+      "dst": "task:airflow:create_tag_template_field",
+      "kind": "depends_on",
+      "src": "task:airflow:create_tag_template_field_result2"
+    },
+    {
+      "dst": "task:airflow:create_tag_template_field",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_tag_template_field"
+    },
+    {
+      "dst": "task:airflow:create_tag_template_field",
+      "kind": "depends_on",
+      "src": "task:airflow:rename_tag_template_field"
+    },
+    {
+      "dst": "task:airflow:create_tag_template_field",
+      "kind": "depends_on",
+      "src": "task:airflow:update_tag_template_field"
+    },
+    {
+      "dst": "task:airflow:create_tag_template_field",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_tag_template_field_result",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_tag_template_field_result2",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_tag_template_result",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:create_tag_template_result2",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:delete_entry",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:delete_entry_group",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:delete_tag",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:delete_tag_template",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:delete_tag_template_field",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:end",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_task_group"
+    },
+    {
+      "dst": "task:airflow:external_python",
+      "kind": "depends_on",
+      "src": "task:airflow:virtualenv_python"
+    },
+    {
+      "dst": "task:airflow:external_python",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_python_operator"
+    },
+    {
+      "dst": "task:airflow:get_entry",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_entry"
+    },
+    {
+      "dst": "task:airflow:get_entry",
+      "kind": "depends_on",
+      "src": "task:airflow:get_entry_result"
+    },
+    {
+      "dst": "task:airflow:get_entry",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:get_entry_group",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_entry_group"
+    },
+    {
+      "dst": "task:airflow:get_entry_group",
+      "kind": "depends_on",
+      "src": "task:airflow:get_entry_group_result"
+    },
+    {
+      "dst": "task:airflow:get_entry_group",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:get_entry_group_result",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:get_entry_result",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:get_tag_template",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_tag_template"
+    },
+    {
+      "dst": "task:airflow:get_tag_template",
+      "kind": "depends_on",
+      "src": "task:airflow:get_tag_template_result"
+    },
+    {
+      "dst": "task:airflow:get_tag_template",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:get_tag_template_result",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:join",
+      "kind": "depends_on",
+      "src": "task:airflow:branching_ext_python"
+    },
+    {
+      "dst": "task:airflow:join_ext_python",
+      "kind": "depends_on",
+      "src": "task:airflow:branching_venv"
+    },
+    {
+      "dst": "task:airflow:list_tags",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_tag"
+    },
+    {
+      "dst": "task:airflow:list_tags",
+      "kind": "depends_on",
+      "src": "task:airflow:list_tags_result"
+    },
+    {
+      "dst": "task:airflow:list_tags",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:list_tags_result",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:log_sql_query",
+      "kind": "depends_on",
+      "src": "task:airflow:"
+    },
+    {
+      "dst": "task:airflow:log_sql_query",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_python_operator"
+    },
+    {
+      "dst": "task:airflow:lookup_entry",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_entry"
+    },
+    {
+      "dst": "task:airflow:lookup_entry",
+      "kind": "depends_on",
+      "src": "task:airflow:lookup_entry_result"
+    },
+    {
+      "dst": "task:airflow:lookup_entry",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:lookup_entry_result",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:print_the_context",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_python_operator"
+    },
+    {
+      "dst": "task:airflow:rename_tag_template_field",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_tag_template_field"
+    },
+    {
+      "dst": "task:airflow:rename_tag_template_field",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:run_after_loop",
+      "kind": "depends_on",
+      "src": "task:airflow:external_python"
+    },
+    {
+      "dst": "task:airflow:run_after_loop",
+      "kind": "depends_on",
+      "src": "task:airflow:log_sql_query"
+    },
+    {
+      "dst": "task:airflow:run_after_loop",
+      "kind": "depends_on",
+      "src": "task:airflow:run_this_last"
+    },
+    {
+      "dst": "task:airflow:run_after_loop",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_bash_operator"
+    },
+    {
+      "dst": "task:airflow:run_this_first",
+      "kind": "depends_on",
+      "src": "task:airflow:branching"
+    },
+    {
+      "dst": "task:airflow:run_this_last",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_bash_operator"
+    },
+    {
+      "dst": "task:airflow:search_catalog",
+      "kind": "depends_on",
+      "src": "task:airflow:search_catalog_result"
+    },
+    {
+      "dst": "task:airflow:search_catalog",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:search_catalog_result",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:start",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_task_group"
+    },
+    {
+      "dst": "task:airflow:task_1",
+      "kind": "depends_on",
+      "src": "task:airflow:task_2"
+    },
+    {
+      "dst": "task:airflow:task_1",
+      "kind": "depends_on",
+      "src": "task:airflow:task_3"
+    },
+    {
+      "dst": "task:airflow:task_1",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_task_group"
+    },
+    {
+      "dst": "task:airflow:task_2",
+      "kind": "depends_on",
+      "src": "task:airflow:task_4"
+    },
+    {
+      "dst": "task:airflow:task_2",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_task_group"
+    },
+    {
+      "dst": "task:airflow:task_3",
+      "kind": "depends_on",
+      "src": "task:airflow:task_4"
+    },
+    {
+      "dst": "task:airflow:task_3",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_task_group"
+    },
+    {
+      "dst": "task:airflow:task_4",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_task_group"
+    },
+    {
+      "dst": "task:airflow:this_will_skip",
+      "kind": "depends_on",
+      "src": "task:airflow:run_this_last"
+    },
+    {
+      "dst": "task:airflow:this_will_skip",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_bash_operator"
+    },
+    {
+      "dst": "task:airflow:this_will_skip",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:this_will_skip",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_task_group"
+    },
+    {
+      "dst": "task:airflow:update_entry",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_entry"
+    },
+    {
+      "dst": "task:airflow:update_entry",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:update_tag",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_tag"
+    },
+    {
+      "dst": "task:airflow:update_tag",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:update_tag_template",
+      "kind": "depends_on",
+      "src": "task:airflow:delete_tag_template"
+    },
+    {
+      "dst": "task:airflow:update_tag_template",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:update_tag_template_field",
+      "kind": "depends_on",
+      "src": "task:airflow:rename_tag_template_field"
+    },
+    {
+      "dst": "task:airflow:update_tag_template_field",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_complex"
+    },
+    {
+      "dst": "task:airflow:virtualenv_python",
+      "kind": "invokes",
+      "src": "workflow:airflow:example_python_operator"
+    }
+  ]
+}
