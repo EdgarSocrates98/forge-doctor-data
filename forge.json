@@ -1,0 +1,15 @@
+{
+  "forge_id": "forge-doctor-data",
+  "package": "forge_doctor_data",
+  "distribution": "forge-doctor-data",
+  "cli": "forge-doctor-data",
+  "python": ">=3.11",
+  "mcp_server_name": "forge-doctor-data",
+  "mcp_command": [
+    "forge-doctor-data",
+    "mcp"
+  ],
+  "extras": [
+    "mcp"
+  ]
+}
