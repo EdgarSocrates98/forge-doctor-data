@@ -1,3 +1,5 @@
+
+> Instalação portátil: [`docs/installation/quickstart.md`](docs/installation/quickstart.md) — clone → setup → install.
 <p align="center">
   <img src="docs/assets/logo.png" alt="Forge Doctor Data" width="440">
 </p>
