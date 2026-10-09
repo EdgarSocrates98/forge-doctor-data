@@ -42,6 +42,7 @@ def _spec() -> kit.ForgeSpec:
         state_dir=STATE_DIR,
         mcp_command=("forge-doctor-data", "mcp"),
         mcp_server_name="forge-doctor-data",
+        mcp_verify_tool="get_execution_baseline",
         version_cmd=("--version",),
         render_assets=_render_for,
         marker_files=("AGENTS.md", "CLAUDE.md"),
