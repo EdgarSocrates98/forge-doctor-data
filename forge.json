@@ -9,7 +9,5 @@
     "forge-doctor-data",
     "mcp"
   ],
-  "extras": [
-    "mcp"
-  ]
+  "extras": []
 }

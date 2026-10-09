@@ -31,6 +31,7 @@ from forge_doctor_data.cli import (  # noqa: F401 - import-time command registra
     iceberg,
     incident,
     inspect,
+    install_cmd,
     lab,
     lakeformation,
     misc,
@@ -165,7 +166,10 @@ _PANELS: dict[str, dict[str, str]] = {
         "Quality gates & supply chain",
     ),
     "Setup & integrations": dict.fromkeys(
-        ("init", "info", "doctor", "cache", "mcp", "lsp", "export", "version", "agent", "project"),
+        (
+            "init", "info", "doctor", "cache", "mcp", "lsp", "export",
+            "version", "agent", "project", "install",
+        ),
         "Setup & integrations",
     ),
 }
