@@ -71,6 +71,7 @@
           "iceberg",
           "incident",
           "inspect",
+          "install",
           "kafka",
           "kinesis",
           "knowledge",

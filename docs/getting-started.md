@@ -17,6 +17,37 @@ forge-doctor-data doctor              # self-check: config, plugins, cache, git
 forge-doctor-data version
 ```
 
+### Portable install (AI hosts)
+
+Clone-once / setup-once is covered by the repo bootstrap:
+
+```bash
+./setup.sh          # or .\setup.ps1 — creates a venv, installs the wheel,
+                    # registers ~/.forge/installations/forge-doctor-data.json
+```
+
+Then install the Forge into a consumer project, a workspace, or your user
+home so MCP-aware hosts (Claude, Devin, Codex, Copilot) can discover it:
+
+```bash
+forge-doctor-data install --dry-run            # plan only — writes nothing
+forge-doctor-data install --yes                # apply into the current repo
+forge-doctor-data install --scope user --yes   # or the user home
+forge-doctor-data install status               # drift report
+forge-doctor-data install doctor               # health checks + MCP probe
+forge-doctor-data install repair               # re-assert managed content
+forge-doctor-data install uninstall            # remove only owned assets
+forge-doctor-data install mcp-verify           # handshake the MCP server
+```
+
+Writes are approval-gated (`--yes`); `--dry-run` never mutates. Installed
+content lives in managed regions — a `.mcp.json` managed key plus an
+`AGENTS.md` marker block — tracked by a sha256 ledger under
+`.forge-doctor-data/install/`; repair re-asserts only managed bytes and
+uninstall preserves anything the ledger does not own. Forge Doctor Data
+ships no host skill/agent mirrors today — every `--profile` installs the
+same MCP + marker surface.
+
 ## 2. First scan
 
 ```bash

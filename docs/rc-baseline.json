@@ -28,9 +28,9 @@
     "scan_validated_envelope": 250
   },
   "git": {
-    "branch": "feat/rc-hardening-1.0",
-    "dirty": true,
-    "head": "f94f161d617e3d23f973a0e43d49ded42be826a2"
+    "branch": "feat/portable-installation",
+    "dirty": false,
+    "head": "74ac08f921b5e51f2cdc0cd05e42c4a28d451982"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -44,13 +44,13 @@
     "version": "1.0.0rc1"
   },
   "public_api": {
-    "public_api_sha256": "9337298979bbb5fed080b14d7bac51fb8dd027aeee89467de816a985b6537288",
+    "public_api_sha256": "8d6bd1966b08fe9f5f3fcb40f5978ca61d1d30048a0b06c2bedb0c3336aba8fb",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
   "schema_version": "1",
   "verification": {
     "coverage_percent": 81.04,
-    "test_count": 2596
+    "test_count": 2618
   }
 }
