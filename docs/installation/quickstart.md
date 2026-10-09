@@ -21,7 +21,7 @@ forge-doctor-data já estão instaladas.
 ## Verificar
 
 ```bash
-forge-doctor-data status
+forge-doctor-data install status
 forge-doctor-data doctor
 ```
 
