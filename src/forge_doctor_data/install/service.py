@@ -87,11 +87,18 @@ def _ctx(
 
 
 def _hosts(host: str) -> tuple[str, ...]:
+    """``all`` → todos; ``none``/vazio → opt-out explícito (nunca todos);
+    nome único ou csv → subconjunto validado (GAP-003)."""
     if host == "all":
         return HOSTS
-    if host not in HOSTS:
-        raise kit.InstallError(kit.E_HOST, f"host {host!r}; known: {list(HOSTS)} + all")
-    return (host,)
+    if not host or host == "none":
+        return ()
+    nomes = [h.strip() for h in host.split(",") if h.strip()]
+    desconhecidos = [h for h in nomes if h not in HOSTS]
+    if desconhecidos:
+        raise kit.InstallError(
+            kit.E_HOST, f"host {desconhecidos[0]!r}; known: {list(HOSTS)} + all,none")
+    return tuple(dict.fromkeys(nomes))
 
 
 def install(
