@@ -53,6 +53,13 @@ _Task-oriented guides and workflows._
 - [Instalação portátil — forge-doctor-data](installation/portable-installation.md)
 - [Instalação em workspace — forge-doctor-data](installation/workspace-installation.md)
 
+### learn/
+
+- [Forge Doctor Data — trilha de aprendizado](learn/README.md)
+- [Receita — rodar um subset de checks com a política certa](learn/recipes/checks-profiles.md)
+- [Receita — por que este finding disparou?](learn/recipes/explain-finding.md)
+- [Receita — o que está errado neste projeto de dados?](learn/recipes/scan-project.md)
+
 ## Reference
 
 _Command, contract, schema and tool references._
