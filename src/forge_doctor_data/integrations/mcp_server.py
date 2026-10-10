@@ -602,6 +602,10 @@ def serve(
     """
     stdin = stdin or sys.stdin
     stdout = stdout or sys.stdout
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is not None:
+            reconfigure(encoding="utf-8", errors="replace")
     resolved_root = root.resolve() if root is not None else None
     # Per-session negotiated adapter; modern surface until initialize says
     # otherwise (pre-initialize requests get the current protocol).
