@@ -1,0 +1,16 @@
+{
+  "forge_id": "forge-doctor-data",
+  "cli": "forge-doctor-data",
+  "parser": "typer:forge_doctor_data.cli:app",
+  "docs": [
+    "docs",
+    "README.md"
+  ],
+  "steps": {
+    "inventory": true,
+    "manifest": true,
+    "index": true,
+    "hub": false,
+    "final_report": true
+  }
+}
