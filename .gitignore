@@ -40,3 +40,5 @@ Thumbs.db
 graphify-out/
 .tokensave/
 .pytest-tmp/
+
+uv.lock
