@@ -20,7 +20,7 @@ app = typer.Typer(
         "forge-doctor-data checks  |  forge-doctor-data explain <CHECK-ID>\n\n"
         "Docs & issues: https://github.com/EdgarSocrates98/forge-doctor-data"
     ),
-    no_args_is_help=True,
+    invoke_without_command=True,
     add_completion=True,
     context_settings={"help_option_names": ["-h", "--help"]},
 )
@@ -34,8 +34,25 @@ def _version_callback(value: bool) -> None:
 
 @app.callback()
 def _main(
+    ctx: typer.Context,
     version: Annotated[
         bool, typer.Option("--version", callback=_version_callback, is_eager=True)
     ] = False,
 ) -> None:
     """Deterministic diagnostics for data engineering projects."""
+    if ctx.invoked_subcommand is None:
+        import sys as _sys
+
+        if _sys.stdin.isatty() and _sys.stdout.isatty():
+            try:
+                from forge_doctor_data.ui.home import run_home
+                from forge_doctor_data.ui.kit import NonInteractive
+
+                try:
+                    raise typer.Exit(run_home())
+                except NonInteractive:
+                    pass
+            except ImportError:
+                pass
+        typer.echo(ctx.get_help())
+        raise typer.Exit()
