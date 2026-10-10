@@ -70,6 +70,7 @@ def _ctx(
     hosts: tuple[str, ...],
     profile: str,
     dry_run: bool,
+    components: tuple[str, ...] | None = None,
 ) -> kit.InstallContext:
     spec = _spec()
     target = kit.resolve_scope(spec, scope, Path.cwd(), root)
@@ -81,6 +82,7 @@ def _ctx(
         profile=profile,
         hosts=hosts,
         dry_run=dry_run,
+        options=kit.component_options(profile, components),
     )
 
 
@@ -100,12 +102,13 @@ def install(
     profile: str = "recommended",
     yes: bool = False,
     dry_run: bool = False,
+    components: tuple[str, ...] | None = None,
 ) -> dict[str, Any]:
     """Apply the installation to the resolved target. Without ``yes`` or
     ``dry_run`` writes are refused — the plan is the contract."""
     if profile not in PROFILES:
         raise kit.InstallError(kit.E_PROFILE, f"profile {profile!r}; {PROFILES}")
-    ctx = _ctx(scope, root, _hosts(host), profile, dry_run)
+    ctx = _ctx(scope, root, _hosts(host), profile, dry_run, components=components)
     state = ctx.state_dir
     with kit.acquire_lock(state):
         receipt = kit.apply_install(ctx, approved=yes)
