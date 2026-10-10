@@ -4,7 +4,7 @@
 |---|---|
 | repository | `forge-doctor-data` |
 | branch | `feat/docs-evolution` |
-| commit | `8647239` |
+| commit | `11b646a` |
 | docs inventoried | 369 (excl. GENERATED mirrors: 362; vendored upstream: 0) |
 
 ## Review levels (honest)
