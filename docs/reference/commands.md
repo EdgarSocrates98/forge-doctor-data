@@ -43,7 +43,7 @@ Generated from the real CLI parser by `doc_inventory.py` + `doc_reference.py`. D
 - [`git`](#git) — 1 command(s)
 - [`glue`](#glue) — 1 command(s)
 - [`golden`](#golden) — 4 command(s)
-- [`graph`](#graph) — 5 command(s)
+- [`graph`](#graph) — 7 command(s)
 - [`history`](#history) — 3 command(s)
 - [`iac`](#iac) — 1 command(s)
 - [`iceberg`](#iceberg) — 6 command(s)
@@ -1913,6 +1913,44 @@ forge-doctor-data graph traversals [path]
 _free notes — errors, examples, next steps (hand-written, preserved)_
 <!-- keep:end -->
 
+### `graph ui`
+
+Open the local Graph Studio explorer for this project's evidence graph.
+
+**Syntax**
+
+```text
+forge-doctor-data graph ui [path] [no_browser] [port]
+```
+
+| argument/flag | required | default | description |
+|---|---|---|---|
+| `path` | no | — | Project root. |
+| `no_browser` | no | — | Serve without opening a browser (SSH/remote). |
+| `port` | no | — | Port to bind (default ephemeral). |
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
+### `graph view`
+
+Emit the ForgeGraphView/v1 document (Graph Studio contract).
+
+**Syntax**
+
+```text
+forge-doctor-data graph view [path]
+```
+
+| argument/flag | required | default | description |
+|---|---|---|---|
+| `path` | no | — | Project root. |
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
 ## history
 
 ### `history`
@@ -2854,7 +2892,7 @@ Install Forge Doctor Data into a project, workspace or the user home; manage the
 **Syntax**
 
 ```text
-forge-doctor-data install [scope] [host] [profile] [root] [yes] [dry_run]
+forge-doctor-data install [scope] [host] [profile] [root] [yes] [dry_run] [components]
 ```
 
 | argument/flag | required | default | description |
@@ -2865,6 +2903,7 @@ forge-doctor-data install [scope] [host] [profile] [root] [yes] [dry_run]
 | `root` | no | — | Target root (default: VCS root or cwd). |
 | `yes` | no | — | Explicit approval; without it only --dry-run is allowed. |
 | `dry_run` | no | — | Plan only — writes nothing. |
+| `components` | no | — | Optional components csv: skills,agents,mcp,tui,graph-studio. |
 
 <!-- keep:start -->
 _free notes — errors, examples, next steps (hand-written, preserved)_
