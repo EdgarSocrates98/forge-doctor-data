@@ -228,3 +228,15 @@ def test_cli_refusal_document(target: Path) -> None:
     assert res.exit_code == 1
     doc = json.loads(res.output)
     assert doc["error"]["kind"] == "FORGE-INSTALL-PLAN-NOT-APPROVED"
+
+
+def test_hosts_none_e_csv():
+    """GAP-003: `none` nunca vira `all`; csv subconjunto e validado."""
+    import pytest
+    from forge_doctor_data.install.service import _hosts, HOSTS
+    assert _hosts("all") == HOSTS
+    assert _hosts("none") == ()
+    assert _hosts("") == ()
+    assert set(_hosts("claude,devin")) == {"claude", "devin"}
+    with pytest.raises(Exception):
+        _hosts("nope")
