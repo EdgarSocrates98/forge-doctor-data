@@ -1,0 +1,362 @@
+{
+  "advise": {
+    "why": "ordena findings numa lista de ações citadas (severidade+confiança+cluster+segurança do fix)",
+    "when": "depois do scan: priorizar o que atacar primeiro com justificativa"
+  },
+  "agent": {
+    "why": "contexto de agente determinístico e com orçamento",
+    "when": "montar contexto econômico para um host/agente"
+  },
+  "airflow": {
+    "why": "inteligência Airflow: inspeciona DAGs, tasks, sensors",
+    "when": "revisar definição de DAGs Airflow com evidência"
+  },
+  "analytical": {
+    "why": "engines OLAP real-time: inspeção ClickHouse/Pinot/Druid",
+    "when": "perguntas sobre motores analíticos detectados"
+  },
+  "architecture": {
+    "why": "detecta drift de arquitetura",
+    "when": "verificar se a arquitetura divergiu do declarado"
+  },
+  "athena": {
+    "why": "inteligência de workgroup/query Athena",
+    "when": "revisar queries e workgroups Athena com evidência"
+  },
+  "aws": {
+    "why": "roda só checks da categoria aws",
+    "when": "escopo estreito de checks AWS no scan"
+  },
+  "bench": {
+    "why": "benchmark de performance e escala",
+    "when": "medir a própria ferramenta ou comparar runs"
+  },
+  "bigquery": {
+    "why": "inteligência BigQuery: inspeciona o modelo do vendor",
+    "when": "revisar datasets/jobs BigQuery com evidência"
+  },
+  "cache": {
+    "why": "inspeciona/limpa o cache de análise incremental",
+    "when": "ver o que está cacheado ou forçar re-análise"
+  },
+  "capabilities": {
+    "why": "registry de capabilities da plataforma",
+    "when": "perguntar o que o doctor declara atender"
+  },
+  "catalog": {
+    "why": "catálogos de metadados: DataHub/OpenMetadata/Glue/Unity declarados",
+    "when": "revisar o estate de catálogos declarado"
+  },
+  "checks": {
+    "why": "lista todo check_id registrado, categoria e título",
+    "when": "descobrir quais checks existem antes de rodar"
+  },
+  "ci": {
+    "why": "roda só checks da categoria ci",
+    "when": "escopo de checks de CI/CD"
+  },
+  "cloud": {
+    "why": "abstrações multi-cloud: visão vendor-neutral sobre serviços detectados",
+    "when": "pergunta cross-cloud sem amarrar a um vendor"
+  },
+  "collector": {
+    "why": "valida bundles de evidência normalizados",
+    "when": "conferir um bundle de coleta antes de analisar"
+  },
+  "compatibility": {
+    "why": "detecta runtimes e mostra riscos de migração Glue (knowledge packs)",
+    "when": "avaliar compatibilidade/migração com fonte versionada"
+  },
+  "contract": {
+    "why": "arquivos de contrato da plataforma",
+    "when": "inspecionar contratos versionados"
+  },
+  "contracts": {
+    "why": "contratos de artefatos publicados (bundles de handoff, schemas)",
+    "when": "verificar handoffs contra schema publicado"
+  },
+  "controlm": {
+    "why": "inteligência Control-M: inspeciona workflows-as-code",
+    "when": "revisar jobs Control-M declarados"
+  },
+  "data-model": {
+    "why": "inspeção de estilo de acesso cross-domain",
+    "when": "perguntas de modelo de acesso a dados"
+  },
+  "databricks": {
+    "why": "inteligência Databricks: workspace/job/UC",
+    "when": "revisar definições Databricks com evidência"
+  },
+  "dbt": {
+    "why": "inteligência dbt: inspeciona o modelo de transformação",
+    "when": "revisar modelos, testes e lineage dbt"
+  },
+  "delta": {
+    "why": "inteligência Delta Lake: features e operações",
+    "when": "revisar tabelas Delta e operações declaradas"
+  },
+  "dependencies": {
+    "why": "roda só checks de dependências",
+    "when": "escopo de checks de dependências do projeto"
+  },
+  "diagnose": {
+    "why": "fingerprint de erros de log contra assinaturas conhecidas (offline)",
+    "when": "classificar um erro de log sem chamar nada externo"
+  },
+  "diff": {
+    "why": "diff de findings: NEW em <novo> vs <velho>, ou range git base...head",
+    "when": "comparar findings entre dois scans ou branches"
+  },
+  "docker": {
+    "why": "roda só checks de docker",
+    "when": "escopo de checks de Docker/imagem"
+  },
+  "doctor": {
+    "why": "self-check: config, plugins, cache, git, saúde do ambiente",
+    "when": "primeira linha de diagnóstico da própria ferramenta"
+  },
+  "dynamodb": {
+    "why": "inteligência DynamoDB",
+    "when": "revisar tabelas/acesso DynamoDB com evidência"
+  },
+  "emr": {
+    "why": "inteligência EMR profunda (EC2/Serverless/EKS)",
+    "when": "revisar clusters/jobs EMR por superfície"
+  },
+  "explain": {
+    "why": "explica o que um check procura, quando é OK e como corrigir",
+    "when": "entender um check antes de rodar ou de agir sobre o finding"
+  },
+  "export": {
+    "why": "emite bundle portátil de handoff: findings+graph+capabilities+plans",
+    "when": "transferir o resultado para outro host/forja"
+  },
+  "fix": {
+    "why": "preview (ou aplica) fixes determinísticos seguros para findings",
+    "when": "corrigir findings com fix seguro — preview antes de aplicar"
+  },
+  "fleet": {
+    "why": "inteligência de frota/estate sobre manifesto multi-repo",
+    "when": "perguntas agregadas sobre muitos repos"
+  },
+  "flink": {
+    "why": "inteligência Flink profunda",
+    "when": "revisar jobs/checkpoints Flink"
+  },
+  "git": {
+    "why": "roda só checks de git",
+    "when": "escopo de checks de repositório git"
+  },
+  "glue": {
+    "why": "roda só checks de glue",
+    "when": "escopo de checks AWS Glue"
+  },
+  "golden": {
+    "why": "repositórios golden — suítes de regressão por snapshot",
+    "when": "validar a ferramenta contra casos conhecidos"
+  },
+  "graph": {
+    "why": "inteligência de grafo",
+    "when": "perguntas de dependência/grafo da plataforma"
+  },
+  "history": {
+    "why": "snapshots gravados de scan: list, diff, trend",
+    "when": "comparar scans ao longo do tempo"
+  },
+  "iac": {
+    "why": "roda só checks de iac",
+    "when": "escopo de checks de infraestrutura como código"
+  },
+  "iceberg": {
+    "why": "inteligência Iceberg: inspeção, manutenção, compatibilidade",
+    "when": "revisar tabelas Iceberg e sua saúde"
+  },
+  "incident": {
+    "why": "inteligência de incidente com dependência (offline)",
+    "when": "correlacionar evidência de incidente já exportada"
+  },
+  "info": {
+    "why": "estatísticas rápidas do projeto — arquivos, linguagens, tooling; sem checks",
+    "when": "visão rápida de um projeto desconhecido"
+  },
+  "init": {
+    "why": "scaffold de projeto Python novo (pyproject, .gitignore, README, src/, tests/)",
+    "when": "começar um projeto novo com estrutura padrão"
+  },
+  "inspect": {
+    "why": "inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)",
+    "when": "inspecionar um domínio específico diretamente"
+  },
+  "install": {
+    "why": "instala Forge Doctor Data em projeto, workspace ou home; gerencia o ciclo de vida",
+    "when": "ativar o doctor num escopo governado"
+  },
+  "kafka": {
+    "why": "inteligência Kafka/MSK profunda",
+    "when": "revisar tópicos/consumers Kafka"
+  },
+  "kinesis": {
+    "why": "inteligência Kinesis profunda",
+    "when": "revisar streams/shards Kinesis"
+  },
+  "knowledge": {
+    "why": "proveniência de knowledge packs",
+    "when": "consultar fontes versionadas de conhecimento"
+  },
+  "lab": {
+    "why": "Forge Lab — cenários reproduzíveis com ground truth",
+    "when": "validar/criar cenários offline contra verdade conhecida"
+  },
+  "lakeformation": {
+    "why": "inteligência de governança Lake Formation",
+    "when": "revisar camadas de acesso Lake Formation"
+  },
+  "lambda": {
+    "why": "inteligência de funções Lambda e triggers",
+    "when": "revisar funções Lambda e gatilhos declarados"
+  },
+  "lineage": {
+    "why": "lineage estático: quais jobs leem/escrevem quais datasets",
+    "when": "mapear fluxo de dados entre jobs e datasets"
+  },
+  "lsp": {
+    "why": "servidor LSP stdio (extra opcional 'lsp')",
+    "when": "integrar o doctor a um editor via LSP"
+  },
+  "mcp": {
+    "why": "servidor MCP zero-dep (JSON-RPC stdio) para integrações de agente",
+    "when": "servir o doctor via MCP a hosts"
+  },
+  "migrate": {
+    "why": "inteligência de migração",
+    "when": "avaliar migrações entre plataformas/runtimes"
+  },
+  "neptune": {
+    "why": "inteligência Neptune Database + Analytics",
+    "when": "revisar clusters/queries Neptune"
+  },
+  "ontology": {
+    "why": "vocabulário canônico da plataforma (entity/rel kinds, planes, domains)",
+    "when": "conferir o vocabulário antes de depender dele"
+  },
+  "optimize": {
+    "why": "candidatos de otimização + oportunidades multi-objetivo",
+    "when": "depois do scan: priorizar otimizações com evidência"
+  },
+  "parquet": {
+    "why": "inteligência Parquet",
+    "when": "revisar layout/datasets Parquet"
+  },
+  "platform": {
+    "why": "grafo canônico da plataforma",
+    "when": "consultar o grafo materializado da plataforma"
+  },
+  "plugins": {
+    "why": "inspeciona e valida plugins externos",
+    "when": "verificar plugins instalados e conformidade"
+  },
+  "policy": {
+    "why": "packs de política de organização",
+    "when": "avaliar políticas organizacionais declaradas"
+  },
+  "project": {
+    "why": "auto-inspeção do projeto: status gerado e checks de doc-drift",
+    "when": "verificar o próprio projeto e drift de documentação"
+  },
+  "python": {
+    "why": "roda só checks de python",
+    "when": "escopo de checks de código Python"
+  },
+  "quality": {
+    "why": "qualidade de dado: Deequ/GX/SodaCL/dbt suites, cobertura, gate wiring",
+    "when": "revisar onde e como o dado é validado"
+  },
+  "redshift": {
+    "why": "inteligência Redshift: inspeciona o modelo do vendor",
+    "when": "revisar clusters/queries Redshift"
+  },
+  "reliability": {
+    "why": "inteligência de SLO e caminho crítico end-to-end",
+    "when": "avaliar confiabilidade com evidência"
+  },
+  "remediate": {
+    "why": "planos de remediação determinísticos para findings/root causes",
+    "when": "obter o plano de correção de um finding"
+  },
+  "repo": {
+    "why": "roda só checks de repository",
+    "when": "escopo de checks do repositório"
+  },
+  "root-cause": {
+    "why": "correlaciona findings de scan com evidência de runtime em clusters causais",
+    "when": "priorizar pela causa, não pela ordem de emissão"
+  },
+  "runtime": {
+    "why": "evidência de runtime offline (artefatos exportados)",
+    "when": "analisar evidência de runtime exportada"
+  },
+  "sbom": {
+    "why": "emite SBOM CycloneDX 1.5: deps, plugins, knowledge packs, imagens",
+    "when": "inventário de suprimentos para auditoria/supply chain"
+  },
+  "scan": {
+    "why": "scaneia um projeto atrás de problemas de engenharia de dados",
+    "when": "primeira passada num repo — produz findings"
+  },
+  "schema": {
+    "why": "extração e diff de schema",
+    "when": "extrair ou comparar schemas"
+  },
+  "search": {
+    "why": "plataformas de busca: índices, políticas, domínios OpenSearch/Elasticsearch",
+    "when": "revisar serviços de busca detectados"
+  },
+  "snowflake": {
+    "why": "inteligência Snowflake: inspeciona o modelo do vendor",
+    "when": "revisar warehouses/queries Snowflake"
+  },
+  "spark": {
+    "why": "checks Spark e diagnóstico de runtime",
+    "when": "escopo de checks Spark ou diagnóstico de runtime Spark"
+  },
+  "stepfunctions": {
+    "why": "inteligência Step Functions",
+    "when": "revisar state machines e execuções"
+  },
+  "streaming": {
+    "why": "inteligência de streaming",
+    "when": "revisar plataformas de streaming detectadas"
+  },
+  "suppressions": {
+    "why": "audita suppressions configuradas: ACTIVE/EXPIRED/UNUSED",
+    "when": "verificar o que está suprimido e por quê"
+  },
+  "terraform": {
+    "why": "inteligência Terraform",
+    "when": "revisar HCL/plan de plataformas de dados"
+  },
+  "trace": {
+    "why": "explica UM finding: evidência, símbolo, cadeia de receiver",
+    "when": "entender um finding específico a fundo"
+  },
+  "trino": {
+    "why": "inteligência Trino: catálogos, coordinator, lineage",
+    "when": "revisar clusters/queries Trino"
+  },
+  "twin": {
+    "why": "digital twin formal: snapshot validado da plataforma",
+    "when": "materializar um twin validado para análise"
+  },
+  "version": {
+    "why": "imprime a versão instalada do Forge Doctor Data",
+    "when": "confirmar qual build está rodando"
+  },
+  "what-if": {
+    "why": "avalia uma mudança hipotética sem executá-la",
+    "when": "ensaiar impacto de mudança sem mutar nada"
+  },
+  "workspace": {
+    "why": "descobre e orquestra sub-projetos",
+    "when": "operar multi-projeto num escopo declarado"
+  }
+}

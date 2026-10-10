@@ -1,6 +1,8 @@
 # `forge-doctor-data` command reference
 
-Generated from the real CLI parser by `doc_inventory.py` + `doc_reference.py`. Do not hand-edit generated sections — write between `keep:start`/`keep:end` markers. Status vocabulary: `available` unless marked otherwise.
+Generated from the real CLI parser by `doc_inventory.py` + `doc_reference.py`. Do not hand-edit generated sections — write between `keep:start`/`keep:end` markers. `por que`/`quando` lines come from the curated `command-rationale.json` — edit rationale there, never here. Status vocabulary: `available` unless marked otherwise.
+
+Rationale coverage: **90/90** first-level groups curated in `command-rationale.json`.
 
 ## Groups
 
@@ -99,11 +101,14 @@ Generated from the real CLI parser by `doc_inventory.py` + `doc_reference.py`. D
 
 ### `advise`
 
-Rank findings into a cited action list.
+**para que:** Rank findings into a cited action list.
 
 Score = severity + confidence + cluster + fix-safety + plan + policy
 + blast radius; every row cites fingerprints and entity ids.
 Advisory only - apply via ``fix``/``remediate`` commands.
+
+- **por que:** ordena findings numa lista de ações citadas (severidade+confiança+cluster+segurança do fix)
+- **quando usar:** depois do scan: priorizar o que atacar primeiro com justificativa
 
 **Syntax**
 
@@ -125,7 +130,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `agent`
 
-Deterministic, budget-aware agent context.
+**para que:** Deterministic, budget-aware agent context.
+
+- **por que:** contexto de agente determinístico e com orçamento
+- **quando usar:** montar contexto econômico para um host/agente
 
 **Syntax**
 
@@ -139,7 +147,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `agent context`
 
-Emit summary-first context constrained by an approximate token budget.
+**para que:** Emit summary-first context constrained by an approximate token budget.
+
+- **por que:** contexto de agente determinístico e com orçamento
+- **quando usar:** montar contexto econômico para um host/agente
 
 **Syntax**
 
@@ -159,7 +170,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `agent delta`
 
-Emit added/removed/unchanged finding fingerprints.
+**para que:** Emit added/removed/unchanged finding fingerprints.
+
+- **por que:** contexto de agente determinístico e com orçamento
+- **quando usar:** montar contexto econômico para um host/agente
 
 **Syntax**
 
@@ -179,7 +193,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `agent evidence`
 
-Resolve one lazy evidence reference.
+**para que:** Resolve one lazy evidence reference.
+
+- **por que:** contexto de agente determinístico e com orçamento
+- **quando usar:** montar contexto econômico para um host/agente
 
 **Syntax**
 
@@ -199,7 +216,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `agent manifest`
 
-Emit compact domains, risks, capabilities, and evidence references.
+**para que:** Emit compact domains, risks, capabilities, and evidence references.
+
+- **por que:** contexto de agente determinístico e com orçamento
+- **quando usar:** montar contexto econômico para um host/agente
 
 **Syntax**
 
@@ -220,7 +240,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `airflow`
 
-Airflow intelligence: inspect DAGs, tasks, sensors.
+**para que:** Airflow intelligence: inspect DAGs, tasks, sensors.
+
+- **por que:** inteligência Airflow: inspeciona DAGs, tasks, sensors
+- **quando usar:** revisar definição de DAGs Airflow com evidência
 
 **Syntax**
 
@@ -234,7 +257,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `airflow inspect`
 
-Summarize the project's Airflow surface from the semantic model.
+**para que:** Summarize the project's Airflow surface from the semantic model.
+
+- **por que:** inteligência Airflow: inspeciona DAGs, tasks, sensors
+- **quando usar:** revisar definição de DAGs Airflow com evidência
 
 **Syntax**
 
@@ -254,7 +280,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `analytical`
 
-Real-time OLAP engines: ClickHouse / Pinot / Druid inspection.
+**para que:** Real-time OLAP engines: ClickHouse / Pinot / Druid inspection.
+
+- **por que:** engines OLAP real-time: inspeção ClickHouse/Pinot/Druid
+- **quando usar:** perguntas sobre motores analíticos detectados
 
 **Syntax**
 
@@ -268,7 +297,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `analytical inspect`
 
-Print the analytical-engine model: tables, engines, schemas, observed.
+**para que:** Print the analytical-engine model: tables, engines, schemas, observed.
+
+- **por que:** engines OLAP real-time: inspeção ClickHouse/Pinot/Druid
+- **quando usar:** perguntas sobre motores analíticos detectados
 
 **Syntax**
 
@@ -288,7 +320,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `architecture`
 
-Architecture drift detection.
+**para que:** Architecture drift detection.
+
+- **por que:** detecta drift de arquitetura
+- **quando usar:** verificar se a arquitetura divergiu do declarado
 
 **Syntax**
 
@@ -302,7 +337,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `architecture drift`
 
-Compare the platform contract against code, IaC, and runtime.
+**para que:** Compare the platform contract against code, IaC, and runtime.
+
+- **por que:** detecta drift de arquitetura
+- **quando usar:** verificar se a arquitetura divergiu do declarado
 
 **Syntax**
 
@@ -325,7 +363,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `athena`
 
-Athena workgroup/query intelligence.
+**para que:** Athena workgroup/query intelligence.
+
+- **por que:** inteligência de workgroup/query Athena
+- **quando usar:** revisar queries e workgroups Athena com evidência
 
 **Syntax**
 
@@ -338,6 +379,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 <!-- keep:end -->
 
 ### `athena findings`
+
+- **por que:** inteligência de workgroup/query Athena
+- **quando usar:** revisar queries e workgroups Athena com evidência
 
 **Syntax**
 
@@ -355,7 +399,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `athena inspect`
 
-Workgroups, catalogs, named queries, SQL ops, boto3 evidence.
+**para que:** Workgroups, catalogs, named queries, SQL ops, boto3 evidence.
+
+- **por que:** inteligência de workgroup/query Athena
+- **quando usar:** revisar queries e workgroups Athena com evidência
 
 **Syntax**
 
@@ -375,7 +422,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `aws`
 
-Run only aws checks.
+**para que:** Run only aws checks.
+
+- **por que:** roda só checks da categoria aws
+- **quando usar:** escopo estreito de checks AWS no scan
 
 **Syntax**
 
@@ -412,7 +462,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `bench`
 
-Performance & scale benchmark.
+**para que:** Performance & scale benchmark.
+
+- **por que:** benchmark de performance e escala
+- **quando usar:** medir a própria ferramenta ou comparar runs
 
 **Syntax**
 
@@ -426,7 +479,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `bench run`
 
-Run the benchmark on a project or a generated synthetic corpus.
+**para que:** Run the benchmark on a project or a generated synthetic corpus.
+
+- **por que:** benchmark de performance e escala
+- **quando usar:** medir a própria ferramenta ou comparar runs
 
 **Syntax**
 
@@ -450,7 +506,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `bigquery`
 
-BigQuery intelligence: inspect the vendor model.
+**para que:** BigQuery intelligence: inspect the vendor model.
+
+- **por que:** inteligência BigQuery: inspeciona o modelo do vendor
+- **quando usar:** revisar datasets/jobs BigQuery com evidência
 
 **Syntax**
 
@@ -464,7 +523,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `bigquery inspect`
 
-Print the BigQuery model: datasets, relations, slots, exports.
+**para que:** Print the BigQuery model: datasets, relations, slots, exports.
+
+- **por que:** inteligência BigQuery: inspeciona o modelo do vendor
+- **quando usar:** revisar datasets/jobs BigQuery com evidência
 
 **Syntax**
 
@@ -484,7 +546,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `cache`
 
-Inspect or clear the incremental analysis cache. Bare: Show cache statistics for the project.
+**para que:** Inspect or clear the incremental analysis cache. Bare: Show cache statistics for the project.
+
+- **por que:** inspeciona/limpa o cache de análise incremental
+- **quando usar:** ver o que está cacheado ou forçar re-análise
 
 **Syntax**
 
@@ -502,7 +567,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `cache clean`
 
-Delete the incremental analysis cache.
+**para que:** Delete the incremental analysis cache.
+
+- **por que:** inspeciona/limpa o cache de análise incremental
+- **quando usar:** ver o que está cacheado ou forçar re-análise
 
 **Syntax**
 
@@ -522,7 +590,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `capabilities`
 
-Platform capability registry.
+**para que:** Platform capability registry.
+
+- **por que:** registry de capabilities da plataforma
+- **quando usar:** perguntar o que o doctor declara atender
 
 **Syntax**
 
@@ -536,7 +607,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `capabilities explain`
 
-Evaluate one capability in context and show status + provenance.
+**para que:** Evaluate one capability in context and show status + provenance.
+
+- **por que:** registry de capabilities da plataforma
+- **quando usar:** perguntar o que o doctor declara atender
 
 **Syntax**
 
@@ -559,11 +633,14 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `capabilities graph`
 
-Render the capability → evidence subgraph for a project.
+**para que:** Render the capability → evidence subgraph for a project.
 
 Capabilities observed in the project evaluate against the versions
 its entities declare; each edge carries the deciding pack entry,
 matched when-clause, and (for unknowns) the missing evidence.
+
+- **por que:** registry de capabilities da plataforma
+- **quando usar:** perguntar o que o doctor declara atender
 
 **Syntax**
 
@@ -582,11 +659,14 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `capabilities list`
 
-List every capability fact by platform with its headline status.
+**para que:** List every capability fact by platform with its headline status.
 
 ``--json`` emits ``{platform: {capability: status}}``; with
 ``--provenance`` each row becomes ``{"status", "provenance"}``
 carrying the deciding pack entry, matched when-clause, and source.
+
+- **por que:** registry de capabilities da plataforma
+- **quando usar:** perguntar o que o doctor declara atender
 
 **Syntax**
 
@@ -607,7 +687,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `catalog`
 
-Metadata catalogs: DataHub/OpenMetadata/Glue/Unity declared estate.
+**para que:** Metadata catalogs: DataHub/OpenMetadata/Glue/Unity declared estate.
+
+- **por que:** catálogos de metadados: DataHub/OpenMetadata/Glue/Unity declarados
+- **quando usar:** revisar o estate de catálogos declarado
 
 **Syntax**
 
@@ -621,7 +704,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `catalog inspect`
 
-Print the declared catalog: datasets, owners, lineage, recipes.
+**para que:** Print the declared catalog: datasets, owners, lineage, recipes.
+
+- **por que:** catálogos de metadados: DataHub/OpenMetadata/Glue/Unity declarados
+- **quando usar:** revisar o estate de catálogos declarado
 
 **Syntax**
 
@@ -641,7 +727,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `checks`
 
-List every registered check id, category and title.
+**para que:** List every registered check id, category and title.
+
+- **por que:** lista todo check_id registrado, categoria e título
+- **quando usar:** descobrir quais checks existem antes de rodar
 
 **Syntax**
 
@@ -657,7 +746,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `ci`
 
-Run only ci checks.
+**para que:** Run only ci checks.
+
+- **por que:** roda só checks da categoria ci
+- **quando usar:** escopo de checks de CI/CD
 
 **Syntax**
 
@@ -694,7 +786,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `cloud`
 
-Multi-cloud abstractions: vendor-neutral view over detected services.
+**para que:** Multi-cloud abstractions: vendor-neutral view over detected services.
+
+- **por que:** abstrações multi-cloud: visão vendor-neutral sobre serviços detectados
+- **quando usar:** pergunta cross-cloud sem amarrar a um vendor
 
 **Syntax**
 
@@ -708,7 +803,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `cloud inspect`
 
-Print the abstraction view: services by kind, cloud, parity gaps.
+**para que:** Print the abstraction view: services by kind, cloud, parity gaps.
+
+- **por que:** abstrações multi-cloud: visão vendor-neutral sobre serviços detectados
+- **quando usar:** pergunta cross-cloud sem amarrar a um vendor
 
 **Syntax**
 
@@ -728,7 +826,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `collector`
 
-Validate normalized evidence bundles.
+**para que:** Validate normalized evidence bundles.
+
+- **por que:** valida bundles de evidência normalizados
+- **quando usar:** conferir um bundle de coleta antes de analisar
 
 **Syntax**
 
@@ -742,7 +843,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `collector validate`
 
-Validate a bundle before offline analysis consumes it.
+**para que:** Validate a bundle before offline analysis consumes it.
+
+- **por que:** valida bundles de evidência normalizados
+- **quando usar:** conferir um bundle de coleta antes de analisar
 
 **Syntax**
 
@@ -763,7 +867,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `compatibility`
 
-Detect runtimes and show Glue migration risks (knowledge packs).
+**para que:** Detect runtimes and show Glue migration risks (knowledge packs).
+
+- **por que:** detecta runtimes e mostra riscos de migração Glue (knowledge packs)
+- **quando usar:** avaliar compatibilidade/migração com fonte versionada
 
 **Syntax**
 
@@ -785,7 +892,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `contract`
 
-Platform contract files.
+**para que:** Platform contract files.
+
+- **por que:** arquivos de contrato da plataforma
+- **quando usar:** inspecionar contratos versionados
 
 **Syntax**
 
@@ -799,7 +909,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `contract validate`
 
-Validate a platform contract's structure and schema version.
+**para que:** Validate a platform contract's structure and schema version.
+
+- **por que:** arquivos de contrato da plataforma
+- **quando usar:** inspecionar contratos versionados
 
 **Syntax**
 
@@ -820,7 +933,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `contracts`
 
-Published artifact contracts (verify handoff bundles, schemas).
+**para que:** Published artifact contracts (verify handoff bundles, schemas).
+
+- **por que:** contratos de artefatos publicados (bundles de handoff, schemas)
+- **quando usar:** verificar handoffs contra schema publicado
 
 **Syntax**
 
@@ -834,12 +950,15 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `contracts conformance`
 
-Check a payload against forge-contracts/1 (spec 267).
+**para que:** Check a payload against forge-contracts/1 (spec 267).
 
 Validates the payload twice: against the published JSON Schema for its
 kind, and through the strict ``from_dict`` model decode. Exit code 1 on
 any violation. Other Forge products (The Forger, Spark Forge, agents)
 use this to prove they speak the same wire contract.
+
+- **por que:** contratos de artefatos publicados (bundles de handoff, schemas)
+- **quando usar:** verificar handoffs contra schema publicado
 
 **Syntax**
 
@@ -860,7 +979,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `contracts list`
 
-List the published contract names (see `schema contracts <name>` for a dump).
+**para que:** List the published contract names (see `schema contracts <name>` for a dump).
+
+- **por que:** contratos de artefatos publicados (bundles de handoff, schemas)
+- **quando usar:** verificar handoffs contra schema publicado
 
 **Syntax**
 
@@ -874,7 +996,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `contracts schema`
 
-Dump the published forge-contracts/1 JSON Schemas.
+**para que:** Dump the published forge-contracts/1 JSON Schemas.
+
+- **por que:** contratos de artefatos publicados (bundles de handoff, schemas)
+- **quando usar:** verificar handoffs contra schema publicado
 
 **Syntax**
 
@@ -892,10 +1017,13 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `contracts verify`
 
-Validate a JSON artifact against a published contract (stdin or file).
+**para que:** Validate a JSON artifact against a published contract (stdin or file).
 
 ``forge-doctor-data export --format handoff`` output validates against
 ``handoff-bundle``; other Forge tools use this in their own tests.
+
+- **por que:** contratos de artefatos publicados (bundles de handoff, schemas)
+- **quando usar:** verificar handoffs contra schema publicado
 
 **Syntax**
 
@@ -916,7 +1044,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `controlm`
 
-Control-M intelligence: inspect workflows-as-code.
+**para que:** Control-M intelligence: inspect workflows-as-code.
+
+- **por que:** inteligência Control-M: inspeciona workflows-as-code
+- **quando usar:** revisar jobs Control-M declarados
 
 **Syntax**
 
@@ -930,7 +1061,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `controlm inspect`
 
-Summarize the project's Control-M surface from the semantic model.
+**para que:** Summarize the project's Control-M surface from the semantic model.
+
+- **por que:** inteligência Control-M: inspeciona workflows-as-code
+- **quando usar:** revisar jobs Control-M declarados
 
 **Syntax**
 
@@ -950,7 +1084,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `data-model`
 
-Cross-domain access-style inspection.
+**para que:** Cross-domain access-style inspection.
+
+- **por que:** inspeção de estilo de acesso cross-domain
+- **quando usar:** perguntas de modelo de acesso a dados
 
 **Syntax**
 
@@ -964,7 +1101,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `data-model inspect`
 
-Breakdown of observed access styles across data domains.
+**para que:** Breakdown of observed access styles across data domains.
+
+- **por que:** inspeção de estilo de acesso cross-domain
+- **quando usar:** perguntas de modelo de acesso a dados
 
 **Syntax**
 
@@ -984,7 +1124,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `databricks`
 
-Databricks workspace/job/UC intelligence.
+**para que:** Databricks workspace/job/UC intelligence.
+
+- **por que:** inteligência Databricks: workspace/job/UC
+- **quando usar:** revisar definições Databricks com evidência
 
 **Syntax**
 
@@ -997,6 +1140,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 <!-- keep:end -->
 
 ### `databricks findings`
+
+- **por que:** inteligência Databricks: workspace/job/UC
+- **quando usar:** revisar definições Databricks com evidência
 
 **Syntax**
 
@@ -1014,7 +1160,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `databricks inspect`
 
-Jobs, clusters, warehouses, UC objects, pipelines, bundles.
+**para que:** Jobs, clusters, warehouses, UC objects, pipelines, bundles.
+
+- **por que:** inteligência Databricks: workspace/job/UC
+- **quando usar:** revisar definições Databricks com evidência
 
 **Syntax**
 
@@ -1034,7 +1183,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `dbt`
 
-dbt intelligence: inspect the transformation model.
+**para que:** dbt intelligence: inspect the transformation model.
+
+- **por que:** inteligência dbt: inspeciona o modelo de transformação
+- **quando usar:** revisar modelos, testes e lineage dbt
 
 **Syntax**
 
@@ -1048,7 +1200,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `dbt inspect`
 
-Print the dbt model: models, sources, tests, manifest coverage.
+**para que:** Print the dbt model: models, sources, tests, manifest coverage.
+
+- **por que:** inteligência dbt: inspeciona o modelo de transformação
+- **quando usar:** revisar modelos, testes e lineage dbt
 
 **Syntax**
 
@@ -1068,7 +1223,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `delta`
 
-Delta Lake feature and ops intelligence.
+**para que:** Delta Lake feature and ops intelligence.
+
+- **por que:** inteligência Delta Lake: features e operações
+- **quando usar:** revisar tabelas Delta e operações declaradas
 
 **Syntax**
 
@@ -1082,7 +1240,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `delta features`
 
-Detected Delta features mapped to protocol requirements.
+**para que:** Detected Delta features mapped to protocol requirements.
+
+- **por que:** inteligência Delta Lake: features e operações
+- **quando usar:** revisar tabelas Delta e operações declaradas
 
 **Syntax**
 
@@ -1100,6 +1261,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `delta findings`
 
+- **por que:** inteligência Delta Lake: features e operações
+- **quando usar:** revisar tabelas Delta e operações declaradas
+
 **Syntax**
 
 ```text
@@ -1116,7 +1280,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `delta inspect`
 
-Tables, ops (merge/optimize/vacuum), features, protocol.
+**para que:** Tables, ops (merge/optimize/vacuum), features, protocol.
+
+- **por que:** inteligência Delta Lake: features e operações
+- **quando usar:** revisar tabelas Delta e operações declaradas
 
 **Syntax**
 
@@ -1136,7 +1303,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `dependencies`
 
-Run only dependencies checks.
+**para que:** Run only dependencies checks.
+
+- **por que:** roda só checks de dependências
+- **quando usar:** escopo de checks de dependências do projeto
 
 **Syntax**
 
@@ -1173,7 +1343,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `diagnose`
 
-Fingerprint log errors against known signatures (deterministic, offline).
+**para que:** Fingerprint log errors against known signatures (deterministic, offline).
+
+- **por que:** fingerprint de erros de log contra assinaturas conhecidas (offline)
+- **quando usar:** classificar um erro de log sem chamar nada externo
 
 **Syntax**
 
@@ -1195,7 +1368,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `diff`
 
-Diff findings: NEW in <new> vs <old>, or in a 'base...head' git range.
+**para que:** Diff findings: NEW in <new> vs <old>, or in a 'base...head' git range.
+
+- **por que:** diff de findings: NEW em <novo> vs <velho>, ou range git base...head
+- **quando usar:** comparar findings entre dois scans ou branches
 
 **Syntax**
 
@@ -1220,7 +1396,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `docker`
 
-Run only docker checks.
+**para que:** Run only docker checks.
+
+- **por que:** roda só checks de docker
+- **quando usar:** escopo de checks de Docker/imagem
 
 **Syntax**
 
@@ -1257,7 +1436,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `doctor`
 
-Self-check: config, plugins, cache dir, git, environment health.
+**para que:** Self-check: config, plugins, cache dir, git, environment health.
+
+- **por que:** self-check: config, plugins, cache, git, saúde do ambiente
+- **quando usar:** primeira linha de diagnóstico da própria ferramenta
 
 **Syntax**
 
@@ -1277,7 +1459,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `dynamodb`
 
-DynamoDB intelligence.
+**para que:** DynamoDB intelligence.
+
+- **por que:** inteligência DynamoDB
+- **quando usar:** revisar tabelas/acesso DynamoDB com evidência
 
 **Syntax**
 
@@ -1291,7 +1476,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `dynamodb access-patterns`
 
-List observed access operations per table.
+**para que:** List observed access operations per table.
+
+- **por que:** inteligência DynamoDB
+- **quando usar:** revisar tabelas/acesso DynamoDB com evidência
 
 **Syntax**
 
@@ -1309,7 +1497,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `dynamodb capacity`
 
-Billing-mode inventory - structure only, no cost math.
+**para que:** Billing-mode inventory - structure only, no cost math.
+
+- **por que:** inteligência DynamoDB
+- **quando usar:** revisar tabelas/acesso DynamoDB com evidência
 
 **Syntax**
 
@@ -1327,7 +1518,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `dynamodb global-tables`
 
-Global-table modes (MREC/MRSC), regions, transaction semantics.
+**para que:** Global-table modes (MREC/MRSC), regions, transaction semantics.
+
+- **por que:** inteligência DynamoDB
+- **quando usar:** revisar tabelas/acesso DynamoDB com evidência
 
 **Syntax**
 
@@ -1345,7 +1539,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `dynamodb indexes`
 
-GSI/LSI inventory vs observed IndexName usage.
+**para que:** GSI/LSI inventory vs observed IndexName usage.
+
+- **por que:** inteligência DynamoDB
+- **quando usar:** revisar tabelas/acesso DynamoDB com evidência
 
 **Syntax**
 
@@ -1363,7 +1560,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `dynamodb inspect`
 
-Summarize tables, keys, capacity mode, streams, global tables.
+**para que:** Summarize tables, keys, capacity mode, streams, global tables.
+
+- **por que:** inteligência DynamoDB
+- **quando usar:** revisar tabelas/acesso DynamoDB com evidência
 
 **Syntax**
 
@@ -1381,7 +1581,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `dynamodb streams`
 
-Stream configuration and detected consumers.
+**para que:** Stream configuration and detected consumers.
+
+- **por que:** inteligência DynamoDB
+- **quando usar:** revisar tabelas/acesso DynamoDB com evidência
 
 **Syntax**
 
@@ -1401,7 +1604,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `emr`
 
-EMR deep intelligence (EC2/Serverless/EKS).
+**para que:** EMR deep intelligence (EC2/Serverless/EKS).
+
+- **por que:** inteligência EMR profunda (EC2/Serverless/EKS)
+- **quando usar:** revisar clusters/jobs EMR por superfície
 
 **Syntax**
 
@@ -1414,6 +1620,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 <!-- keep:end -->
 
 ### `emr findings`
+
+- **por que:** inteligência EMR profunda (EC2/Serverless/EKS)
+- **quando usar:** revisar clusters/jobs EMR por superfície
 
 **Syntax**
 
@@ -1431,7 +1640,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `emr inspect`
 
-Clusters, serverless apps, EKS virtual clusters, releases, steps.
+**para que:** Clusters, serverless apps, EKS virtual clusters, releases, steps.
+
+- **por que:** inteligência EMR profunda (EC2/Serverless/EKS)
+- **quando usar:** revisar clusters/jobs EMR por superfície
 
 **Syntax**
 
@@ -1451,7 +1663,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `explain`
 
-Explain what a check looks for, when it is OK, and how to fix it.
+**para que:** Explain what a check looks for, when it is OK, and how to fix it.
+
+- **por que:** explica o que um check procura, quando é OK e como corrigir
+- **quando usar:** entender um check antes de rodar ou de agir sobre o finding
 
 **Syntax**
 
@@ -1472,7 +1687,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `export`
 
-Emit a portable handoff bundle: findings + graph + capabilities + plans.
+**para que:** Emit a portable handoff bundle: findings + graph + capabilities + plans.
+
+- **por que:** emite bundle portátil de handoff: findings+graph+capabilities+plans
+- **quando usar:** transferir o resultado para outro host/forja
 
 **Syntax**
 
@@ -1494,7 +1712,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `fix`
 
-Preview (or apply) deterministic safe fixes for findings.
+**para que:** Preview (or apply) deterministic safe fixes for findings.
+
+- **por que:** preview (ou aplica) fixes determinísticos seguros para findings
+- **quando usar:** corrigir findings com fix seguro — preview antes de aplicar
 
 **Syntax**
 
@@ -1517,7 +1738,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `fleet`
 
-Fleet/estate intelligence across many repos. Bare: Fleet/estate intelligence over a manifest of repositories.
+**para que:** Fleet/estate intelligence across many repos. Bare: Fleet/estate intelligence over a manifest of repositories.
+
+- **por que:** inteligência de frota/estate sobre manifesto multi-repo
+- **quando usar:** perguntas agregadas sobre muitos repos
 
 **Syntax**
 
@@ -1531,7 +1755,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `fleet inspect`
 
-Estate census: repos, merged platform graph, cross-repo links.
+**para que:** Estate census: repos, merged platform graph, cross-repo links.
+
+- **por que:** inteligência de frota/estate sobre manifesto multi-repo
+- **quando usar:** perguntas agregadas sobre muitos repos
 
 **Syntax**
 
@@ -1549,8 +1776,11 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `fleet portfolio`
 
-Portfolio view: platforms, workloads, duplication, complexity —
+**para que:** Portfolio view: platforms, workloads, duplication, complexity —
 facts only, no health score.
+
+- **por que:** inteligência de frota/estate sobre manifesto multi-repo
+- **quando usar:** perguntas agregadas sobre muitos repos
 
 **Syntax**
 
@@ -1569,7 +1799,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `fleet query`
 
-Deterministic estate queries over the merged fleet graph.
+**para que:** Deterministic estate queries over the merged fleet graph.
+
+- **por que:** inteligência de frota/estate sobre manifesto multi-repo
+- **quando usar:** perguntas agregadas sobre muitos repos
 
 **Syntax**
 
@@ -1590,8 +1823,11 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `fleet regressions`
 
-Fleet-level regression aggregation: same regression family across
+**para que:** Fleet-level regression aggregation: same regression family across
 workloads/repos (e.g. after a platform upgrade).
+
+- **por que:** inteligência de frota/estate sobre manifesto multi-repo
+- **quando usar:** perguntas agregadas sobre muitos repos
 
 **Syntax**
 
@@ -1610,7 +1846,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `fleet report`
 
-Estate census + per-repo findings roll-up (built-in checks only).
+**para que:** Estate census + per-repo findings roll-up (built-in checks only).
+
+- **por que:** inteligência de frota/estate sobre manifesto multi-repo
+- **quando usar:** perguntas agregadas sobre muitos repos
 
 **Syntax**
 
@@ -1631,7 +1870,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `flink`
 
-Flink deep intelligence.
+**para que:** Flink deep intelligence.
+
+- **por que:** inteligência Flink profunda
+- **quando usar:** revisar jobs/checkpoints Flink
 
 **Syntax**
 
@@ -1644,6 +1886,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 <!-- keep:end -->
 
 ### `flink findings`
+
+- **por que:** inteligência Flink profunda
+- **quando usar:** revisar jobs/checkpoints Flink
 
 **Syntax**
 
@@ -1661,7 +1906,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `flink inspect`
 
-Jobs, sources, keyed state, windows, timers, checkpoints, sinks.
+**para que:** Jobs, sources, keyed state, windows, timers, checkpoints, sinks.
+
+- **por que:** inteligência Flink profunda
+- **quando usar:** revisar jobs/checkpoints Flink
 
 **Syntax**
 
@@ -1681,7 +1929,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `git`
 
-Run only git checks.
+**para que:** Run only git checks.
+
+- **por que:** roda só checks de git
+- **quando usar:** escopo de checks de repositório git
 
 **Syntax**
 
@@ -1718,7 +1969,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `glue`
 
-Run only glue checks.
+**para que:** Run only glue checks.
+
+- **por que:** roda só checks de glue
+- **quando usar:** escopo de checks AWS Glue
 
 **Syntax**
 
@@ -1755,7 +2009,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `golden`
 
-Golden repositories - snapshot regression suites.
+**para que:** Golden repositories - snapshot regression suites.
+
+- **por que:** repositórios golden — suítes de regressão por snapshot
+- **quando usar:** validar a ferramenta contra casos conhecidos
 
 **Syntax**
 
@@ -1769,7 +2026,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `golden list`
 
-List golden repositories.
+**para que:** List golden repositories.
+
+- **por que:** repositórios golden — suítes de regressão por snapshot
+- **quando usar:** validar a ferramenta contra casos conhecidos
 
 **Syntax**
 
@@ -1787,7 +2047,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `golden run`
 
-Diff current engine output against stored snapshots.
+**para que:** Diff current engine output against stored snapshots.
+
+- **por que:** repositórios golden — suítes de regressão por snapshot
+- **quando usar:** validar a ferramenta contra casos conhecidos
 
 **Syntax**
 
@@ -1807,7 +2070,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `golden update`
 
-Regenerate snapshots — review the diff before committing.
+**para que:** Regenerate snapshots — review the diff before committing.
+
+- **por que:** repositórios golden — suítes de regressão por snapshot
+- **quando usar:** validar a ferramenta contra casos conhecidos
 
 **Syntax**
 
@@ -1828,7 +2094,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `graph`
 
-Graph intelligence.
+**para que:** Graph intelligence.
+
+- **por que:** inteligência de grafo
+- **quando usar:** perguntas de dependência/grafo da plataforma
 
 **Syntax**
 
@@ -1842,7 +2111,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `graph inspect`
 
-Summarize detected graph workloads, languages, and paradigms.
+**para que:** Summarize detected graph workloads, languages, and paradigms.
+
+- **por que:** inteligência de grafo
+- **quando usar:** perguntas de dependência/grafo da plataforma
 
 **Syntax**
 
@@ -1860,7 +2132,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `graph project`
 
-Project Intelligence Graph: jobs, datasets, infra, orchestrators.
+**para que:** Project Intelligence Graph: jobs, datasets, infra, orchestrators.
+
+- **por que:** inteligência de grafo
+- **quando usar:** perguntas de dependência/grafo da plataforma
 
 **Syntax**
 
@@ -1879,7 +2154,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `graph schema`
 
-Show the vertex/edge schema reconstructed from static evidence.
+**para que:** Show the vertex/edge schema reconstructed from static evidence.
+
+- **por que:** inteligência de grafo
+- **quando usar:** perguntas de dependência/grafo da plataforma
 
 **Syntax**
 
@@ -1897,7 +2175,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `graph traversals`
 
-List traversal inventory with per-traversal shape summary.
+**para que:** List traversal inventory with per-traversal shape summary.
+
+- **por que:** inteligência de grafo
+- **quando usar:** perguntas de dependência/grafo da plataforma
 
 **Syntax**
 
@@ -1915,7 +2196,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `graph ui`
 
-Open the local Graph Studio explorer for this project's evidence graph.
+**para que:** Open the local Graph Studio explorer for this project's evidence graph.
+
+- **por que:** inteligência de grafo
+- **quando usar:** perguntas de dependência/grafo da plataforma
 
 **Syntax**
 
@@ -1935,7 +2219,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `graph view`
 
-Emit the ForgeGraphView/v1 document (Graph Studio contract).
+**para que:** Emit the ForgeGraphView/v1 document (Graph Studio contract).
+
+- **por que:** inteligência de grafo
+- **quando usar:** perguntas de dependência/grafo da plataforma
 
 **Syntax**
 
@@ -1955,7 +2242,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `history`
 
-Recorded scan snapshots: list, diff, trend. Bare: List recorded snapshots (scan --record).
+**para que:** Recorded scan snapshots: list, diff, trend. Bare: List recorded snapshots (scan --record).
+
+- **por que:** snapshots gravados de scan: list, diff, trend
+- **quando usar:** comparar scans ao longo do tempo
 
 **Syntax**
 
@@ -1973,7 +2263,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `history diff`
 
-Diff two snapshots: new/resolved findings, entity + capability + drift deltas.
+**para que:** Diff two snapshots: new/resolved findings, entity + capability + drift deltas.
+
+- **por que:** snapshots gravados de scan: list, diff, trend
+- **quando usar:** comparar scans ao longo do tempo
 
 **Syntax**
 
@@ -1995,7 +2288,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `history trend`
 
-Per-category finding counts + entity counts across the series.
+**para que:** Per-category finding counts + entity counts across the series.
+
+- **por que:** snapshots gravados de scan: list, diff, trend
+- **quando usar:** comparar scans ao longo do tempo
 
 **Syntax**
 
@@ -2016,7 +2312,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `iac`
 
-Run only iac checks.
+**para que:** Run only iac checks.
+
+- **por que:** roda só checks de iac
+- **quando usar:** escopo de checks de infraestrutura como código
 
 **Syntax**
 
@@ -2053,7 +2352,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `iceberg`
 
-Iceberg intelligence: inspect, maintenance, compatibility.
+**para que:** Iceberg intelligence: inspect, maintenance, compatibility.
+
+- **por que:** inteligência Iceberg: inspeção, manutenção, compatibilidade
+- **quando usar:** revisar tabelas Iceberg e sua saúde
 
 **Syntax**
 
@@ -2067,7 +2369,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `iceberg compatibility`
 
-Cross detected runtimes with the Iceberg compatibility pack.
+**para que:** Cross detected runtimes with the Iceberg compatibility pack.
+
+- **por que:** inteligência Iceberg: inspeção, manutenção, compatibilidade
+- **quando usar:** revisar tabelas Iceberg e sua saúde
 
 **Syntax**
 
@@ -2085,7 +2390,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `iceberg files`
 
-Static small-file risk posture (repartition/coalesce near writes).
+**para que:** Static small-file risk posture (repartition/coalesce near writes).
+
+- **por que:** inteligência Iceberg: inspeção, manutenção, compatibilidade
+- **quando usar:** revisar tabelas Iceberg e sua saúde
 
 **Syntax**
 
@@ -2103,7 +2411,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `iceberg inspect`
 
-Summarize the project's Iceberg surface from the semantic model.
+**para que:** Summarize the project's Iceberg surface from the semantic model.
+
+- **por que:** inteligência Iceberg: inspeção, manutenção, compatibilidade
+- **quando usar:** revisar tabelas Iceberg e sua saúde
 
 **Syntax**
 
@@ -2121,7 +2432,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `iceberg maintenance`
 
-Maintenance posture: which Iceberg housekeeping ops exist in code.
+**para que:** Maintenance posture: which Iceberg housekeeping ops exist in code.
+
+- **por que:** inteligência Iceberg: inspeção, manutenção, compatibilidade
+- **quando usar:** revisar tabelas Iceberg e sua saúde
 
 **Syntax**
 
@@ -2139,7 +2453,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `iceberg merge`
 
-Reconstruct every detected MERGE statement from the semantic model.
+**para que:** Reconstruct every detected MERGE statement from the semantic model.
+
+- **por que:** inteligência Iceberg: inspeção, manutenção, compatibilidade
+- **quando usar:** revisar tabelas Iceberg e sua saúde
 
 **Syntax**
 
@@ -2159,7 +2476,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `incident`
 
-Dependency-aware incident intelligence (offline).
+**para que:** Dependency-aware incident intelligence (offline).
+
+- **por que:** inteligência de incidente com dependência (offline)
+- **quando usar:** correlacionar evidência de incidente já exportada
 
 **Syntax**
 
@@ -2173,7 +2493,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `incident explain`
 
-Narrate one incident's evidence path, causes and unknowns.
+**para que:** Narrate one incident's evidence path, causes and unknowns.
+
+- **por que:** inteligência de incidente com dependência (offline)
+- **quando usar:** correlacionar evidência de incidente já exportada
 
 **Syntax**
 
@@ -2194,7 +2517,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `incident inspect`
 
-Group co-occurring regression episodes into incident windows.
+**para que:** Group co-occurring regression episodes into incident windows.
+
+- **por que:** inteligência de incidente com dependência (offline)
+- **quando usar:** correlacionar evidência de incidente já exportada
 
 **Syntax**
 
@@ -2217,7 +2543,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `info`
 
-Quick project stats - files, languages, tooling - no checks run.
+**para que:** Quick project stats - files, languages, tooling - no checks run.
+
+- **por que:** estatísticas rápidas do projeto — arquivos, linguagens, tooling; sem checks
+- **quando usar:** visão rápida de um projeto desconhecido
 
 **Syntax**
 
@@ -2237,7 +2566,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `init`
 
-Scaffold a new Python project (pyproject, .gitignore, README, src/, tests/).
+**para que:** Scaffold a new Python project (pyproject, .gitignore, README, src/, tests/).
+
+- **por que:** scaffold de projeto Python novo (pyproject, .gitignore, README, src/, tests/)
+- **quando usar:** começar um projeto novo com estrutura padrão
 
 **Syntax**
 
@@ -2259,7 +2591,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect`
 
-Domain inspection: `inspect <domain> [path]` (alias of `<domain> inspect`).
+**para que:** Domain inspection: `inspect <domain> [path]` (alias of `<domain> inspect`).
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2273,7 +2608,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect airflow`
 
-Alias of `airflow inspect`. Summarize the project's Airflow surface from the semantic model.
+**para que:** Alias of `airflow inspect`. Summarize the project's Airflow surface from the semantic model.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2291,7 +2629,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect analytical`
 
-Alias of `analytical inspect`. Print the analytical-engine model: tables, engines, schemas, observed.
+**para que:** Alias of `analytical inspect`. Print the analytical-engine model: tables, engines, schemas, observed.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2309,7 +2650,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect athena`
 
-Alias of `athena inspect`. Workgroups, catalogs, named queries, SQL ops, boto3 evidence.
+**para que:** Alias of `athena inspect`. Workgroups, catalogs, named queries, SQL ops, boto3 evidence.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2327,7 +2671,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect bigquery`
 
-Alias of `bigquery inspect`. Print the BigQuery model: datasets, relations, slots, exports.
+**para que:** Alias of `bigquery inspect`. Print the BigQuery model: datasets, relations, slots, exports.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2345,7 +2692,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect catalog`
 
-Alias of `catalog inspect`. Print the declared catalog: datasets, owners, lineage, recipes.
+**para que:** Alias of `catalog inspect`. Print the declared catalog: datasets, owners, lineage, recipes.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2363,7 +2713,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect cloud`
 
-Alias of `cloud inspect`. Print the abstraction view: services by kind, cloud, parity gaps.
+**para que:** Alias of `cloud inspect`. Print the abstraction view: services by kind, cloud, parity gaps.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2381,7 +2734,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect controlm`
 
-Alias of `controlm inspect`. Summarize the project's Control-M surface from the semantic model.
+**para que:** Alias of `controlm inspect`. Summarize the project's Control-M surface from the semantic model.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2399,7 +2755,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect data-model`
 
-Alias of `data-model inspect`. Breakdown of observed access styles across data domains.
+**para que:** Alias of `data-model inspect`. Breakdown of observed access styles across data domains.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2417,7 +2776,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect databricks`
 
-Alias of `databricks inspect`. Jobs, clusters, warehouses, UC objects, pipelines, bundles.
+**para que:** Alias of `databricks inspect`. Jobs, clusters, warehouses, UC objects, pipelines, bundles.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2435,7 +2797,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect dbt`
 
-Alias of `dbt inspect`. Print the dbt model: models, sources, tests, manifest coverage.
+**para que:** Alias of `dbt inspect`. Print the dbt model: models, sources, tests, manifest coverage.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2453,7 +2818,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect delta`
 
-Alias of `delta inspect`. Tables, ops (merge/optimize/vacuum), features, protocol.
+**para que:** Alias of `delta inspect`. Tables, ops (merge/optimize/vacuum), features, protocol.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2471,7 +2839,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect dynamodb`
 
-Alias of `dynamodb inspect`. Summarize tables, keys, capacity mode, streams, global tables.
+**para que:** Alias of `dynamodb inspect`. Summarize tables, keys, capacity mode, streams, global tables.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2489,7 +2860,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect emr`
 
-Alias of `emr inspect`. Clusters, serverless apps, EKS virtual clusters, releases, steps.
+**para que:** Alias of `emr inspect`. Clusters, serverless apps, EKS virtual clusters, releases, steps.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2507,7 +2881,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect flink`
 
-Alias of `flink inspect`. Jobs, sources, keyed state, windows, timers, checkpoints, sinks.
+**para que:** Alias of `flink inspect`. Jobs, sources, keyed state, windows, timers, checkpoints, sinks.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2525,7 +2902,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect graph`
 
-Alias of `graph inspect`. Summarize detected graph workloads, languages, and paradigms.
+**para que:** Alias of `graph inspect`. Summarize detected graph workloads, languages, and paradigms.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2543,7 +2923,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect iceberg`
 
-Alias of `iceberg inspect`. Summarize the project's Iceberg surface from the semantic model.
+**para que:** Alias of `iceberg inspect`. Summarize the project's Iceberg surface from the semantic model.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2561,7 +2944,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect incident`
 
-Alias of `incident inspect`. Group co-occurring regression episodes into incident windows.
+**para que:** Alias of `incident inspect`. Group co-occurring regression episodes into incident windows.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2579,7 +2965,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect kafka`
 
-Alias of `kafka inspect`. MSK clusters, topics, consumer groups, options, security.
+**para que:** Alias of `kafka inspect`. MSK clusters, topics, consumer groups, options, security.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2597,7 +2986,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect kinesis`
 
-Alias of `kinesis inspect`. Streams, shards, consumers, EFO, retention, flink apps.
+**para que:** Alias of `kinesis inspect`. Streams, shards, consumers, EFO, retention, flink apps.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2615,7 +3007,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect lakeformation`
 
-Alias of `lakeformation inspect`. Census: databases, tables, locations, tags, filters, links, shares.
+**para que:** Alias of `lakeformation inspect`. Census: databases, tables, locations, tags, filters, links, shares.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2633,7 +3028,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect lambda`
 
-Alias of `lambda inspect`. Functions, runtimes, triggers, destinations, idempotency evidence.
+**para que:** Alias of `lambda inspect`. Functions, runtimes, triggers, destinations, idempotency evidence.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2651,7 +3049,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect neptune`
 
-Alias of `neptune inspect`. Clusters, instances, endpoints, languages, product split.
+**para que:** Alias of `neptune inspect`. Clusters, instances, endpoints, languages, product split.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2669,7 +3070,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect optimize`
 
-Alias of `optimize inspect`. Multi-objective opportunities with guardrails + tradeoffs.
+**para que:** Alias of `optimize inspect`. Multi-objective opportunities with guardrails + tradeoffs.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2687,7 +3091,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect parquet`
 
-Alias of `parquet inspect`. Summarize the project's Parquet surface from the semantic model.
+**para que:** Alias of `parquet inspect`. Summarize the project's Parquet surface from the semantic model.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2705,7 +3112,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect quality`
 
-Alias of `quality inspect`. Print declared suites, coverage map, and gate wiring.
+**para que:** Alias of `quality inspect`. Print declared suites, coverage map, and gate wiring.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2723,7 +3133,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect redshift`
 
-Alias of `redshift inspect`. Print the Redshift model: compute, relations, WLM, exports.
+**para que:** Alias of `redshift inspect`. Print the Redshift model: compute, relations, WLM, exports.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2741,7 +3154,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect search`
 
-Alias of `search inspect`. Print the search model: indices/templates, policies, pipelines, domains.
+**para que:** Alias of `search inspect`. Print the search model: indices/templates, policies, pipelines, domains.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2759,7 +3175,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect snowflake`
 
-Alias of `snowflake inspect`. Print the Snowflake model: warehouses, objects, exports, copies.
+**para que:** Alias of `snowflake inspect`. Print the Snowflake model: warehouses, objects, exports, copies.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2777,7 +3196,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect stepfunctions`
 
-Alias of `stepfunctions inspect`. Summarize Step Functions definitions from the semantic model.
+**para que:** Alias of `stepfunctions inspect`. Summarize Step Functions definitions from the semantic model.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2795,7 +3217,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect streaming`
 
-Alias of `streaming inspect`. Summarize streaming queries from the semantic model.
+**para que:** Alias of `streaming inspect`. Summarize streaming queries from the semantic model.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2813,7 +3238,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect terraform`
 
-Alias of `terraform inspect`. Summarize the project's Terraform surface from the semantic model.
+**para que:** Alias of `terraform inspect`. Summarize the project's Terraform surface from the semantic model.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2831,7 +3259,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect trino`
 
-Alias of `trino inspect`. Print the Trino model: catalogs, coordinator flags, SQL refs.
+**para que:** Alias of `trino inspect`. Print the Trino model: catalogs, coordinator flags, SQL refs.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2849,7 +3280,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect twin`
 
-Alias of `twin inspect`. Twin summary + invariant report. Exit 1 on hard violations.
+**para que:** Alias of `twin inspect`. Twin summary + invariant report. Exit 1 on hard violations.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2867,7 +3301,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `inspect workspace`
 
-Alias of `workspace inspect`. Build the WorkspaceModel: repos, merged platform graph, cross-repo links.
+**para que:** Alias of `workspace inspect`. Build the WorkspaceModel: repos, merged platform graph, cross-repo links.
+
+- **por que:** inspeção por domínio: `inspect <domain>` (alias de `<domain> inspect`)
+- **quando usar:** inspecionar um domínio específico diretamente
 
 **Syntax**
 
@@ -2887,7 +3324,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `install`
 
-Install Forge Doctor Data into a project, workspace or the user home; manage the lifecycle (status, doctor, repair, update, uninstall).
+**para que:** Install Forge Doctor Data into a project, workspace or the user home; manage the lifecycle (status, doctor, repair, update, uninstall).
+
+- **por que:** instala Forge Doctor Data em projeto, workspace ou home; gerencia o ciclo de vida
+- **quando usar:** ativar o doctor num escopo governado
 
 **Syntax**
 
@@ -2911,7 +3351,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `install doctor`
 
-Run installation health checks (ledger, MCP availability).
+**para que:** Run installation health checks (ledger, MCP availability).
+
+- **por que:** instala Forge Doctor Data em projeto, workspace ou home; gerencia o ciclo de vida
+- **quando usar:** ativar o doctor num escopo governado
 
 **Syntax**
 
@@ -2930,7 +3373,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `install mcp-verify`
 
-Handshake the configured MCP server (PASS/BLOCKED/FAIL).
+**para que:** Handshake the configured MCP server (PASS/BLOCKED/FAIL).
+
+- **por que:** instala Forge Doctor Data em projeto, workspace ou home; gerencia o ciclo de vida
+- **quando usar:** ativar o doctor num escopo governado
 
 **Syntax**
 
@@ -2944,7 +3390,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `install repair`
 
-Restore missing managed assets; user-modified content is kept.
+**para que:** Restore missing managed assets; user-modified content is kept.
+
+- **por que:** instala Forge Doctor Data em projeto, workspace ou home; gerencia o ciclo de vida
+- **quando usar:** ativar o doctor num escopo governado
 
 **Syntax**
 
@@ -2964,7 +3413,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `install status`
 
-Report drift/health of the resolved installation.
+**para que:** Report drift/health of the resolved installation.
+
+- **por que:** instala Forge Doctor Data em projeto, workspace ou home; gerencia o ciclo de vida
+- **quando usar:** ativar o doctor num escopo governado
 
 **Syntax**
 
@@ -2983,7 +3435,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `install uninstall`
 
-Remove ledger-owned assets only; user content is preserved.
+**para que:** Remove ledger-owned assets only; user content is preserved.
+
+- **por que:** instala Forge Doctor Data em projeto, workspace ou home; gerencia o ciclo de vida
+- **quando usar:** ativar o doctor num escopo governado
 
 **Syntax**
 
@@ -3004,7 +3459,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `install update`
 
-Upgrade the bootstrapped runtime from its registered checkout.
+**para que:** Upgrade the bootstrapped runtime from its registered checkout.
+
+- **por que:** instala Forge Doctor Data em projeto, workspace ou home; gerencia o ciclo de vida
+- **quando usar:** ativar o doctor num escopo governado
 
 **Syntax**
 
@@ -3026,7 +3484,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `kafka`
 
-Kafka/MSK deep intelligence.
+**para que:** Kafka/MSK deep intelligence.
+
+- **por que:** inteligência Kafka/MSK profunda
+- **quando usar:** revisar tópicos/consumers Kafka
 
 **Syntax**
 
@@ -3039,6 +3500,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 <!-- keep:end -->
 
 ### `kafka findings`
+
+- **por que:** inteligência Kafka/MSK profunda
+- **quando usar:** revisar tópicos/consumers Kafka
 
 **Syntax**
 
@@ -3056,7 +3520,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `kafka inspect`
 
-MSK clusters, topics, consumer groups, options, security.
+**para que:** MSK clusters, topics, consumer groups, options, security.
+
+- **por que:** inteligência Kafka/MSK profunda
+- **quando usar:** revisar tópicos/consumers Kafka
 
 **Syntax**
 
@@ -3076,7 +3543,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `kinesis`
 
-Kinesis deep intelligence.
+**para que:** Kinesis deep intelligence.
+
+- **por que:** inteligência Kinesis profunda
+- **quando usar:** revisar streams/shards Kinesis
 
 **Syntax**
 
@@ -3089,6 +3559,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 <!-- keep:end -->
 
 ### `kinesis findings`
+
+- **por que:** inteligência Kinesis profunda
+- **quando usar:** revisar streams/shards Kinesis
 
 **Syntax**
 
@@ -3106,7 +3579,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `kinesis inspect`
 
-Streams, shards, consumers, EFO, retention, flink apps.
+**para que:** Streams, shards, consumers, EFO, retention, flink apps.
+
+- **por que:** inteligência Kinesis profunda
+- **quando usar:** revisar streams/shards Kinesis
 
 **Syntax**
 
@@ -3126,7 +3602,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `knowledge`
 
-Knowledge-pack provenance. Bare: List all bundled knowledge packs with provenance.
+**para que:** Knowledge-pack provenance. Bare: List all bundled knowledge packs with provenance.
+
+- **por que:** proveniência de knowledge packs
+- **quando usar:** consultar fontes versionadas de conhecimento
 
 **Syntax**
 
@@ -3140,7 +3619,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `knowledge audit`
 
-Classify packs as fresh, stale, expired, invalid_source, or unverified.
+**para que:** Classify packs as fresh, stale, expired, invalid_source, or unverified.
+
+- **por que:** proveniência de knowledge packs
+- **quando usar:** consultar fontes versionadas de conhecimento
 
 **Syntax**
 
@@ -3158,7 +3640,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `knowledge diff`
 
-Semantic pack diff: entries added/removed/changed (not text diff).
+**para que:** Semantic pack diff: entries added/removed/changed (not text diff).
+
+- **por que:** proveniência de knowledge packs
+- **quando usar:** consultar fontes versionadas de conhecimento
 
 **Syntax**
 
@@ -3178,7 +3663,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `knowledge info`
 
-Show provenance detail for one domain's packs.
+**para que:** Show provenance detail for one domain's packs.
+
+- **por que:** proveniência de knowledge packs
+- **quando usar:** consultar fontes versionadas de conhecimento
 
 **Syntax**
 
@@ -3196,7 +3684,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `knowledge list`
 
-Alias for the default listing.
+**para que:** Alias for the default listing.
+
+- **por que:** proveniência de knowledge packs
+- **quando usar:** consultar fontes versionadas de conhecimento
 
 **Syntax**
 
@@ -3210,7 +3701,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `knowledge new`
 
-Scaffold a new knowledge pack with provenance fields + examples.
+**para que:** Scaffold a new knowledge pack with provenance fields + examples.
+
+- **por que:** proveniência de knowledge packs
+- **quando usar:** consultar fontes versionadas de conhecimento
 
 **Syntax**
 
@@ -3230,7 +3724,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `knowledge publish`
 
-Publish checklist: freshness fields valid, conformance clean.
+**para que:** Publish checklist: freshness fields valid, conformance clean.
+
+- **por que:** proveniência de knowledge packs
+- **quando usar:** consultar fontes versionadas de conhecimento
 
 **Syntax**
 
@@ -3251,7 +3748,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `knowledge test`
 
-Pack conformance suite: structure, regexes, examples, capabilities.
+**para que:** Pack conformance suite: structure, regexes, examples, capabilities.
+
+- **por que:** proveniência de knowledge packs
+- **quando usar:** consultar fontes versionadas de conhecimento
 
 **Syntax**
 
@@ -3269,7 +3769,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `knowledge verify`
 
-Validate structure + flag packs stale (>90d since verified_at).
+**para que:** Validate structure + flag packs stale (>90d since verified_at).
+
+- **por que:** proveniência de knowledge packs
+- **quando usar:** consultar fontes versionadas de conhecimento
 
 **Syntax**
 
@@ -3285,7 +3788,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lab`
 
-Forge Lab - reproducible scenarios with ground truth.
+**para que:** Forge Lab - reproducible scenarios with ground truth.
+
+- **por que:** Forge Lab — cenários reproduzíveis com ground truth
+- **quando usar:** validar/criar cenários offline contra verdade conhecida
 
 **Syntax**
 
@@ -3299,7 +3805,7 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lab experiment`
 
-Apply a named hypothesis to a scenario copy and compare findings.
+**para que:** Apply a named hypothesis to a scenario copy and compare findings.
 
 With --before/--after, compares two exported artifact bundles on
 declared metrics instead (ExperimentPlan v2: verdicts SUPPORTED /
@@ -3308,6 +3814,9 @@ NOT_SUPPORTED / INCONCLUSIVE / CONSTRAINT_VIOLATED).
 Never mutates the fixture: the scenario is copied to a temp dir,
 transformed, rescanned hermetically, and reported as
 improved | regressed | neutral with reasons.
+
+- **por que:** Forge Lab — cenários reproduzíveis com ground truth
+- **quando usar:** validar/criar cenários offline contra verdade conhecida
 
 **Syntax**
 
@@ -3332,7 +3841,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lab list`
 
-List discovered scenarios.
+**para que:** List discovered scenarios.
+
+- **por que:** Forge Lab — cenários reproduzíveis com ground truth
+- **quando usar:** validar/criar cenários offline contra verdade conhecida
 
 **Syntax**
 
@@ -3350,7 +3862,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lab metrics`
 
-Precision/recall/FP rates and coverage per domain + total.
+**para que:** Precision/recall/FP rates and coverage per domain + total.
+
+- **por que:** Forge Lab — cenários reproduzíveis com ground truth
+- **quando usar:** validar/criar cenários offline contra verdade conhecida
 
 **Syntax**
 
@@ -3369,7 +3884,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lab report`
 
-Alias for `lab run` over every scenario (summary view).
+**para que:** Alias for `lab run` over every scenario (summary view).
+
+- **por que:** Forge Lab — cenários reproduzíveis com ground truth
+- **quando usar:** validar/criar cenários offline contra verdade conhecida
 
 **Syntax**
 
@@ -3388,7 +3906,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lab run`
 
-Run scenario(s) and compare engine output to ground truth.
+**para que:** Run scenario(s) and compare engine output to ground truth.
+
+- **por que:** Forge Lab — cenários reproduzíveis com ground truth
+- **quando usar:** validar/criar cenários offline contra verdade conhecida
 
 **Syntax**
 
@@ -3410,7 +3931,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lakeformation`
 
-Lake Formation governance intelligence.
+**para que:** Lake Formation governance intelligence.
+
+- **por que:** inteligência de governança Lake Formation
+- **quando usar:** revisar camadas de acesso Lake Formation
 
 **Syntax**
 
@@ -3424,7 +3948,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lakeformation compatibility`
 
-Engine x FGAC/FTA capability report (knowledge-pack driven).
+**para que:** Engine x FGAC/FTA capability report (knowledge-pack driven).
+
+- **por que:** inteligência de governança Lake Formation
+- **quando usar:** revisar camadas de acesso Lake Formation
 
 **Syntax**
 
@@ -3442,7 +3969,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lakeformation cross-account`
 
-Producer/consumer view: external accounts, RAM shares, links.
+**para que:** Producer/consumer view: external accounts, RAM shares, links.
+
+- **por que:** inteligência de governança Lake Formation
+- **quando usar:** revisar camadas de acesso Lake Formation
 
 **Syntax**
 
@@ -3460,7 +3990,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lakeformation findings`
 
-Run LF### checks against the project.
+**para que:** Run LF### checks against the project.
+
+- **por que:** inteligência de governança Lake Formation
+- **quando usar:** revisar camadas de acesso Lake Formation
 
 **Syntax**
 
@@ -3478,7 +4011,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lakeformation graph`
 
-Governance graph view: principal -> resource edges.
+**para que:** Governance graph view: principal -> resource edges.
+
+- **por que:** inteligência de governança Lake Formation
+- **quando usar:** revisar camadas de acesso Lake Formation
 
 **Syntax**
 
@@ -3496,7 +4032,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lakeformation inspect`
 
-Census: databases, tables, locations, tags, filters, links, shares.
+**para que:** Census: databases, tables, locations, tags, filters, links, shares.
+
+- **por que:** inteligência de governança Lake Formation
+- **quando usar:** revisar camadas de acesso Lake Formation
 
 **Syntax**
 
@@ -3514,7 +4053,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lakeformation permissions`
 
-Grant table: principal x permissions x resource.
+**para que:** Grant table: principal x permissions x resource.
+
+- **por que:** inteligência de governança Lake Formation
+- **quando usar:** revisar camadas de acesso Lake Formation
 
 **Syntax**
 
@@ -3534,7 +4076,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lambda`
 
-Lambda function/trigger intelligence.
+**para que:** Lambda function/trigger intelligence.
+
+- **por que:** inteligência de funções Lambda e triggers
+- **quando usar:** revisar funções Lambda e gatilhos declarados
 
 **Syntax**
 
@@ -3547,6 +4092,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 <!-- keep:end -->
 
 ### `lambda findings`
+
+- **por que:** inteligência de funções Lambda e triggers
+- **quando usar:** revisar funções Lambda e gatilhos declarados
 
 **Syntax**
 
@@ -3564,7 +4112,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lambda inspect`
 
-Functions, runtimes, triggers, destinations, idempotency evidence.
+**para que:** Functions, runtimes, triggers, destinations, idempotency evidence.
+
+- **por que:** inteligência de funções Lambda e triggers
+- **quando usar:** revisar funções Lambda e gatilhos declarados
 
 **Syntax**
 
@@ -3584,7 +4135,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lineage`
 
-Static lineage: which jobs read/write which datasets.
+**para que:** Static lineage: which jobs read/write which datasets.
+
+- **por que:** lineage estático: quais jobs leem/escrevem quais datasets
+- **quando usar:** mapear fluxo de dados entre jobs e datasets
 
 **Syntax**
 
@@ -3605,7 +4159,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `lsp`
 
-Start a stdio LSP server (requires the optional 'lsp' extra).
+**para que:** Start a stdio LSP server (requires the optional 'lsp' extra).
+
+- **por que:** servidor LSP stdio (extra opcional 'lsp')
+- **quando usar:** integrar o doctor a um editor via LSP
 
 **Syntax**
 
@@ -3621,7 +4178,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `mcp`
 
-Start a zero-dep MCP (JSON-RPC stdio) server for agent integrations.
+**para que:** Start a zero-dep MCP (JSON-RPC stdio) server for agent integrations.
+
+- **por que:** servidor MCP zero-dep (JSON-RPC stdio) para integrações de agente
+- **quando usar:** servir o doctor via MCP a hosts
 
 **Syntax**
 
@@ -3641,7 +4201,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `migrate`
 
-Migration intelligence.
+**para que:** Migration intelligence.
+
+- **por que:** inteligência de migração
+- **quando usar:** avaliar migrações entre plataformas/runtimes
 
 **Syntax**
 
@@ -3655,11 +4218,14 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `migrate explain`
 
-Explain why each service mapped the way it did (spec 234).
+**para que:** Explain why each service mapped the way it did (spec 234).
 
 Per concept: logical concept, mapping/lossiness, capability gaps the
 target pack cannot satisfy, missing evidence, and the source-side
 facts that anchored the mapping.
+
+- **por que:** inteligência de migração
+- **quando usar:** avaliar migrações entre plataformas/runtimes
 
 **Syntax**
 
@@ -3680,7 +4246,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `migrate glue`
 
-Glue migration report: knowledge changes + this project's real signals.
+**para que:** Glue migration report: knowledge changes + this project's real signals.
+
+- **por que:** inteligência de migração
+- **quando usar:** avaliar migrações entre plataformas/runtimes
 
 **Syntax**
 
@@ -3701,7 +4270,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `migrate plan`
 
-Enumerate migration plans; --from/--to build a cross-platform plan.
+**para que:** Enumerate migration plans; --from/--to build a cross-platform plan.
+
+- **por que:** inteligência de migração
+- **quando usar:** avaliar migrações entre plataformas/runtimes
 
 **Syntax**
 
@@ -3724,7 +4296,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `neptune`
 
-Neptune Database + Analytics intelligence.
+**para que:** Neptune Database + Analytics intelligence.
+
+- **por que:** inteligência Neptune Database + Analytics
+- **quando usar:** revisar clusters/queries Neptune
 
 **Syntax**
 
@@ -3738,7 +4313,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `neptune analyze-explain`
 
-Alias of `explain` (spec 179 names both entry points).
+**para que:** Alias of `explain` (spec 179 names both entry points).
+
+- **por que:** inteligência Neptune Database + Analytics
+- **quando usar:** revisar clusters/queries Neptune
 
 **Syntax**
 
@@ -3756,7 +4334,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `neptune compatibility`
 
-Query-language vs graph-paradigm compatibility via registry.
+**para que:** Query-language vs graph-paradigm compatibility via registry.
+
+- **por que:** inteligência Neptune Database + Analytics
+- **quando usar:** revisar clusters/queries Neptune
 
 **Syntax**
 
@@ -3774,7 +4355,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `neptune explain`
 
-Analyze a user-supplied explain/profile file (offline).
+**para que:** Analyze a user-supplied explain/profile file (offline).
+
+- **por que:** inteligência Neptune Database + Analytics
+- **quando usar:** revisar clusters/queries Neptune
 
 **Syntax**
 
@@ -3792,7 +4376,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `neptune ingest`
 
-Bulk-loader usage and ingestion-relevant config.
+**para que:** Bulk-loader usage and ingestion-relevant config.
+
+- **por que:** inteligência Neptune Database + Analytics
+- **quando usar:** revisar clusters/queries Neptune
 
 **Syntax**
 
@@ -3810,7 +4397,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `neptune inspect`
 
-Clusters, instances, endpoints, languages, product split.
+**para que:** Clusters, instances, endpoints, languages, product split.
+
+- **por que:** inteligência Neptune Database + Analytics
+- **quando usar:** revisar clusters/queries Neptune
 
 **Syntax**
 
@@ -3828,7 +4418,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `neptune queries`
 
-Per-query shape inventory (language, selectivity, bounds).
+**para que:** Per-query shape inventory (language, selectivity, bounds).
+
+- **por que:** inteligência Neptune Database + Analytics
+- **quando usar:** revisar clusters/queries Neptune
 
 **Syntax**
 
@@ -3846,7 +4439,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `neptune schema`
 
-Graph schema facts (labels, endpoints) seen by Neptune queries.
+**para que:** Graph schema facts (labels, endpoints) seen by Neptune queries.
+
+- **por que:** inteligência Neptune Database + Analytics
+- **quando usar:** revisar clusters/queries Neptune
 
 **Syntax**
 
@@ -3866,7 +4462,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `ontology`
 
-Canonical platform vocabulary (entity/rel kinds, planes, domains). Bare: Print the canonical vocabulary (entity kinds, rel kinds, evidence
+**para que:** Canonical platform vocabulary (entity/rel kinds, planes, domains). Bare: Print the canonical vocabulary (entity kinds, rel kinds, evidence
+
+- **por que:** vocabulário canônico da plataforma (entity/rel kinds, planes, domains)
+- **quando usar:** conferir o vocabulário antes de depender dele
 
 **Syntax**
 
@@ -3884,7 +4483,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `ontology access-patterns`
 
-Data-access patterns the ontology distinguishes.
+**para que:** Data-access patterns the ontology distinguishes.
+
+- **por que:** vocabulário canônico da plataforma (entity/rel kinds, planes, domains)
+- **quando usar:** conferir o vocabulário antes de depender dele
 
 **Syntax**
 
@@ -3902,7 +4504,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `ontology platform`
 
-Platform implementations mapped onto vendor-neutral kinds (spec 230).
+**para que:** Platform implementations mapped onto vendor-neutral kinds (spec 230).
+
+- **por que:** vocabulário canônico da plataforma (entity/rel kinds, planes, domains)
+- **quando usar:** conferir o vocabulário antes de depender dele
 
 **Syntax**
 
@@ -3921,11 +4526,14 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `ontology validate`
 
-Validate a project's platform graph against the ontology vocabulary.
+**para que:** Validate a project's platform graph against the ontology vocabulary.
 
 Reports entities whose free-text producer domain is outside the
 vocabulary; enum-constrained fields (kind, rel kind, evidence plane)
 cannot drift by construction.
+
+- **por que:** vocabulário canônico da plataforma (entity/rel kinds, planes, domains)
+- **quando usar:** conferir o vocabulário antes de depender dele
 
 **Syntax**
 
@@ -3943,7 +4551,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `ontology workloads`
 
-Workload intents and the platform kinds that can serve them.
+**para que:** Workload intents and the platform kinds that can serve them.
+
+- **por que:** vocabulário canônico da plataforma (entity/rel kinds, planes, domains)
+- **quando usar:** conferir o vocabulário antes de depender dele
 
 **Syntax**
 
@@ -3963,7 +4574,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `optimize`
 
-Optimization candidates + multi-objective opportunities. Bare: Enumerate optimization candidates (v1) when no subcommand given.
+**para que:** Optimization candidates + multi-objective opportunities. Bare: Enumerate optimization candidates (v1) when no subcommand given.
+
+- **por que:** candidatos de otimização + oportunidades multi-objetivo
+- **quando usar:** depois do scan: priorizar otimizações com evidência
 
 **Syntax**
 
@@ -3983,7 +4597,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `optimize explain`
 
-Full detail for one opportunity: effects, tradeoffs, guardrails.
+**para que:** Full detail for one opportunity: effects, tradeoffs, guardrails.
+
+- **por que:** candidatos de otimização + oportunidades multi-objetivo
+- **quando usar:** depois do scan: priorizar otimizações com evidência
 
 **Syntax**
 
@@ -4004,7 +4621,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `optimize inspect`
 
-Multi-objective opportunities with guardrails + tradeoffs.
+**para que:** Multi-objective opportunities with guardrails + tradeoffs.
+
+- **por que:** candidatos de otimização + oportunidades multi-objetivo
+- **quando usar:** depois do scan: priorizar otimizações com evidência
 
 **Syntax**
 
@@ -4027,7 +4647,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `parquet`
 
-Parquet intelligence: inspect.
+**para que:** Parquet intelligence: inspect.
+
+- **por que:** inteligência Parquet
+- **quando usar:** revisar layout/datasets Parquet
 
 **Syntax**
 
@@ -4041,7 +4664,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `parquet inspect`
 
-Summarize the project's Parquet surface from the semantic model.
+**para que:** Summarize the project's Parquet surface from the semantic model.
+
+- **por que:** inteligência Parquet
+- **quando usar:** revisar layout/datasets Parquet
 
 **Syntax**
 
@@ -4061,7 +4687,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `platform`
 
-Canonical platform graph.
+**para que:** Canonical platform graph.
+
+- **por que:** grafo canônico da plataforma
+- **quando usar:** consultar o grafo materializado da plataforma
 
 **Syntax**
 
@@ -4075,7 +4704,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `platform blast-radius`
 
-Entities impacted by a change to ``query`` (semantic direction).
+**para que:** Entities impacted by a change to ``query`` (semantic direction).
+
+- **por que:** grafo canônico da plataforma
+- **quando usar:** consultar o grafo materializado da plataforma
 
 **Syntax**
 
@@ -4094,7 +4726,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `platform findings`
 
-Cross-domain platform findings (PLAT### rules).
+**para que:** Cross-domain platform findings (PLAT### rules).
+
+- **por que:** grafo canônico da plataforma
+- **quando usar:** consultar o grafo materializado da plataforma
 
 **Syntax**
 
@@ -4113,7 +4748,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `platform graph`
 
-Entity/relationship census of the canonical platform graph.
+**para que:** Entity/relationship census of the canonical platform graph.
+
+- **por que:** grafo canônico da plataforma
+- **quando usar:** consultar o grafo materializado da plataforma
 
 **Syntax**
 
@@ -4134,7 +4772,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `plugins`
 
-Inspect and validate external plugins. Bare: List built-in categories and discovered external plugins.
+**para que:** Inspect and validate external plugins. Bare: List built-in categories and discovered external plugins.
+
+- **por que:** inspeciona e valida plugins externos
+- **quando usar:** verificar plugins instalados e conformidade
 
 **Syntax**
 
@@ -4148,7 +4789,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `plugins doctor`
 
-Per-plugin health: entry point resolves, api_version supported.
+**para que:** Per-plugin health: entry point resolves, api_version supported.
+
+- **por que:** inspeciona e valida plugins externos
+- **quando usar:** verificar plugins instalados e conformidade
 
 **Syntax**
 
@@ -4162,7 +4806,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `plugins init`
 
-Scaffold a plugin package (pyproject + check + test) under dest/name.
+**para que:** Scaffold a plugin package (pyproject + check + test) under dest/name.
+
+- **por que:** inspeciona e valida plugins externos
+- **quando usar:** verificar plugins instalados e conformidade
 
 **Syntax**
 
@@ -4181,7 +4828,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `plugins install`
 
-Install a plugin via pipx inject (or pip), then validate loading.
+**para que:** Install a plugin via pipx inject (or pip), then validate loading.
+
+- **por que:** inspeciona e valida plugins externos
+- **quando usar:** verificar plugins instalados e conformidade
 
 **Syntax**
 
@@ -4200,7 +4850,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `plugins list`
 
-List installed plugins with API version and load/trust status.
+**para que:** List installed plugins with API version and load/trust status.
+
+- **por que:** inspeciona e valida plugins externos
+- **quando usar:** verificar plugins instalados e conformidade
 
 **Syntax**
 
@@ -4214,7 +4867,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `plugins lock`
 
-Pin every installed plugin's content digest to .forge-doctor-data/plugins.lock.
+**para que:** Pin every installed plugin's content digest to .forge-doctor-data/plugins.lock.
+
+- **por que:** inspeciona e valida plugins externos
+- **quando usar:** verificar plugins instalados e conformidade
 
 **Syntax**
 
@@ -4232,7 +4888,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `plugins validate`
 
-Fail when any installed plugin is incompatible or unloadable.
+**para que:** Fail when any installed plugin is incompatible or unloadable.
+
+- **por que:** inspeciona e valida plugins externos
+- **quando usar:** verificar plugins instalados e conformidade
 
 **Syntax**
 
@@ -4246,7 +4905,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `plugins verify`
 
-Verify installed plugins against .forge-doctor-data/plugins.lock.
+**para que:** Verify installed plugins against .forge-doctor-data/plugins.lock.
+
+- **por que:** inspeciona e valida plugins externos
+- **quando usar:** verificar plugins instalados e conformidade
 
 **Syntax**
 
@@ -4266,7 +4928,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `policy`
 
-Organization policy packs.
+**para que:** Organization policy packs.
+
+- **por que:** packs de política de organização
+- **quando usar:** avaliar políticas organizacionais declaradas
 
 **Syntax**
 
@@ -4280,7 +4945,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `policy eval`
 
-Evaluate policy packs and print violations (exit 1 on errors/violations).
+**para que:** Evaluate policy packs and print violations (exit 1 on errors/violations).
+
+- **por que:** packs de política de organização
+- **quando usar:** avaliar políticas organizacionais declaradas
 
 **Syntax**
 
@@ -4299,7 +4967,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `policy list`
 
-List discovered policy packs and their rules.
+**para que:** List discovered policy packs and their rules.
+
+- **por que:** packs de política de organização
+- **quando usar:** avaliar políticas organizacionais declaradas
 
 **Syntax**
 
@@ -4317,7 +4988,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `policy report`
 
-Compliance report: packs, violations by rule, suppression audit.
+**para que:** Compliance report: packs, violations by rule, suppression audit.
+
+- **por que:** packs de política de organização
+- **quando usar:** avaliar políticas organizacionais declaradas
 
 **Syntax**
 
@@ -4336,7 +5010,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `policy validate`
 
-Lint a policy pack file: schema, duplicate ids, regexes, severities.
+**para que:** Lint a policy pack file: schema, duplicate ids, regexes, severities.
+
+- **por que:** packs de política de organização
+- **quando usar:** avaliar políticas organizacionais declaradas
 
 **Syntax**
 
@@ -4356,7 +5033,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `project`
 
-Project self-inspection: generated status and doc-drift checks.
+**para que:** Project self-inspection: generated status and doc-drift checks.
+
+- **por que:** auto-inspeção do projeto: status gerado e checks de doc-drift
+- **quando usar:** verificar o próprio projeto e drift de documentação
 
 **Syntax**
 
@@ -4370,11 +5050,14 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `project status`
 
-Deterministic project status from source registries.
+**para que:** Deterministic project status from source registries.
 
 Same inputs → same bytes: commands, checks, contracts, MCP tools,
 knowledge domains, and Loop Factory state are all read from their
 source of truth, sorted, and rendered without timestamps.
+
+- **por que:** auto-inspeção do projeto: status gerado e checks de doc-drift
+- **quando usar:** verificar o próprio projeto e drift de documentação
 
 **Syntax**
 
@@ -4396,7 +5079,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `python`
 
-Run only python checks.
+**para que:** Run only python checks.
+
+- **por que:** roda só checks de python
+- **quando usar:** escopo de checks de código Python
 
 **Syntax**
 
@@ -4433,7 +5119,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `quality`
 
-Data quality: Deequ/GX/SodaCL/dbt suites, coverage, gate wiring.
+**para que:** Data quality: Deequ/GX/SodaCL/dbt suites, coverage, gate wiring.
+
+- **por que:** qualidade de dado: Deequ/GX/SodaCL/dbt suites, cobertura, gate wiring
+- **quando usar:** revisar onde e como o dado é validado
 
 **Syntax**
 
@@ -4447,7 +5136,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `quality inspect`
 
-Print declared suites, coverage map, and gate wiring.
+**para que:** Print declared suites, coverage map, and gate wiring.
+
+- **por que:** qualidade de dado: Deequ/GX/SodaCL/dbt suites, cobertura, gate wiring
+- **quando usar:** revisar onde e como o dado é validado
 
 **Syntax**
 
@@ -4467,7 +5159,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `redshift`
 
-Redshift intelligence: inspect the vendor model.
+**para que:** Redshift intelligence: inspect the vendor model.
+
+- **por que:** inteligência Redshift: inspeciona o modelo do vendor
+- **quando usar:** revisar clusters/queries Redshift
 
 **Syntax**
 
@@ -4481,7 +5176,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `redshift inspect`
 
-Print the Redshift model: compute, relations, WLM, exports.
+**para que:** Print the Redshift model: compute, relations, WLM, exports.
+
+- **por que:** inteligência Redshift: inspeciona o modelo do vendor
+- **quando usar:** revisar clusters/queries Redshift
 
 **Syntax**
 
@@ -4501,7 +5199,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `reliability`
 
-End-to-end SLO & critical-path intelligence.
+**para que:** End-to-end SLO & critical-path intelligence.
+
+- **por que:** inteligência de SLO e caminho crítico end-to-end
+- **quando usar:** avaliar confiabilidade com evidência
 
 **Syntax**
 
@@ -4515,7 +5216,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `reliability path`
 
-Critical paths over data-flow edges with per-segment coverage.
+**para que:** Critical paths over data-flow edges with per-segment coverage.
+
+- **por que:** inteligência de SLO e caminho crítico end-to-end
+- **quando usar:** avaliar confiabilidade com evidência
 
 **Syntax**
 
@@ -4534,7 +5238,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `reliability slo`
 
-SLO budgets + SLO001-006 findings over critical paths.
+**para que:** SLO budgets + SLO001-006 findings over critical paths.
+
+- **por que:** inteligência de SLO e caminho crítico end-to-end
+- **quando usar:** avaliar confiabilidade com evidência
 
 **Syntax**
 
@@ -4555,7 +5262,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `remediate`
 
-Print deterministic remediation plans for findings / root causes.
+**para que:** Print deterministic remediation plans for findings / root causes.
+
+- **por que:** planos de remediação determinísticos para findings/root causes
+- **quando usar:** obter o plano de correção de um finding
 
 **Syntax**
 
@@ -4577,7 +5287,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `repo`
 
-Run only repository checks.
+**para que:** Run only repository checks.
+
+- **por que:** roda só checks de repository
+- **quando usar:** escopo de checks do repositório
 
 **Syntax**
 
@@ -4614,7 +5327,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `root-cause`
 
-Correlate scan findings with runtime evidence into causal clusters.
+**para que:** Correlate scan findings with runtime evidence into causal clusters.
+
+- **por que:** correlaciona findings de scan com evidência de runtime em clusters causais
+- **quando usar:** priorizar pela causa, não pela ordem de emissão
 
 **Syntax**
 
@@ -4636,7 +5352,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime`
 
-Offline runtime evidence (exported artifacts).
+**para que:** Offline runtime evidence (exported artifacts).
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4650,7 +5369,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime baseline`
 
-Robust baselines (median/p95/MAD) per fingerprint or recorded series.
+**para que:** Robust baselines (median/p95/MAD) per fingerprint or recorded series.
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4674,10 +5396,13 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime capacity`
 
-Capacity/saturation signals + trends over recorded history (CAP001-007).
+**para que:** Capacity/saturation signals + trends over recorded history (CAP001-007).
 
 Threshold provenance is config > platform pack > baseline — an
 unthresholded dimension reports UNKNOWN, never a global rule.
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4696,11 +5421,14 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime correlate`
 
-Correlate recorded change events with regression episodes.
+**para que:** Correlate recorded change events with regression episodes.
 
 Evidence-gated: a correlation is reported only when at least two
 evidence legs hold (temporal proximity, entity overlap, graph path,
 metric relevance).  Language stays 'correlated with' — never cause.
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4721,7 +5449,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime cost`
 
-Derive technical cost drivers + COST findings (never prices).
+**para que:** Derive technical cost drivers + COST findings (never prices).
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4742,7 +5473,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime diagnose`
 
-Match the artifact's errors against known error signatures.
+**para que:** Match the artifact's errors against known error signatures.
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4761,7 +5495,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime executions`
 
-Normalize an exported artifact into QueryExecution spines.
+**para que:** Normalize an exported artifact into QueryExecution spines.
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4781,12 +5518,15 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime history`
 
-Record an artifact batch and/or list recorded history series.
+**para que:** Record an artifact batch and/or list recorded history series.
 
 With ``artifact``, the normalized executions are appended as one
 compact JSONL snapshot under ``.forge-doctor-data/execution-history/``
 (metrics + fingerprints only — never raw logs or SQL).  Without an
 artifact, the stored series are listed.
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4808,7 +5548,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime inspect`
 
-Normalize one artifact into runtime facts (offline).
+**para que:** Normalize one artifact into runtime facts (offline).
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4828,7 +5571,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime performance`
 
-Derive performance signals + PERF findings from an artifact.
+**para que:** Derive performance signals + PERF findings from an artifact.
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4848,11 +5594,14 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime regressions`
 
-Baseline-aware regression detection (PERFREG001-009).
+**para que:** Baseline-aware regression detection (PERFREG001-009).
 
 Compares each series' latest window against its own historical
 baseline — a single slow run reports as a candidate (INFO), only
 persistent breaches warn.
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4873,7 +5622,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime reliability`
 
-Reliability models, delivery semantics, objectives + REL findings.
+**para que:** Reliability models, delivery semantics, objectives + REL findings.
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4894,7 +5646,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `runtime trend`
 
-Per-series trend direction for one metric (rising/falling/stable).
+**para que:** Per-series trend direction for one metric (rising/falling/stable).
+
+- **por que:** evidência de runtime offline (artefatos exportados)
+- **quando usar:** analisar evidência de runtime exportada
 
 **Syntax**
 
@@ -4918,7 +5673,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `sbom`
 
-Emit a CycloneDX 1.5 SBOM: deps, plugins, knowledge packs, images.
+**para que:** Emit a CycloneDX 1.5 SBOM: deps, plugins, knowledge packs, images.
+
+- **por que:** emite SBOM CycloneDX 1.5: deps, plugins, knowledge packs, imagens
+- **quando usar:** inventário de suprimentos para auditoria/supply chain
 
 **Syntax**
 
@@ -4940,7 +5698,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `scan`
 
-Scan a project for data-engineering problems.
+**para que:** Scan a project for data-engineering problems.
+
+- **por que:** scaneia um projeto atrás de problemas de engenharia de dados
+- **quando usar:** primeira passada num repo — produz findings
 
 **Syntax**
 
@@ -4985,7 +5746,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `schema`
 
-Schema extraction and diffing.
+**para que:** Schema extraction and diffing.
+
+- **por que:** extração e diff de schema
+- **quando usar:** extrair ou comparar schemas
 
 **Syntax**
 
@@ -4999,7 +5763,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `schema contracts`
 
-Dump the JSON Schemas for Forge Doctor Data's public artifacts.
+**para que:** Dump the JSON Schemas for Forge Doctor Data's public artifacts.
+
+- **por que:** extração e diff de schema
+- **quando usar:** extrair ou comparar schemas
 
 **Syntax**
 
@@ -5017,7 +5784,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `schema diff`
 
-Diff two schema files, or all schema files across a git range.
+**para que:** Diff two schema files, or all schema files across a git range.
+
+- **por que:** extração e diff de schema
+- **quando usar:** extrair ou comparar schemas
 
 **Syntax**
 
@@ -5040,7 +5810,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `search`
 
-Search platforms: OpenSearch/Elasticsearch indices, policies, domains.
+**para que:** Search platforms: OpenSearch/Elasticsearch indices, policies, domains.
+
+- **por que:** plataformas de busca: índices, políticas, domínios OpenSearch/Elasticsearch
+- **quando usar:** revisar serviços de busca detectados
 
 **Syntax**
 
@@ -5054,7 +5827,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `search inspect`
 
-Print the search model: indices/templates, policies, pipelines, domains.
+**para que:** Print the search model: indices/templates, policies, pipelines, domains.
+
+- **por que:** plataformas de busca: índices, políticas, domínios OpenSearch/Elasticsearch
+- **quando usar:** revisar serviços de busca detectados
 
 **Syntax**
 
@@ -5074,7 +5850,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `snowflake`
 
-Snowflake intelligence: inspect the vendor model.
+**para que:** Snowflake intelligence: inspect the vendor model.
+
+- **por que:** inteligência Snowflake: inspeciona o modelo do vendor
+- **quando usar:** revisar warehouses/queries Snowflake
 
 **Syntax**
 
@@ -5088,7 +5867,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `snowflake inspect`
 
-Print the Snowflake model: warehouses, objects, exports, copies.
+**para que:** Print the Snowflake model: warehouses, objects, exports, copies.
+
+- **por que:** inteligência Snowflake: inspeciona o modelo do vendor
+- **quando usar:** revisar warehouses/queries Snowflake
 
 **Syntax**
 
@@ -5108,7 +5890,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `spark`
 
-Spark checks and runtime diagnosis. Bare: Run only spark checks (default) or a runtime subcommand.
+**para que:** Spark checks and runtime diagnosis. Bare: Run only spark checks (default) or a runtime subcommand.
+
+- **por que:** checks Spark e diagnóstico de runtime
+- **quando usar:** escopo de checks Spark ou diagnóstico de runtime Spark
 
 **Syntax**
 
@@ -5133,7 +5918,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `spark eventlog`
 
-Analyze a Spark event log (JSONL) for runtime problems.
+**para que:** Analyze a Spark event log (JSONL) for runtime problems.
+
+- **por que:** checks Spark e diagnóstico de runtime
+- **quando usar:** escopo de checks Spark ou diagnóstico de runtime Spark
 
 **Syntax**
 
@@ -5152,7 +5940,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `spark logs`
 
-Fingerprint a Spark log against error packs and runtime signatures.
+**para que:** Fingerprint a Spark log against error packs and runtime signatures.
+
+- **por que:** checks Spark e diagnóstico de runtime
+- **quando usar:** escopo de checks Spark ou diagnóstico de runtime Spark
 
 **Syntax**
 
@@ -5171,7 +5962,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `spark plan`
 
-Scan a Spark physical plan for pathological operators.
+**para que:** Scan a Spark physical plan for pathological operators.
+
+- **por que:** checks Spark e diagnóstico de runtime
+- **quando usar:** escopo de checks Spark ou diagnóstico de runtime Spark
 
 **Syntax**
 
@@ -5192,7 +5986,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `stepfunctions`
 
-Step Functions intelligence.
+**para que:** Step Functions intelligence.
+
+- **por que:** inteligência Step Functions
+- **quando usar:** revisar state machines e execuções
 
 **Syntax**
 
@@ -5206,7 +6003,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `stepfunctions inspect`
 
-Summarize Step Functions definitions from the semantic model.
+**para que:** Summarize Step Functions definitions from the semantic model.
+
+- **por que:** inteligência Step Functions
+- **quando usar:** revisar state machines e execuções
 
 **Syntax**
 
@@ -5226,7 +6026,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `streaming`
 
-Streaming intelligence.
+**para que:** Streaming intelligence.
+
+- **por que:** inteligência de streaming
+- **quando usar:** revisar plataformas de streaming detectadas
 
 **Syntax**
 
@@ -5240,7 +6043,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `streaming diagnose`
 
-Deterministic runtime diagnostics over a progress batch series.
+**para que:** Deterministic runtime diagnostics over a progress batch series.
+
+- **por que:** inteligência de streaming
+- **quando usar:** revisar plataformas de streaming detectadas
 
 **Syntax**
 
@@ -5258,7 +6064,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `streaming inspect`
 
-Summarize streaming queries from the semantic model.
+**para que:** Summarize streaming queries from the semantic model.
+
+- **por que:** inteligência de streaming
+- **quando usar:** revisar plataformas de streaming detectadas
 
 **Syntax**
 
@@ -5276,7 +6085,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `streaming progress`
 
-Summarize a Structured Streaming progress artifact (offline).
+**para que:** Summarize a Structured Streaming progress artifact (offline).
+
+- **por que:** inteligência de streaming
+- **quando usar:** revisar plataformas de streaming detectadas
 
 **Syntax**
 
@@ -5294,7 +6106,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `streaming semantics`
 
-Derived delivery semantics per streaming query.
+**para que:** Derived delivery semantics per streaming query.
+
+- **por que:** inteligência de streaming
+- **quando usar:** revisar plataformas de streaming detectadas
 
 **Syntax**
 
@@ -5314,7 +6129,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `suppressions`
 
-Audit configured suppressions: ACTIVE / EXPIRED / UNUSED.
+**para que:** Audit configured suppressions: ACTIVE / EXPIRED / UNUSED.
+
+- **por que:** audita suppressions configuradas: ACTIVE/EXPIRED/UNUSED
+- **quando usar:** verificar o que está suprimido e por quê
 
 **Syntax**
 
@@ -5335,7 +6153,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `terraform`
 
-Terraform intelligence: inspect.
+**para que:** Terraform intelligence: inspect.
+
+- **por que:** inteligência Terraform
+- **quando usar:** revisar HCL/plan de plataformas de dados
 
 **Syntax**
 
@@ -5349,7 +6170,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `terraform inspect`
 
-Summarize the project's Terraform surface from the semantic model.
+**para que:** Summarize the project's Terraform surface from the semantic model.
+
+- **por que:** inteligência Terraform
+- **quando usar:** revisar HCL/plan de plataformas de dados
 
 **Syntax**
 
@@ -5369,7 +6193,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `trace`
 
-Explain ONE finding: evidence, enclosing symbol, receiver chain.
+**para que:** Explain ONE finding: evidence, enclosing symbol, receiver chain.
+
+- **por que:** explica UM finding: evidência, símbolo, cadeia de receiver
+- **quando usar:** entender um finding específico a fundo
 
 **Syntax**
 
@@ -5392,7 +6219,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `trino`
 
-Trino intelligence: inspect catalogs, coordinator, lineage.
+**para que:** Trino intelligence: inspect catalogs, coordinator, lineage.
+
+- **por que:** inteligência Trino: catálogos, coordinator, lineage
+- **quando usar:** revisar clusters/queries Trino
 
 **Syntax**
 
@@ -5406,7 +6236,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `trino inspect`
 
-Print the Trino model: catalogs, coordinator flags, SQL refs.
+**para que:** Print the Trino model: catalogs, coordinator flags, SQL refs.
+
+- **por que:** inteligência Trino: catálogos, coordinator, lineage
+- **quando usar:** revisar clusters/queries Trino
 
 **Syntax**
 
@@ -5426,7 +6259,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `twin`
 
-Formal digital twin: validated platform snapshot.
+**para que:** Formal digital twin: validated platform snapshot.
+
+- **por que:** digital twin formal: snapshot validado da plataforma
+- **quando usar:** materializar um twin validado para análise
 
 **Syntax**
 
@@ -5440,7 +6276,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `twin diff`
 
-Diff two twin-state snapshots: entities, rels, capabilities, drift.
+**para que:** Diff two twin-state snapshots: entities, rels, capabilities, drift.
+
+- **por que:** digital twin formal: snapshot validado da plataforma
+- **quando usar:** materializar um twin validado para análise
 
 **Syntax**
 
@@ -5461,7 +6300,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `twin explain`
 
-Show one entity across all five states.
+**para que:** Show one entity across all five states.
+
+- **por que:** digital twin formal: snapshot validado da plataforma
+- **quando usar:** materializar um twin validado para análise
 
 **Syntax**
 
@@ -5481,7 +6323,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `twin export`
 
-Emit the deterministic twin snapshot artifact.
+**para que:** Emit the deterministic twin snapshot artifact.
+
+- **por que:** digital twin formal: snapshot validado da plataforma
+- **quando usar:** materializar um twin validado para análise
 
 **Syntax**
 
@@ -5500,7 +6345,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `twin facts`
 
-List state-tagged facts the twin collected.
+**para que:** List state-tagged facts the twin collected.
+
+- **por que:** digital twin formal: snapshot validado da plataforma
+- **quando usar:** materializar um twin validado para análise
 
 **Syntax**
 
@@ -5520,7 +6368,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `twin inspect`
 
-Twin summary + invariant report. Exit 1 on hard violations.
+**para que:** Twin summary + invariant report. Exit 1 on hard violations.
+
+- **por que:** digital twin formal: snapshot validado da plataforma
+- **quando usar:** materializar um twin validado para análise
 
 **Syntax**
 
@@ -5539,7 +6390,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `twin reconcile`
 
-Reconcile the five states: every (entity, property) divergence.
+**para que:** Reconcile the five states: every (entity, property) divergence.
+
+- **por que:** digital twin formal: snapshot validado da plataforma
+- **quando usar:** materializar um twin validado para análise
 
 **Syntax**
 
@@ -5558,7 +6412,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `twin record`
 
-Persist a five-state twin snapshot into the project history dir.
+**para que:** Persist a five-state twin snapshot into the project history dir.
+
+- **por que:** digital twin formal: snapshot validado da plataforma
+- **quando usar:** materializar um twin validado para análise
 
 **Syntax**
 
@@ -5579,7 +6436,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `version`
 
-Print the installed Forge Doctor Data version.
+**para que:** Print the installed Forge Doctor Data version.
+
+- **por que:** imprime a versão instalada do Forge Doctor Data
+- **quando usar:** confirmar qual build está rodando
 
 **Syntax**
 
@@ -5595,7 +6455,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `what-if`
 
-Evaluate a hypothetical change without executing it. Bare: Evaluate --change target=value specs against the project.
+**para que:** Evaluate a hypothetical change without executing it. Bare: Evaluate --change target=value specs against the project.
+
+- **por que:** avalia uma mudança hipotética sem executá-la
+- **quando usar:** ensaiar impacto de mudança sem mutar nada
 
 **Syntax**
 
@@ -5617,7 +6480,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `workspace`
 
-Discover and orchestrate sub-projects. Bare: Discover sub-projects (pyproject.toml) under a workspace root.
+**para que:** Discover and orchestrate sub-projects. Bare: Discover sub-projects (pyproject.toml) under a workspace root.
+
+- **por que:** descobre e orquestra sub-projetos
+- **quando usar:** operar multi-projeto num escopo declarado
 
 **Syntax**
 
@@ -5635,7 +6501,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `workspace diff`
 
-Per-subproject finding diff across a git range.
+**para que:** Per-subproject finding diff across a git range.
+
+- **por que:** descobre e orquestra sub-projetos
+- **quando usar:** operar multi-projeto num escopo declarado
 
 **Syntax**
 
@@ -5654,7 +6523,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `workspace inspect`
 
-Build the WorkspaceModel: repos, merged platform graph, cross-repo links.
+**para que:** Build the WorkspaceModel: repos, merged platform graph, cross-repo links.
+
+- **por que:** descobre e orquestra sub-projetos
+- **quando usar:** operar multi-projeto num escopo declarado
 
 **Syntax**
 
@@ -5673,7 +6545,10 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 ### `workspace scan`
 
-Scan every nested project and aggregate results with a project column.
+**para que:** Scan every nested project and aggregate results with a project column.
+
+- **por que:** descobre e orquestra sub-projetos
+- **quando usar:** operar multi-projeto num escopo declarado
 
 **Syntax**
 
