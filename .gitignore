@@ -39,3 +39,4 @@ Thumbs.db
 .env.*
 graphify-out/
 .tokensave/
+.pytest-tmp/
