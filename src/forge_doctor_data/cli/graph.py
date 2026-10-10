@@ -158,3 +158,43 @@ def graph_project(
         typer.echo(graph.to_mermaid())
     else:
         typer.echo(_json.dumps(graph.to_dict(), indent=2, ensure_ascii=False))
+
+
+@graph_app.command(name="view")
+def graph_view(path: _PathOpt = Path(".")) -> None:
+    """Emit the ForgeGraphView/v1 document (Graph Studio contract)."""
+    import json as _json
+
+    from forge_doctor_data.graphview import build_view
+
+    view = build_view(path)
+    if view is None:
+        _stderr("no evidence graph for this project")
+        raise typer.Exit(INTERNAL_ERROR_EXIT)
+    typer.echo(_json.dumps(view.to_dict(), indent=2, sort_keys=True))
+
+
+@graph_app.command(name="ui")
+def graph_ui(
+    path: _PathOpt = Path("."),
+    no_browser: bool = typer.Option(
+        False, "--no-browser", help="Serve without opening a browser (SSH/remote)."
+    ),
+    port: int = typer.Option(0, "--port", help="Port to bind (default ephemeral)."),
+) -> None:
+    """Open the local Graph Studio explorer for this project's evidence graph."""
+    from forge_doctor_data._graphstudio import graph_studio_enabled, open_studio
+    from forge_doctor_data.graphview import build_view
+
+    if not graph_studio_enabled(
+        Path("."),
+        state_rel=".forge-doctor-data/install",
+        user_state_rel="~/.forge-doctor-data/install",
+    ):
+        _stderr("Graph Studio declined at install — reinstall with graph-studio")
+        raise typer.Exit(INTERNAL_ERROR_EXIT)
+    view = build_view(path)
+    if view is None:
+        _stderr("no evidence graph for this project")
+        raise typer.Exit(INTERNAL_ERROR_EXIT)
+    raise typer.Exit(open_studio([view], open_browser=not no_browser, port=port))

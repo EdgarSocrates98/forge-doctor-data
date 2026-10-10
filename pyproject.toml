@@ -101,6 +101,9 @@ select = [
 ignore = ["RUF001"]  # severity icons (ℹ ⚠) are deliberate
 
 [tool.ruff.lint.per-file-ignores]
+# Vendored Graph Studio kit (canonical: the-forge/src/theforge)
+"src/forge_doctor_data/_graphview.py" = ["ALL"]
+"src/forge_doctor_data/_graphstudio.py" = ["ALL"]
 # Vendored Forge UI kit (canonical: the-forge/src/theforge/ui)
 "src/forge_doctor_data/ui/**/*.py" = ["ALL"]
 "tests/**" = ["S101"]

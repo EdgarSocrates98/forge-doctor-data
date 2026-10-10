@@ -69,10 +69,22 @@ def install_apply(
         ),
     ] = False,
     dry_run: DryRunOpt = False,
+    components: Annotated[
+        str | None,
+        typer.Option(
+            "--components",
+            help="Optional components csv: skills,agents,mcp,tui,graph-studio.",
+        ),
+    ] = None,
 ) -> None:
     """Install Forge Doctor Data host assets into the resolved scope."""
     if ctx.invoked_subcommand is not None:
         return
+    comps = (
+        tuple(c.strip() for c in components.split(",") if c.strip())
+        if components
+        else None
+    )
     doc = _call(
         service.install,
         host,
@@ -81,6 +93,7 @@ def install_apply(
         profile=profile,
         yes=yes,
         dry_run=dry_run,
+        components=comps,
     )
     _emit(doc)
     if doc.get("status") not in ("planned", "completed"):
