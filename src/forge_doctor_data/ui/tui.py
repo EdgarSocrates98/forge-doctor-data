@@ -12,12 +12,17 @@ import subprocess
 import sys
 
 from forge_doctor_data.ui import home
-from forge_doctor_data.ui.app import ActionData, Entry, ForgeApp, TextData
+from forge_doctor_data.ui.app import ActionData, DocMeta, Entry, ForgeApp, TextData
 from forge_doctor_data.ui.kit import UIContext
 
 # argv[0]s that stream progressively or open external surfaces —
 # those run attached (alt-screen suspended) instead of captured.
 _SUSPEND_VERBS = {"analyze", "judge", "collect", "migrate", "graph", "sdd"}
+
+
+_LEARN_DOC: dict[str, str] = {
+    "capabilities": "docs/learn/recipes/checks-profiles.md",
+}
 
 
 def _action_for(label: str, extra: list[str]) -> ActionData:
@@ -38,8 +43,13 @@ def _action_for(label: str, extra: list[str]) -> ActionData:
             sys.stdout.write("\n[stderr]\n" + cp.stderr)
         return cp.returncode
 
+    doc = DocMeta(
+        description=label,
+        example=f"{home.CLI_NAME} {' '.join(extra)}",
+        doc_path=_LEARN_DOC.get(extra[0], ""),
+    )
     return ActionData(callable=_run, title=f"{home.CLI_NAME} {' '.join(extra)}",
-                      suspend=suspend)
+                      suspend=suspend, doc=doc)
 
 
 def _wizard_entry() -> Entry:

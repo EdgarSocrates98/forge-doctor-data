@@ -16,4 +16,6 @@
 | "Quero um subset de regras/severidade" | [checks-profiles](recipes/checks-profiles.md) |
 | "Por que este finding disparou?" | [explain-finding](recipes/explain-finding.md) |
 
+Hub do ecossistema (descoberta cross-forge): `the-forge/docs/hub/` — install, which-forge, hosts, MCP, troubleshooting.
+
 Índice gerado: [../INDEX.md](../INDEX.md).
