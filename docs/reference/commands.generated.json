@@ -2,9 +2,9 @@
   "schema": "forge/CommandInventory/v1",
   "forge_id": "forge-doctor-data",
   "cli": "forge-doctor-data",
-  "generated_at": "2026-10-09T22:45:18Z",
+  "generated_at": "2026-10-10T01:11:10Z",
   "generated_by": "doc_inventory.py/1",
-  "command_count": 289,
+  "command_count": 291,
   "commands": [
     {
       "path": "advise",
@@ -3069,6 +3069,62 @@
       ]
     },
     {
+      "path": "graph ui",
+      "help": "Open the local Graph Studio explorer for this project's evidence graph.",
+      "arguments": [
+        {
+          "name": "path",
+          "flags": [
+            "path"
+          ],
+          "required": false,
+          "default": ".",
+          "choices": null,
+          "positional": false,
+          "help": "Project root."
+        },
+        {
+          "name": "no_browser",
+          "flags": [
+            "--no-browser"
+          ],
+          "required": false,
+          "default": "False",
+          "choices": null,
+          "positional": false,
+          "help": "Serve without opening a browser (SSH/remote)."
+        },
+        {
+          "name": "port",
+          "flags": [
+            "--port"
+          ],
+          "required": false,
+          "default": "0",
+          "choices": null,
+          "positional": false,
+          "help": "Port to bind (default ephemeral)."
+        }
+      ]
+    },
+    {
+      "path": "graph view",
+      "help": "Emit the ForgeGraphView/v1 document (Graph Studio contract).",
+      "arguments": [
+        {
+          "name": "path",
+          "flags": [
+            "path"
+          ],
+          "required": false,
+          "default": ".",
+          "choices": null,
+          "positional": false,
+          "help": "Project root."
+        }
+      ]
+    },
+    {
       "path": "history",
       "help": "Recorded scan snapshots: list, diff, trend. Bare: List recorded snapshots (scan --record).",
       "arguments": [
@@ -4296,6 +4352,17 @@
           "choices": null,
           "positional": false,
           "help": "Plan only — writes nothing."
+        },
+        {
+          "name": "components",
+          "flags": [
+            "--components"
+          ],
+          "required": false,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": "Optional components csv: skills,agents,mcp,tui,graph-studio."
         }
       ],
       "group": true
