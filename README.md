@@ -503,3 +503,9 @@ add tests and a `docs/checks.md` entry.
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+## Graph Studio
+
+`forge-doctor-data graph view|ui --path .` projects the evidence graph through
+`forge/ForgeGraphView/v1` and serves the embedded local explorer (declinable at
+install via `--components`). Full docs: `the-forge/docs/graph-studio/`.
