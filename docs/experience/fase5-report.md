@@ -48,8 +48,11 @@ Data: 2026-10-11 · Branch: feat/ultimate-completion
 - Slice tocado + gates de docs/freeze: verde.
 - api-surface regenerado; `test_mcp_surface_frozen` pin 13→14.
 - Divergência de documentação: 0 (0 missing, 0 undocumented).
-- Suíte integral: ver resultado JUnit `fdd-suite2.xml` (com cobertura
-  para o rc-baseline).
+- Suíte integral no HEAD: **2638 passed / 1 failed / 0 errors** —
+  a única falha era `rc-baseline` com `test_count` nulo (baseline
+  gerado sem `--tests`); re-selado com os números medidos da própria
+  run (**2639 testes, 82.85% de cobertura**) → verde em re-run.
+  JUnit autoritativo: `fdd-suite2.xml`.
 
 ## Achados e limitações honestas
 
