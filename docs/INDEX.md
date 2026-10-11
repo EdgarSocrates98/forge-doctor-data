@@ -56,8 +56,16 @@ _Task-oriented guides and workflows._
 ### learn/
 
 - [Forge Doctor Data — trilha de aprendizado](learn/README.md)
+- [Receita — transformar findings em plano de ação](learn/recipes/advise-acoes.md)
+- [Receita — "analise este repo de dados" via agente](learn/recipes/agente-contexto.md)
+- [Receita — baselines e histórico de scans](learn/recipes/baselines-history.md)
 - [Receita — rodar um subset de checks com a política certa](learn/recipes/checks-profiles.md)
+- [Receita — usar o Doctor como gate de CI](learn/recipes/ci-gate.md)
+- [Receita — Doctor Data vs Spark Forge: qual usar?](learn/recipes/diferenca-sparkforge.md)
 - [Receita — por que este finding disparou?](learn/recipes/explain-finding.md)
+- [Receita — usar o Doctor pelo seu host de IA (Devin/Claude/Codex)](learn/recipes/mcp-hosts.md)
+- [Receita — estender o Doctor com plugins e knowledge packs](learn/recipes/plugins-knowledge.md)
+- [Receita — operar o Forge Doctor Data pelo portal web local](learn/recipes/portal.md)
 - [Receita — o que está errado neste projeto de dados?](learn/recipes/scan-project.md)
 
 ## Reference
@@ -116,6 +124,10 @@ _Troubleshooting, doctor/repair, observability._
 - [Uninstall — forge-doctor-data](installation/uninstall.md)
 - [Update e repair — forge-doctor-data](installation/update-and-repair.md)
 
+### learn/
+
+- [Receita — instalar o Doctor num projeto](learn/recipes/instalar-doctor.md)
+
 ### superpowers/
 
 - [Forge Doctor Data v0.1 Implementation Plan](superpowers/plans/2026-09-28-forge-doctor-v0.1.md)
@@ -154,6 +166,7 @@ _Historical, deprecated, generated and evidence docs (preserved, not entry point
 
 - [Accessibility](experience/accessibility.md) `UNKNOWN`
 - [Automation mode](experience/automation-mode.md) `UNKNOWN`
+- [FASE 5 — Forge Doctor Data: relatório de validação](experience/fase5-report.md) `RELEASE_REPORT`
 - [Interactive CLI](experience/interactive-cli.md) `UNKNOWN`
 - [Themes and visual identity](experience/themes.md) `UNKNOWN`
 

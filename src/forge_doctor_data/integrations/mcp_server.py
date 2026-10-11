@@ -179,6 +179,19 @@ _TOOL_DEFS = [
             "required": ["manifest"],
         },
     },
+    {
+        "name": "get_host_status",
+        "description": "Observe AI host CLIs (claude/devin/codex/copilot): "
+        "binary, version, auth state and this project's forge integration. "
+        "Read-only — never launches a host.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "host": {"type": "string"},
+                "path": {"type": "string"},
+            },
+        },
+    },
 ]
 
 
@@ -425,6 +438,16 @@ def _get_portfolio_summary(arguments: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _get_host_status(arguments: dict[str, Any]) -> dict[str, Any]:
+    from forge_doctor_data.integrations.hostflow import hosts_flow
+
+    return hosts_flow(
+        str(arguments.get("host") or "all"),
+        repo=Path(str(arguments.get("path") or ".")),
+        launch=False,
+    )
+
+
 _TOOL_HANDLERS = {
     "scan_project": _scan,
     "explain_rule": _explain,
@@ -439,6 +462,7 @@ _TOOL_HANDLERS = {
     "get_critical_path": _get_critical_path,
     "get_capacity_signals": _get_capacity_signals,
     "get_portfolio_summary": _get_portfolio_summary,
+    "get_host_status": _get_host_status,
 }
 
 

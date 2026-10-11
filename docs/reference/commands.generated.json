@@ -2,9 +2,9 @@
   "schema": "forge/CommandInventory/v1",
   "forge_id": "forge-doctor-data",
   "cli": "forge-doctor-data",
-  "generated_at": "2026-10-10T10:34:16Z",
+  "generated_at": "2026-10-11T05:25:41Z",
   "generated_by": "doc_inventory.py/1",
-  "command_count": 291,
+  "command_count": 293,
   "commands": [
     {
       "path": "advise",
@@ -3234,6 +3234,45 @@
       ]
     },
     {
+      "path": "hosts",
+      "help": "Observe AI host CLIs and this project's integration with them.",
+      "arguments": [
+        {
+          "name": "target",
+          "flags": [
+            "target"
+          ],
+          "required": false,
+          "default": "all",
+          "choices": null,
+          "positional": false,
+          "help": "claude|devin|codex|copilot|all"
+        },
+        {
+          "name": "launch",
+          "flags": [
+            "--launch"
+          ],
+          "required": false,
+          "default": "False",
+          "choices": null,
+          "positional": false,
+          "help": "Open the host in this repo (TTY only)."
+        },
+        {
+          "name": "root",
+          "flags": [
+            "--root"
+          ],
+          "required": false,
+          "default": ".",
+          "choices": null,
+          "positional": false,
+          "help": "Repository to observe (default: cwd)."
+        }
+      ]
+    },
+    {
       "path": "iac",
       "help": "Run only iac checks.",
       "arguments": [
@@ -6085,6 +6124,45 @@
           "choices": null,
           "positional": false,
           "help": "Policy pack file to validate."
+        }
+      ]
+    },
+    {
+      "path": "portal",
+      "help": "Serve the optional local portal over the real services (127.0.0.1).",
+      "arguments": [
+        {
+          "name": "no_browser",
+          "flags": [
+            "--no-browser"
+          ],
+          "required": false,
+          "default": "False",
+          "choices": null,
+          "positional": false,
+          "help": "Print the URL instead of opening a browser (SSH/remote)."
+        },
+        {
+          "name": "port",
+          "flags": [
+            "--port"
+          ],
+          "required": false,
+          "default": "0",
+          "choices": null,
+          "positional": false,
+          "help": "Port to bind (default: free port)."
+        },
+        {
+          "name": "root",
+          "flags": [
+            "--root"
+          ],
+          "required": false,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": "Workspace root (default: cwd)."
         }
       ]
     },

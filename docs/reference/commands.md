@@ -2,7 +2,7 @@
 
 Generated from the real CLI parser by `doc_inventory.py` + `doc_reference.py`. Do not hand-edit generated sections — write between `keep:start`/`keep:end` markers. `por que`/`quando` lines come from the curated `command-rationale.json` — edit rationale there, never here. Status vocabulary: `available` unless marked otherwise.
 
-Rationale coverage: **90/90** first-level groups curated in `command-rationale.json`.
+Rationale coverage: **92/92** first-level groups curated in `command-rationale.json`.
 
 ## Groups
 
@@ -47,6 +47,7 @@ Rationale coverage: **90/90** first-level groups curated in `command-rationale.j
 - [`golden`](#golden) — 4 command(s)
 - [`graph`](#graph) — 7 command(s)
 - [`history`](#history) — 3 command(s)
+- [`hosts`](#hosts) — 1 command(s)
 - [`iac`](#iac) — 1 command(s)
 - [`iceberg`](#iceberg) — 6 command(s)
 - [`incident`](#incident) — 3 command(s)
@@ -71,6 +72,7 @@ Rationale coverage: **90/90** first-level groups curated in `command-rationale.j
 - [`platform`](#platform) — 4 command(s)
 - [`plugins`](#plugins) — 8 command(s)
 - [`policy`](#policy) — 5 command(s)
+- [`portal`](#portal) — 1 command(s)
 - [`project`](#project) — 2 command(s)
 - [`python`](#python) — 1 command(s)
 - [`quality`](#quality) — 2 command(s)
@@ -2303,6 +2305,31 @@ forge-doctor-data history trend [path] [fmt]
 |---|---|---|---|
 | `path` | no | — | Project root. |
 | `fmt` | no | — | text|json |
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
+## hosts
+
+### `hosts`
+
+**para que:** Observe AI host CLIs and this project's integration with them.
+
+- **por que:** observa os CLIs de host de IA (binário, versão, auth, integração) e abre um no repo
+- **quando usar:** medir primeiro com `hosts`; `hosts <h> --launch` com TTY abre o host no repositório
+
+**Syntax**
+
+```text
+forge-doctor-data hosts [target] [launch] [root]
+```
+
+| argument/flag | required | default | description |
+|---|---|---|---|
+| `target` | no | — | claude|devin|codex|copilot|all |
+| `launch` | no | — | Open the host in this repo (TTY only). |
+| `root` | no | — | Repository to observe (default: cwd). |
 
 <!-- keep:start -->
 _free notes — errors, examples, next steps (hand-written, preserved)_
@@ -5024,6 +5051,32 @@ forge-doctor-data policy validate <pack>
 | argument/flag | required | default | description |
 |---|---|---|---|
 | `pack` | yes | — | Policy pack file to validate. |
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
+## portal
+
+### `portal`
+
+**para que:** Serve the optional local portal over the real services (127.0.0.1).
+
+- **por que:** UI web local opcional (127.0.0.1) sobre os serviços reais — install, hosts, MCP, scan e grafo de evidência
+- **quando usar:** explorar/operar visualmente a forja instalada; o CLI/MCP continuam idênticos sem ela
+- **quando não:** em automação/CI — use os verbos CLI diretamente; em hosts remotos sem túnel (loopback-only)
+
+**Syntax**
+
+```text
+forge-doctor-data portal [no_browser] [port] [root]
+```
+
+| argument/flag | required | default | description |
+|---|---|---|---|
+| `no_browser` | no | — | Print the URL instead of opening a browser (SSH/remote). |
+| `port` | no | — | Port to bind (default: free port). |
+| `root` | no | — | Workspace root (default: cwd). |
 
 <!-- keep:start -->
 _free notes — errors, examples, next steps (hand-written, preserved)_

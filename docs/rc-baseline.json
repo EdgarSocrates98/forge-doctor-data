@@ -28,29 +28,29 @@
     "scan_validated_envelope": 250
   },
   "git": {
-    "branch": "feat/portable-installation",
-    "dirty": false,
-    "head": "74ac08f921b5e51f2cdc0cd05e42c4a28d451982"
+    "branch": "feat/ultimate-completion",
+    "dirty": true,
+    "head": "757f590e22e54bf8119324d28fa33a642f881c6b"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
     "scenario_count": 66
   },
   "mcp": {
-    "tool_count": 13
+    "tool_count": 14
   },
   "package": {
     "name": "forge-doctor-data",
     "version": "1.0.0rc1"
   },
   "public_api": {
-    "public_api_sha256": "8d6bd1966b08fe9f5f3fcb40f5978ca61d1d30048a0b06c2bedb0c3336aba8fb",
+    "public_api_sha256": "ac120676d1aa416d44c9e615c80f62020e9d4ff2a225992811833c93f9df60cd",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
   "schema_version": "1",
   "verification": {
-    "coverage_percent": 81.04,
-    "test_count": 2618
+    "coverage_percent": 82.85,
+    "test_count": 2639
   }
 }

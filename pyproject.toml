@@ -54,6 +54,7 @@ packages = [{ include = "forge_doctor_data", from = "src" }]
 include = [
     { path = "src/forge_doctor_data/knowledge", format = ["sdist", "wheel"] },
     { path = "src/forge_doctor_data/contracts/fixtures", format = ["sdist", "wheel"] },
+    { path = "src/forge_doctor_data/portal_assets", format = ["sdist", "wheel"] },
 ]
 requires-poetry = ">=2.2"
 
@@ -109,6 +110,7 @@ ignore = ["RUF001"]  # severity icons (ℹ ⚠) are deliberate
 "tests/**" = ["S101"]
 "src/forge_doctor_data/cli/**" = ["B006"]  # Typer list-valued options use [] defaults
 "src/forge_doctor_data/_installkit.py" = ["ALL"]  # vendored shared source — canonical copy is the lint target
+"src/forge_doctor_data/_forge_portal.py" = ["ALL"]  # vendored portal server — canonical copy is the lint target
 "scripts/forge_installkit.py" = ["ALL"]
 "scripts/forge_bootstrap.py" = ["ALL"]
 
@@ -136,6 +138,12 @@ disallow_untyped_decorators = false
 [[tool.mypy.overrides]]
 module = ["forge_doctor_data._installkit"]
 warn_return_any = false
+
+# Vendored portal server — canonical copy in forge-portal/portal_core is
+# the typecheck target; do not diverge the byte-parity copy for typing.
+[[tool.mypy.overrides]]
+module = ["forge_doctor_data._forge_portal"]
+ignore_errors = true
 
 [build-system]
 requires = ["poetry-core>=2.0"]
