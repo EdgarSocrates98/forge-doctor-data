@@ -233,10 +233,13 @@ def test_cli_refusal_document(target: Path) -> None:
 def test_hosts_none_e_csv():
     """GAP-003: `none` nunca vira `all`; csv subconjunto e validado."""
     import pytest
-    from forge_doctor_data.install.service import _hosts, HOSTS
+
+    from forge_doctor_data import _installkit as kit
+    from forge_doctor_data.install.service import HOSTS, _hosts
+
     assert _hosts("all") == HOSTS
     assert _hosts("none") == ()
     assert _hosts("") == ()
     assert set(_hosts("claude,devin")) == {"claude", "devin"}
-    with pytest.raises(Exception):
+    with pytest.raises(kit.InstallError):
         _hosts("nope")

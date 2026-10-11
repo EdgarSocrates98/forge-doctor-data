@@ -131,13 +131,13 @@ def collect_surface() -> dict[str, Any]:
 def main(argv: list[str]) -> int:
     rendered = json.dumps(collect_surface(), indent=2, sort_keys=True) + "\n"
     if "--check" in argv:
-        current = OUT.read_text("utf-8") if OUT.is_file() else ""
-        if current != rendered:
+        current = OUT.read_bytes() if OUT.is_file() else b""
+        if current != rendered.encode("utf-8"):
             print("docs/api-surface.json is stale - regenerate with tools/api_surface.py")
             return 1
         print("docs/api-surface.json up to date")
         return 0
-    OUT.write_text(rendered, encoding="utf-8")
+    OUT.write_bytes(rendered.encode("utf-8"))
     print(f"wrote {OUT}")
     return 0
 

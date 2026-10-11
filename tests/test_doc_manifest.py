@@ -18,9 +18,16 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 EXEMPT_PREFIXES = (
-    "docs/sdd/archive/", "docs/superpowers/", "docs/historico/",
-    ".claude/sdd/", ".agents/sdd/", ".devin/sdd/", "vendor/",
-    "docs/reports/", "docs/knowledge-program/", "knowledge/devin/",
+    "docs/sdd/archive/",
+    "docs/superpowers/",
+    "docs/historico/",
+    ".claude/sdd/",
+    ".agents/sdd/",
+    ".devin/sdd/",
+    "vendor/",
+    "docs/reports/",
+    "docs/knowledge-program/",
+    "knowledge/devin/",
 )
 
 
@@ -35,16 +42,19 @@ def _load_manifest():
     return mod
 
 
-@pytest.mark.parametrize("cli,forge", [
-    # overridden per repo by edit below — single binding keeps vendoring simple
-    ("forge-doctor-data", "forge-doctor-data"),
-])
+@pytest.mark.parametrize(
+    "cli,forge",
+    [
+        # overridden per repo by edit below — single binding keeps vendoring simple
+        ("forge-doctor-data", "forge-doctor-data"),
+    ],
+)
 def test_no_broken_links_in_active_docs(cli: str, forge: str):
     mod = _load_manifest()
     inv = ROOT / "docs" / "knowledge-program" / "inventory.jsonl"
     if not inv.exists():
         pytest.skip("run scripts/docs/doc_manifest.py first")
-    rows = [json.loads(l) for l in inv.read_text("utf-8").splitlines()]
+    rows = [json.loads(line) for line in inv.read_text("utf-8").splitlines()]
     broken: list[dict] = []
     for r in rows:
         path = r["path"]

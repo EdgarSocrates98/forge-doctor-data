@@ -269,9 +269,10 @@ def test_deeply_nested_json_line_does_not_crash_server(tmp_path: Path) -> None:
 
 
 def test_deeply_nested_valid_request_does_not_crash(tmp_path: Path) -> None:
-    """Deep-but-parseable payloads reach handle(); a dict without method
-    is silently ignored, and the loop keeps serving."""
-    depth = 1_000  # parses: lands in handle(), which drops non-requests
+    """Deep payloads cannot crash the serve loop. Depth 1000 parses on
+    some platforms (dropped by handle: not a request) and exceeds the C
+    json recursion limit on others (-32700) — ping is served either way."""
+    depth = 1_000
     line = '{"a":' * depth + "1" + "}" * depth
     out = io.StringIO()
     serve(
@@ -280,7 +281,10 @@ def test_deeply_nested_valid_request_does_not_crash(tmp_path: Path) -> None:
         root=tmp_path,
     )
     lines = [json.loads(x) for x in out.getvalue().strip().splitlines()]
-    assert lines[0]["result"] == {}  # loop survived; only ping answered
+    assert lines[-1]["result"] == {}  # ping answered — loop survived
+    assert len(lines) <= 2
+    if len(lines) == 2:
+        assert lines[0]["error"]["code"] == -32700
 
 
 def test_garbage_line_then_valid_line(tmp_path: Path) -> None:

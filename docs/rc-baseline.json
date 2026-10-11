@@ -28,9 +28,9 @@
     "scan_validated_envelope": 250
   },
   "git": {
-    "branch": "feat/ultimate-completion",
+    "branch": "main",
     "dirty": true,
-    "head": "757f590e22e54bf8119324d28fa33a642f881c6b"
+    "head": "9b77a3717b3b273a0a8d7e0784d70a79f63a6e4e"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -44,13 +44,13 @@
     "version": "1.0.0rc1"
   },
   "public_api": {
-    "public_api_sha256": "ac120676d1aa416d44c9e615c80f62020e9d4ff2a225992811833c93f9df60cd",
+    "public_api_sha256": "6ae1f35f53182ab5b06b65d23d014b826b9b9abdf649fb52ddc08490810e80bf",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
   "schema_version": "1",
   "verification": {
-    "coverage_percent": 82.85,
-    "test_count": 2639
+    "coverage_percent": 80.37,
+    "test_count": 2657
   }
 }

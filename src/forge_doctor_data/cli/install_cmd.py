@@ -48,10 +48,10 @@ def _emit(doc: Any) -> None:
     import sys
 
     human = sys.stdout.isatty() or bool(os.environ.get("FORGE_TEXT_OUTPUT"))
-    if human and isinstance(doc, dict) and (
-        str(doc.get("schema", "")).startswith("forge/")
-        or "checks" in doc
-        or "drift" in doc
+    if (
+        human
+        and isinstance(doc, dict)
+        and (str(doc.get("schema", "")).startswith("forge/") or "checks" in doc or "drift" in doc)
     ):
         from forge_doctor_data.ui.kit import UIContext, format_status_doc
 
@@ -97,18 +97,20 @@ def install_apply(
         return
     import sys
 
-    comps = (
-        tuple(c.strip() for c in components.split(",") if c.strip())
-        if components
-        else None
-    )
+    comps = tuple(c.strip() for c in components.split(",") if c.strip()) if components else None
     approved = yes
     if not yes and not dry_run and sys.stdin.isatty() and sys.stdout.isatty():
         # Interactive approval: render the real plan, confirm once,
         # apply — one command instead of dry-run + apply.
         plan = _call(
-            service.install, host, scope=scope, root=root,
-            profile=profile, yes=False, dry_run=True, components=comps,
+            service.install,
+            host,
+            scope=scope,
+            root=root,
+            profile=profile,
+            yes=False,
+            dry_run=True,
+            components=comps,
         )
         _emit(plan)
         approved = typer.confirm("Apply this plan?", default=True)

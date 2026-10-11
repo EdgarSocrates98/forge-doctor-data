@@ -50,9 +50,7 @@ def build_view(root: str | Path = ".") -> ForgeGraphView | None:
     )
     object.__setattr__(desc, "node_count", len(g.nodes))
     object.__setattr__(desc, "edge_count", len(g.edges))
-    object.__setattr__(
-        desc, "available_layers", tuple(sorted({n.kind for n in g.nodes.values()}))
-    )
+    object.__setattr__(desc, "available_layers", tuple(sorted({n.kind for n in g.nodes.values()})))
     nodes = tuple(
         GraphNodeView(
             id=n.id,

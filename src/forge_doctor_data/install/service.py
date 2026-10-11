@@ -97,7 +97,8 @@ def _hosts(host: str) -> tuple[str, ...]:
     desconhecidos = [h for h in nomes if h not in HOSTS]
     if desconhecidos:
         raise kit.InstallError(
-            kit.E_HOST, f"host {desconhecidos[0]!r}; known: {list(HOSTS)} + all,none")
+            kit.E_HOST, f"host {desconhecidos[0]!r}; known: {list(HOSTS)} + all,none"
+        )
     return tuple(dict.fromkeys(nomes))
 
 
