@@ -295,12 +295,20 @@ def test_docs_search_needs_inventory() -> None:
 
 
 def test_portal_verb_registered() -> None:
-    # Wide terminal: rich/truncated option columns made `--no-browser`
-    # disappear from the rendered help on narrow CI consoles.
-    result = runner.invoke(app, ["portal", "--help"], env={"COLUMNS": "200"})
+    # Structural assertion on the click command object — rendered rich
+    # help truncates option columns by console width, which differs
+    # across CI platforms and made this check flaky.
+    from typer.main import get_command
+
+    cmd = get_command(app)
+    assert "portal" in cmd.commands
+    params = cmd.commands["portal"].params
+    names = {p.name for p in params}
+    opts = {opt for p in params for opt in p.opts + p.secondary_opts}
+    assert "no_browser" in names and "root" in names
+    assert "--no-browser" in opts
+    result = runner.invoke(app, ["portal", "--help"])
     assert result.exit_code == 0
-    assert "--no-browser" in result.output
-    assert "--root" in result.output
 
 
 def test_assets_vendored_in_package() -> None:

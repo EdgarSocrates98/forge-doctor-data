@@ -152,11 +152,12 @@ ignore_missing_imports = true
 module = ["forge_doctor_data.integrations.lsp_server"]
 disallow_untyped_decorators = false
 
-# Vendored shared source — strict-mode warnings suppressed; canonical copy
-# in the-forge is the typecheck target.
+# Vendored shared source — canonical copy in the-forge's scripts/installkit
+# is intentionally excluded from strict typecheck (Python 3.10 floor,
+# platform-gated ctypes); do not diverge the byte-parity copy for typing.
 [[tool.mypy.overrides]]
 module = ["forge_doctor_data._installkit"]
-warn_return_any = false
+ignore_errors = true
 
 # Vendored portal server — canonical copy in forge-portal/portal_core is
 # the typecheck target; do not diverge the byte-parity copy for typing.
