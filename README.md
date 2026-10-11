@@ -165,6 +165,7 @@ forge-doctor-data knowledge audit        # fresh/stale/expired/source status
 forge-doctor-data doctor                 # environment self-check
 forge-doctor-data mcp                    # JSON-RPC stdio server for agents
 forge-doctor-data hosts                  # observe AI host CLIs; `hosts <h> --launch` opens one (TTY)
+forge-doctor-data portal                 # optional local web UI over the real services (127.0.0.1)
 forge-doctor-data agent manifest .       # compact domains, risks, capabilities, refs
 forge-doctor-data agent context . --budget 8000
 forge-doctor-data agent delta . --since context.json

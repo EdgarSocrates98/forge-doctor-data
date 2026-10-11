@@ -259,6 +259,11 @@
   "why": "packs de política de organização",
   "when": "avaliar políticas organizacionais declaradas"
  },
+ "portal": {
+  "why": "UI web local opcional (127.0.0.1) sobre os serviços reais — install, hosts, MCP, scan e grafo de evidência",
+  "when": "explorar/operar visualmente a forja instalada; o CLI/MCP continuam idênticos sem ela",
+  "when_not": "em automação/CI — use os verbos CLI diretamente; em hosts remotos sem túnel (loopback-only)"
+ },
  "project": {
   "why": "auto-inspeção do projeto: status gerado e checks de doc-drift",
   "when": "verificar o próprio projeto e drift de documentação"

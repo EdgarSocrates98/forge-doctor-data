@@ -65,6 +65,7 @@ _Task-oriented guides and workflows._
 - [Receita — por que este finding disparou?](learn/recipes/explain-finding.md)
 - [Receita — usar o Doctor pelo seu host de IA (Devin/Claude/Codex)](learn/recipes/mcp-hosts.md)
 - [Receita — estender o Doctor com plugins e knowledge packs](learn/recipes/plugins-knowledge.md)
+- [Receita — operar o Forge Doctor Data pelo portal web local](learn/recipes/portal.md)
 - [Receita — o que está errado neste projeto de dados?](learn/recipes/scan-project.md)
 
 ## Reference

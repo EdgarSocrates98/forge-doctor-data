@@ -43,6 +43,7 @@ from forge_doctor_data.cli import (  # noqa: F401 - import-time command registra
     platforms,
     plugins,
     policy,
+    portal,
     project,
     quality,
     redshift,

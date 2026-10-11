@@ -52,6 +52,7 @@
 {"path": "docs/learn/recipes/instalar-doctor.md", "title": "Receita \u2014 instalar o Doctor num projeto", "category": "HOW_TO", "audience": "public", "related_commands": ["install"], "review_level": "AUTOMATICALLY_CHECKED"}
 {"path": "docs/learn/recipes/mcp-hosts.md", "title": "Receita \u2014 usar o Doctor pelo seu host de IA (Devin/Claude/Codex)", "category": "HOW_TO", "audience": "public", "related_commands": ["hosts", "install", "mcp"], "review_level": "AUTOMATICALLY_CHECKED"}
 {"path": "docs/learn/recipes/plugins-knowledge.md", "title": "Receita \u2014 estender o Doctor com plugins e knowledge packs", "category": "HOW_TO", "audience": "public", "related_commands": ["knowledge", "plugins"], "review_level": "AUTOMATICALLY_CHECKED"}
+{"path": "docs/learn/recipes/portal.md", "title": "Receita \u2014 operar o Forge Doctor Data pelo portal web local", "category": "HOW_TO", "audience": "public", "related_commands": ["portal"], "review_level": "AUTOMATICALLY_CHECKED"}
 {"path": "docs/learn/recipes/scan-project.md", "title": "Receita \u2014 o que est\u00e1 errado neste projeto de dados?", "category": "HOW_TO", "audience": "public", "related_commands": ["scan"], "review_level": "AUTOMATICALLY_CHECKED"}
 {"path": "docs/ontology.md", "title": "Platform ontology", "category": "UNKNOWN", "audience": "public", "related_commands": ["ontology"], "review_level": "AUTOMATICALLY_CHECKED"}
 {"path": "docs/performance-budgets.md", "title": "Performance budgets", "category": "UNKNOWN", "audience": "public", "related_commands": [], "review_level": "AUTOMATICALLY_CHECKED"}

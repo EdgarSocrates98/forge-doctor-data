@@ -4,13 +4,13 @@
 |---|---|
 | repository | `forge-doctor-data` |
 | branch | `feat/ultimate-completion` |
-| commit | `1469dff` |
-| docs inventoried | 378 (excl. GENERATED mirrors: 371; vendored upstream: 0) |
+| commit | `b1929a4` |
+| docs inventoried | 379 (excl. GENERATED mirrors: 372; vendored upstream: 0) |
 
 ## Review levels (honest)
 
 - `INVENTORIED`: 0
-- `AUTOMATICALLY_CHECKED`: 378
+- `AUTOMATICALLY_CHECKED`: 379
 - `TECHNICALLY_VERIFIED`: 0
 - `SEMANTICALLY_REVIEWED`: 0
 - `USER_JOURNEY_VALIDATED`: 0
@@ -22,7 +22,7 @@ Automatic checks ran on every row; semantic review is recorded only where a huma
 - `UNKNOWN`: 168
 - `HISTORICAL`: 136
 - `USER_GUIDE`: 23
-- `HOW_TO`: 11
+- `HOW_TO`: 12
 - `RELEASE_REPORT`: 8
 - `GENERATED`: 7
 - `CONTRACT`: 6
@@ -44,7 +44,7 @@ Automatic checks ran on every row; semantic review is recorded only where a huma
 ## Educational layer delivered
 
 - first-run/quickstart docs: 3
-- docs/learn/ entries: 12
+- docs/learn/ entries: 13
 - docs/hub/ entries: 0
 
 ## Documentation changes this program
