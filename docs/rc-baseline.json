@@ -30,7 +30,7 @@
   "git": {
     "branch": "feat/ultimate-completion",
     "dirty": true,
-    "head": "f89c255ca1acacaa8e81260911f1ce0e73da3f02"
+    "head": "757f590e22e54bf8119324d28fa33a642f881c6b"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -50,7 +50,7 @@
   "rc_target": "1.0.0-rc1",
   "schema_version": "1",
   "verification": {
-    "coverage_percent": null,
-    "test_count": null
+    "coverage_percent": 82.85,
+    "test_count": 2639
   }
 }
