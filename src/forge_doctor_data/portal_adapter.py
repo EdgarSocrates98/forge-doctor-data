@@ -711,7 +711,9 @@ def _portal(args: Any) -> dict[str, Any]:
             {
                 "url": url,
                 "note": "portal is optional — CLI/MCP keep working without it",
-            }), flush=True
+            }
+        ),
+        flush=True,
     )
     if not args.no_browser:
         webbrowser.open(url)

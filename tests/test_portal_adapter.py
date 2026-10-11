@@ -295,7 +295,9 @@ def test_docs_search_needs_inventory() -> None:
 
 
 def test_portal_verb_registered() -> None:
-    result = runner.invoke(app, ["portal", "--help"])
+    # Wide terminal: rich/truncated option columns made `--no-browser`
+    # disappear from the rendered help on narrow CI consoles.
+    result = runner.invoke(app, ["portal", "--help"], env={"COLUMNS": "200"})
     assert result.exit_code == 0
     assert "--no-browser" in result.output
     assert "--root" in result.output

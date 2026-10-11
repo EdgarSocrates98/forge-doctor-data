@@ -34,12 +34,17 @@ def hosts_cmd(
 ) -> None:
     """Observe AI host CLIs and this project's integration with them."""
     if target not in (*HOST_NAMES, "all"):
-        typer.echo(json.dumps({
-            "status": "refused",
-            "reason": "host_unknown",
-            "host": target,
-            "known": [*HOST_NAMES, "all"],
-        }, indent=2))
+        typer.echo(
+            json.dumps(
+                {
+                    "status": "refused",
+                    "reason": "host_unknown",
+                    "host": target,
+                    "known": [*HOST_NAMES, "all"],
+                },
+                indent=2,
+            )
+        )
         raise typer.Exit(2)
     doc = hosts_flow(target, repo=root, launch=launch)
     typer.echo(json.dumps(doc, indent=2, ensure_ascii=False))

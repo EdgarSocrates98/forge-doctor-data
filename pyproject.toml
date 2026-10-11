@@ -78,6 +78,12 @@ addopts = "-ra --basetemp=.pytest_tmp"
 [tool.coverage.run]
 source = ["src/forge_doctor_data"]
 branch = true
+omit = [
+    # Vendored code — tested at canonical source (the-forge/src/theforge)
+    "src/forge_doctor_data/_graphview.py",
+    "src/forge_doctor_data/_graphstudio.py",
+    "src/forge_doctor_data/ui/**",
+]
 
 [tool.coverage.report]
 fail_under = 80
@@ -114,6 +120,19 @@ ignore = ["RUF001"]  # severity icons (ℹ ⚠) are deliberate
 "scripts/forge_installkit.py" = ["ALL"]
 "scripts/forge_bootstrap.py" = ["ALL"]
 
+[tool.ruff.format]
+# Vendored copies must stay byte-identical to their canonical sources —
+# formatting here would break parity (same boundary as the lint/mypy
+# vendored exemptions above).
+exclude = [
+    "src/forge_doctor_data/_forge_portal.py",
+    "src/forge_doctor_data/_graphview.py",
+    "src/forge_doctor_data/_graphstudio.py",
+    "src/forge_doctor_data/_installkit.py",
+    "scripts/forge_installkit.py",
+    "src/forge_doctor_data/ui/**",
+]
+
 [tool.mypy]
 python_version = "3.11"
 mypy_path = "src"
@@ -143,6 +162,12 @@ warn_return_any = false
 # the typecheck target; do not diverge the byte-parity copy for typing.
 [[tool.mypy.overrides]]
 module = ["forge_doctor_data._forge_portal"]
+ignore_errors = true
+
+# Vendored Graph Studio view + Forge UI kit — canonical copies in
+# the-forge are the typecheck target; keep byte-parity copies untouched.
+[[tool.mypy.overrides]]
+module = ["forge_doctor_data._graphview", "forge_doctor_data.ui.*"]
 ignore_errors = true
 
 [build-system]

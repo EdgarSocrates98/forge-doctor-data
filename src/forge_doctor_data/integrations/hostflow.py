@@ -19,6 +19,7 @@ A signed-out host is never launched: the receipt points at the official
 login command and never asks for a credential in a prompt. MCP exposes
 observation only — launching stays a CLI+TTY human boundary.
 """
+
 from __future__ import annotations
 
 import json
@@ -67,8 +68,12 @@ def _default_which(binary: str) -> str | None:
 
 def _default_runner(argv: list[str]) -> tuple[int, str]:
     proc = subprocess.run(
-        argv, capture_output=True, text=True, timeout=_TIMEOUT_S,
-        errors="replace", check=False,
+        argv,
+        capture_output=True,
+        text=True,
+        timeout=_TIMEOUT_S,
+        errors="replace",
+        check=False,
     )
     return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
 
@@ -84,9 +89,15 @@ def _logged_in(host: str, out: str) -> bool | None:
             return bool(data["loggedIn"])
     low = out.lower()
     # negative before positive: "Not logged in" contains "logged in"
-    if any(s in low for s in (
-        "not logged", "logged out", "no credentials", "unauthorized",
-    )):
+    if any(
+        s in low
+        for s in (
+            "not logged",
+            "logged out",
+            "no credentials",
+            "unauthorized",
+        )
+    ):
         return False
     if "logged in" in low:
         return True
@@ -141,8 +152,12 @@ def host_state(
 ) -> dict[str, Any]:
     """Observed state of one host: binary, version, auth, integration, launch cmd."""
     if host not in _HOST_CMDS:
-        return {"host": host, "state": "refused",
-                "reason": "host_unknown", "known": list(_HOST_CMDS)}
+        return {
+            "host": host,
+            "state": "refused",
+            "reason": "host_unknown",
+            "known": list(_HOST_CMDS),
+        }
     which = which or _default_which
     runner = runner or _default_runner
     cmd = _HOST_CMDS[host]
@@ -163,8 +178,7 @@ def host_state(
         state["version_refused"] = version
     else:
         rc, out = version
-        first = next(
-            (line.strip() for line in out.splitlines() if line.strip()), "")
+        first = next((line.strip() for line in out.splitlines() if line.strip()), "")
         state["version"] = first or None
         state["state"] = "SUPPORTED" if rc == 0 else "DETECTED"
 
@@ -193,7 +207,7 @@ def _final_state(state: dict[str, Any]) -> str:
     if integ == "healthy":
         return "READY"
     if integ in {"degraded", "broken"}:
-        return "INTEGRATION_" + integ.upper()
+        return "INTEGRATION_" + str(integ).upper()
     return "SUPPORTED"
 
 
@@ -217,10 +231,7 @@ def hosts_flow(
     """
     repo = Path(repo)
     names = list(HOST_NAMES) if target == "all" else [target]
-    states = [
-        host_state(name, repo=repo, which=which, runner=runner)
-        for name in names
-    ]
+    states = [host_state(name, repo=repo, which=which, runner=runner) for name in names]
     receipt: dict[str, Any] = {
         "repo": repo.as_posix(),
         "hosts": states,
@@ -242,9 +253,7 @@ def hosts_flow(
         receipt["launch_refused"] = "no_tty"
     else:
         # Path came from shutil.which — same trust level as any PATH exec.
-        exec_fn = exec_host or (
-            lambda path, cwd: subprocess.call(
-                [path], cwd=str(cwd)))
+        exec_fn = exec_host or (lambda path, cwd: subprocess.call([path], cwd=str(cwd)))
         receipt["launched"] = True
         receipt["host_exit_code"] = exec_fn(state["binary_path"], repo)
     return receipt

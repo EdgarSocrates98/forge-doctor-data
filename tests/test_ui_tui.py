@@ -6,6 +6,7 @@ import pytest
 def test_menu_well_formed():
     """Every _MENU item is a (label, argv|None) pair — no bare strings."""
     from forge_doctor_data.ui import home
+
     for item in home._MENU:
         assert isinstance(item, tuple) and len(item) == 2, item
         label, argv = item
@@ -30,6 +31,7 @@ def test_menu_argv_resolves_against_real_commands():
     that the real CLI would reject is a broken promise to the user."""
     from forge_doctor_data.cli import app
     from forge_doctor_data.ui import home
+
     top, groups = _registered(app)
     for label, argv in home._MENU:
         if argv is None or argv == "__wizard__":
@@ -44,6 +46,7 @@ def test_menu_argv_resolves_against_real_commands():
 
 def test_tui_entries_real():
     from forge_doctor_data.ui import tui
+
     entries = tui.entries()
     assert len(entries) >= 3
     assert any("wizard" in e.label for e in entries)
@@ -54,8 +57,8 @@ def test_tui_renders_non_tty_ctx():
     from forge_doctor_data.ui.app import ForgeApp
     from forge_doctor_data.ui.kit import UIContext
     from forge_doctor_data.ui.screen import Buffer
-    ctx = UIContext(interactive=False, color=False, unicode=False,
-                    width=80, height=24, ansi=False)
+
+    ctx = UIContext(interactive=False, color=False, unicode=False, width=80, height=24, ansi=False)
     app = ForgeApp(ctx, forge_id="x", title="cc", entries=tui.entries())
     buf = Buffer(ctx, 80, 24)
     app.render(buf)
@@ -65,6 +68,7 @@ def test_tui_renders_non_tty_ctx():
 def test_home_requires_tty():
     from forge_doctor_data.ui import home
     from forge_doctor_data.ui.kit import NonInteractive, UIContext
+
     ctx = UIContext(interactive=False, color=False, unicode=False, width=80)
     with pytest.raises(NonInteractive):
         home.run_home(ctx=ctx)

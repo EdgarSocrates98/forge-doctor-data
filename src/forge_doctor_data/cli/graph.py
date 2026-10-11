@@ -169,7 +169,7 @@ def graph_view(path: _PathOpt = Path(".")) -> None:
 
     view = build_view(path)
     if view is None:
-        _stderr("no evidence graph for this project")
+        _stderr.print("no evidence graph for this project")
         raise typer.Exit(INTERNAL_ERROR_EXIT)
     typer.echo(_json.dumps(view.to_dict(), indent=2, sort_keys=True))
 
@@ -191,10 +191,10 @@ def graph_ui(
         state_rel=".forge-doctor-data/install",
         user_state_rel="~/.forge-doctor-data/install",
     ):
-        _stderr("Graph Studio declined at install — reinstall with graph-studio")
+        _stderr.print("Graph Studio declined at install — reinstall with graph-studio")
         raise typer.Exit(INTERNAL_ERROR_EXIT)
     view = build_view(path)
     if view is None:
-        _stderr("no evidence graph for this project")
+        _stderr.print("no evidence graph for this project")
         raise typer.Exit(INTERNAL_ERROR_EXIT)
     raise typer.Exit(open_studio([view], open_browser=not no_browser, port=port))
