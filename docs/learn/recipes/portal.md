@@ -50,3 +50,6 @@ de navegação.
 | `FDD-PORTAL-NO-ASSETS` | assets não vendorizados no checkout | rode `python scripts/vendor.py` no forge-portal |
 | health `DEGRADED` após install | check do doctor falhou | `forge-doctor-data doctor` mostra qual |
 | intent recusado (`FDD-PORTAL-AMBIGUOUS`) | tarefa fora do conjunto seguro | use um dos verbos seguros listados |
+| `PORTAL-HOST` 403 | Host não-loopback (rede/túnel/DNS rebinding) | acesse por 127.0.0.1/localhost |
+| `PORTAL-ORIGIN` 403 | POST com Origin fora do loopback | só a UI do portal muta |
+| `PORTAL-RATE-LIMITED` 429 | >10 mutações/min | aguarde a janela; envelope sinaliza retry |
