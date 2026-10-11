@@ -6,10 +6,10 @@ Package version: `1.0.0rc1`
 
 ## Surface
 
-- CLI commands: 223
+- CLI commands: 233
 - Built-in checks: 342 across 42 categories
 - Contracts: 10
-- MCP tools: 13
+- MCP tools: 14
 - Knowledge domains: 29
 - Plugins discovered: 0
 
@@ -83,8 +83,11 @@ Package version: `1.0.0rc1`
 - `graph project`
 - `graph schema`
 - `graph traversals`
+- `graph ui`
+- `graph view`
 - `history diff`
 - `history trend`
+- `hosts`
 - `iac`
 - `iceberg compatibility`
 - `iceberg files`
@@ -129,6 +132,12 @@ Package version: `1.0.0rc1`
 - `inspect trino`
 - `inspect twin`
 - `inspect workspace`
+- `install doctor`
+- `install mcp-verify`
+- `install repair`
+- `install status`
+- `install uninstall`
+- `install update`
 - `kafka findings`
 - `kafka inspect`
 - `kinesis findings`
@@ -188,6 +197,7 @@ Package version: `1.0.0rc1`
 - `policy list`
 - `policy report`
 - `policy validate`
+- `portal`
 - `project status`
 - `python`
 - `quality inspect`
@@ -306,6 +316,7 @@ Package version: `1.0.0rc1`
 - `get_capacity_signals`
 - `get_critical_path`
 - `get_execution_baseline`
+- `get_host_status`
 - `get_incident_explanation`
 - `get_lineage`
 - `get_portfolio_summary`
@@ -352,7 +363,7 @@ _none installed_
 ## Loop Factory
 
 - inbox: 47
-- active: 24
+- active: 25
 - archive: 136
 - run records: 91
 
