@@ -4,13 +4,13 @@
 |---|---|
 | repository | `forge-doctor-data` |
 | branch | `feat/ultimate-completion` |
-| commit | `f89c255` |
-| docs inventoried | 377 (excl. GENERATED mirrors: 370; vendored upstream: 0) |
+| commit | `1469dff` |
+| docs inventoried | 378 (excl. GENERATED mirrors: 371; vendored upstream: 0) |
 
 ## Review levels (honest)
 
 - `INVENTORIED`: 0
-- `AUTOMATICALLY_CHECKED`: 377
+- `AUTOMATICALLY_CHECKED`: 378
 - `TECHNICALLY_VERIFIED`: 0
 - `SEMANTICALLY_REVIEWED`: 0
 - `USER_JOURNEY_VALIDATED`: 0
@@ -23,8 +23,8 @@ Automatic checks ran on every row; semantic review is recorded only where a huma
 - `HISTORICAL`: 136
 - `USER_GUIDE`: 23
 - `HOW_TO`: 11
+- `RELEASE_REPORT`: 8
 - `GENERATED`: 7
-- `RELEASE_REPORT`: 7
 - `CONTRACT`: 6
 - `TEST_EVIDENCE`: 6
 - `ARCHITECTURE`: 5
