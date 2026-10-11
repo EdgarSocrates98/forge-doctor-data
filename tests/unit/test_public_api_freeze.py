@@ -41,9 +41,9 @@ def test_stable_surfaces_are_nonempty() -> None:
 
 
 def test_mcp_surface_frozen() -> None:
-    """Explicit legibility: the 13 MCP tools and protocol versions are pinned."""
+    """Explicit legibility: the 14 MCP tools and protocol versions are pinned."""
     mcp = RECORDED["surfaces"]["mcp"]
-    assert len(mcp["entries"]) == 13
+    assert len(mcp["entries"]) == 14
     assert mcp["protocols"]["modern"]
     assert mcp["protocols"]["legacy"]  # legacy adapters remain until a major boundary
 

@@ -28,6 +28,7 @@ from forge_doctor_data.cli import (  # noqa: F401 - import-time command registra
     golden,
     graph,
     history,
+    hosts,
     iceberg,
     incident,
     inspect,
@@ -168,7 +169,7 @@ _PANELS: dict[str, dict[str, str]] = {
     "Setup & integrations": dict.fromkeys(
         (
             "init", "info", "doctor", "cache", "mcp", "lsp", "export",
-            "version", "agent", "project", "install",
+            "version", "agent", "project", "install", "hosts",
         ),
         "Setup & integrations",
     ),

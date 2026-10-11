@@ -20,10 +20,17 @@ CLI_NAME = 'forge-doctor-data'
 CLI_ENTRY = 'forge_doctor_data.cli:app'
 
 _MENU: list[tuple[str, list[str] | None]] = [
-    ('Start diagnostic', ['diagnose']),
-    ('Capabilities', ['capabilities']),
-    ('Check installation health', ['doctor']),
+    ('Scan this project', ['scan', '.']),
+    ('List checks', ['checks']),
+    ('Findings ranked (advise)', ['advise']),
+    ('Baselines & history', ['history']),
+    ('Export report bundle', ['export']),
+    ('Policies', ['policy', 'list']),
+    ('Verify environment (doctor)', ['doctor']),
+    ('Installation status', ['install', 'status']),
+    ('AI hosts', ['hosts']),
     ('MCP verify (real handshake)', ['install', 'mcp-verify']),
+    ('Capabilities', ['capabilities']),
     ('Graph Studio (browser)', ['graph','ui']),
     ("installation wizard", "__wizard__"),
     ("quit", None),

@@ -2,9 +2,9 @@
   "schema": "forge/CommandInventory/v1",
   "forge_id": "forge-doctor-data",
   "cli": "forge-doctor-data",
-  "generated_at": "2026-10-10T10:34:16Z",
+  "generated_at": "2026-10-11T00:26:23Z",
   "generated_by": "doc_inventory.py/1",
-  "command_count": 291,
+  "command_count": 292,
   "commands": [
     {
       "path": "advise",
@@ -3230,6 +3230,45 @@
           "choices": null,
           "positional": false,
           "help": "text|json"
+        }
+      ]
+    },
+    {
+      "path": "hosts",
+      "help": "Observe AI host CLIs and this project's integration with them.",
+      "arguments": [
+        {
+          "name": "target",
+          "flags": [
+            "target"
+          ],
+          "required": false,
+          "default": "all",
+          "choices": null,
+          "positional": false,
+          "help": "claude|devin|codex|copilot|all"
+        },
+        {
+          "name": "launch",
+          "flags": [
+            "--launch"
+          ],
+          "required": false,
+          "default": "False",
+          "choices": null,
+          "positional": false,
+          "help": "Open the host in this repo (TTY only)."
+        },
+        {
+          "name": "root",
+          "flags": [
+            "--root"
+          ],
+          "required": false,
+          "default": ".",
+          "choices": null,
+          "positional": false,
+          "help": "Repository to observe (default: cwd)."
         }
       ]
     },

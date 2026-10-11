@@ -17,7 +17,8 @@ from forge_doctor_data.ui.kit import UIContext
 
 # argv[0]s that stream progressively or open external surfaces —
 # those run attached (alt-screen suspended) instead of captured.
-_SUSPEND_VERBS = {"analyze", "judge", "collect", "migrate", "graph", "sdd"}
+_SUSPEND_VERBS = {"analyze", "judge", "collect", "migrate", "graph", "sdd",
+                  "scan", "advise", "export"}
 
 
 _LEARN_DOC: dict[str, str] = {

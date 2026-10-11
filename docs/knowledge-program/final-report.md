@@ -3,14 +3,14 @@
 | Campo | Valor |
 |---|---|
 | repository | `forge-doctor-data` |
-| branch | `main` |
-| commit | `586ed4c` |
-| docs inventoried | 369 (excl. GENERATED mirrors: 362; vendored upstream: 0) |
+| branch | `feat/ultimate-completion` |
+| commit | `f89c255` |
+| docs inventoried | 377 (excl. GENERATED mirrors: 370; vendored upstream: 0) |
 
 ## Review levels (honest)
 
 - `INVENTORIED`: 0
-- `AUTOMATICALLY_CHECKED`: 369
+- `AUTOMATICALLY_CHECKED`: 377
 - `TECHNICALLY_VERIFIED`: 0
 - `SEMANTICALLY_REVIEWED`: 0
 - `USER_JOURNEY_VALIDATED`: 0
@@ -22,13 +22,13 @@ Automatic checks ran on every row; semantic review is recorded only where a huma
 - `UNKNOWN`: 168
 - `HISTORICAL`: 136
 - `USER_GUIDE`: 23
+- `HOW_TO`: 11
 - `GENERATED`: 7
 - `RELEASE_REPORT`: 7
 - `CONTRACT`: 6
 - `TEST_EVIDENCE`: 6
 - `ARCHITECTURE`: 5
 - `GETTING_STARTED`: 4
-- `HOW_TO`: 3
 - `INTERNAL`: 1
 - `TUTORIAL`: 1
 - `REFERENCE`: 1
@@ -44,7 +44,7 @@ Automatic checks ran on every row; semantic review is recorded only where a huma
 ## Educational layer delivered
 
 - first-run/quickstart docs: 3
-- docs/learn/ entries: 4
+- docs/learn/ entries: 12
 - docs/hub/ entries: 0
 
 ## Documentation changes this program
