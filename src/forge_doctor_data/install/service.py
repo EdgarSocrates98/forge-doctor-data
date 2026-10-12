@@ -28,6 +28,7 @@ from forge_doctor_data import _installkit as kit
 FORGE_ID = "forge-doctor-data"
 STATE_DIR = ".forge-doctor-data/install"
 PROFILES: tuple[str, ...] = ("minimal", "recommended", "full")
+GATEWAY_PROFILES: tuple[str, ...] = ("economy", "balanced", "deep")
 SCOPES: tuple[str, ...] = ("project", "workspace", "user")
 HOSTS: tuple[str, ...] = ("claude", "devin", "codex", "copilot")
 
@@ -71,9 +72,12 @@ def _ctx(
     profile: str,
     dry_run: bool,
     components: tuple[str, ...] | None = None,
+    gateway_profile: str = "balanced",
 ) -> kit.InstallContext:
     spec = _spec()
     target = kit.resolve_scope(spec, scope, Path.cwd(), root)
+    options = kit.component_options(profile, components)
+    options["execution_profile"] = gateway_profile
     return kit.InstallContext(
         spec=spec,
         scope=scope,
@@ -82,7 +86,7 @@ def _ctx(
         profile=profile,
         hosts=hosts,
         dry_run=dry_run,
-        options=kit.component_options(profile, components),
+        options=options,
     )
 
 
@@ -111,12 +115,26 @@ def install(
     yes: bool = False,
     dry_run: bool = False,
     components: tuple[str, ...] | None = None,
+    gateway_profile: str = "balanced",
 ) -> dict[str, Any]:
     """Apply the installation to the resolved target. Without ``yes`` or
     ``dry_run`` writes are refused — the plan is the contract."""
     if profile not in PROFILES:
         raise kit.InstallError(kit.E_PROFILE, f"profile {profile!r}; {PROFILES}")
-    ctx = _ctx(scope, root, _hosts(host), profile, dry_run, components=components)
+    if gateway_profile not in GATEWAY_PROFILES:
+        raise kit.InstallError(
+            kit.E_PROFILE,
+            f"gateway_profile {gateway_profile!r}; {GATEWAY_PROFILES}",
+        )
+    ctx = _ctx(
+        scope,
+        root,
+        _hosts(host),
+        profile,
+        dry_run,
+        components=components,
+        gateway_profile=gateway_profile,
+    )
     state = ctx.state_dir
     with kit.acquire_lock(state):
         receipt = kit.apply_install(ctx, approved=yes)
