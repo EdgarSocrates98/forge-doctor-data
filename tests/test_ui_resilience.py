@@ -1,7 +1,15 @@
-from forge_doctor_data.ui import screen, tui
+import sys
+
+from forge_doctor_data.ui import screen, tui, wizard
 from forge_doctor_data.ui.app import ActionData, Entry, ForgeApp, TextData
 from forge_doctor_data.ui.kit import UIContext
 from forge_doctor_data.ui.screen import Buffer, Column, Theme, key_bar, table
+
+
+def test_family_wizard_is_explicitly_optional(monkeypatch, capsys):
+    monkeypatch.setitem(sys.modules, "theforge", None)
+    assert wizard.run_setup_wizard() == 2
+    assert "native Doctor Data commands remain available" in capsys.readouterr().out
 
 
 def _ctx(width=60, height=16):
