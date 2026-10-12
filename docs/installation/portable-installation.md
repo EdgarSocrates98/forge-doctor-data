@@ -8,6 +8,7 @@ forge-doctor-data install                    # escopo projeto (padrão)
 forge-doctor-data install --dry-run          # planeja sem escrever
 forge-doctor-data install --profile minimal  # só CLI+MCP+marker
 forge-doctor-data install --profile full     # skills + agents + todos os hosts
+forge-doctor-data install --gateway-profile economy  # menor custo de execução
 ```
 
 O que acontece: assets gerenciados vão para `.agents/`, `.claude/`,
@@ -17,3 +18,7 @@ entrada gerenciada; `AGENTS.md` recebe um bloco delimitado
 
 Perfis: `minimal` (essencial) · `recommended` (workflow completo, padrão)
 · `full` (teto de disclosure — não é autorização extra).
+
+Perfil de execução: `economy` reduz custo e contexto mantendo roteamento
+seguro; `balanced` é padrão; `deep` amplia capacidade para tarefas difíceis.
+A escolha fica no recibo e é preservada quando o The Forge delega instalação.

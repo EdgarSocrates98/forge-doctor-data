@@ -78,6 +78,7 @@ def _bare_install_requested(
     yes: bool,
     dry_run: bool,
     components: str | None,
+    gateway_profile: str,
 ) -> bool:
     if (scope, host, profile, root, yes, dry_run, components) != (
         "project",
@@ -94,7 +95,16 @@ def _bare_install_requested(
         return True
     return all(
         getattr(source(name), "name", "") == "DEFAULT"
-        for name in ("scope", "host", "profile", "root", "yes", "dry_run", "components")
+        for name in (
+            "scope",
+            "host",
+            "profile",
+            "root",
+            "yes",
+            "dry_run",
+            "components",
+            "gateway_profile",
+        )
     )
 
 
@@ -121,6 +131,10 @@ def install_apply(
             help="Optional components csv: skills,agents,mcp,tui,graph-studio.",
         ),
     ] = None,
+    gateway_profile: Annotated[
+        str,
+        typer.Option("--gateway-profile", help="Execution profile: economy|balanced|deep."),
+    ] = "balanced",
 ) -> None:
     """Install Forge Doctor Data host assets into the resolved scope."""
     if ctx.invoked_subcommand is not None:
@@ -138,6 +152,7 @@ def install_apply(
             yes=yes,
             dry_run=dry_run,
             components=components,
+            gateway_profile=gateway_profile,
         )
         and sys.stdin.isatty()
         and sys.stdout.isatty()
@@ -163,6 +178,7 @@ def install_apply(
             scope=scope,
             root=root,
             profile=profile,
+            gateway_profile=gateway_profile,
             yes=False,
             dry_run=True,
             components=comps,
@@ -178,6 +194,7 @@ def install_apply(
         scope=scope,
         root=root,
         profile=profile,
+        gateway_profile=gateway_profile,
         yes=approved,
         dry_run=dry_run,
         components=comps,
