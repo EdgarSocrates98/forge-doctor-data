@@ -5,7 +5,7 @@ Três comandos:
 ```bash
 git clone <forge-doctor-data repo>
 cd forge-doctor-data
-./setup.sh        # Windows: .\setup.ps1
+./install.sh      # Windows: .\install.ps1 — account runtime + editable CLI
 ```
 
 Depois, dentro de qualquer projeto:
@@ -25,4 +25,4 @@ forge-doctor-data install status
 forge-doctor-data doctor
 ```
 
-Problemas? → [troubleshooting.md](troubleshooting.md)
+Detalhes: [account-installation.md](account-installation.md). Problemas? → [troubleshooting.md](troubleshooting.md)
