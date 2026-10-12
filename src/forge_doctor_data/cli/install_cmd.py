@@ -80,7 +80,13 @@ def _bare_install_requested(
     components: str | None,
 ) -> bool:
     if (scope, host, profile, root, yes, dry_run, components) != (
-        "project", "all", "recommended", None, False, False, None
+        "project",
+        "all",
+        "recommended",
+        None,
+        False,
+        False,
+        None,
     ):
         return False
     source = getattr(ctx, "get_parameter_source", None)
