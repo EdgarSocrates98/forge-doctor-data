@@ -68,6 +68,36 @@ def _call(fn: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
         raise typer.Exit(1) from exc
 
 
+def _bare_install_requested(
+    ctx: typer.Context,
+    *,
+    scope: str,
+    host: str,
+    profile: str,
+    root: Path | None,
+    yes: bool,
+    dry_run: bool,
+    components: str | None,
+) -> bool:
+    if (scope, host, profile, root, yes, dry_run, components) != (
+        "project",
+        "all",
+        "recommended",
+        None,
+        False,
+        False,
+        None,
+    ):
+        return False
+    source = getattr(ctx, "get_parameter_source", None)
+    if source is None:
+        return True
+    return all(
+        getattr(source(name), "name", "") == "DEFAULT"
+        for name in ("scope", "host", "profile", "root", "yes", "dry_run", "components")
+    )
+
+
 @install_app.callback()
 def install_apply(
     ctx: typer.Context,
@@ -98,6 +128,31 @@ def install_apply(
     import sys
 
     comps = tuple(c.strip() for c in components.split(",") if c.strip()) if components else None
+    if (
+        _bare_install_requested(
+            ctx,
+            scope=scope,
+            host=host,
+            profile=profile,
+            root=root,
+            yes=yes,
+            dry_run=dry_run,
+            components=components,
+        )
+        and sys.stdin.isatty()
+        and sys.stdout.isatty()
+    ):
+        from forge_doctor_data.ui.kit import UIContext
+        from forge_doctor_data.ui.wizard import run_wizard
+
+        raise typer.Exit(
+            run_wizard(
+                forge_name="forge-doctor-data",
+                install_fn=lambda **kw: service.install(root=None, **kw),
+                doctor_fn=lambda **kw: service.doctor(**kw),
+                ctx=UIContext.detect(),
+            )
+        )
     approved = yes
     if not yes and not dry_run and sys.stdin.isatty() and sys.stdout.isatty():
         # Interactive approval: render the real plan, confirm once,

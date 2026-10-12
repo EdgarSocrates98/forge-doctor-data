@@ -1,8 +1,8 @@
 # Installation wizard
 
 Bare `forge-doctor-data install` on a TTY opens the guided wizard. On a non-TTY it
-exits with a usage error pointing at `install apply` — scripts keep the
-flag contract.
+returns a structured approval refusal without reading stdin or writing files.
+Explicit flags keep the deterministic contract.
 
 ## Steps
 
@@ -24,10 +24,10 @@ flag contract.
 Non-interactive equivalent:
 
 ```bash
-forge-doctor-data install apply --scope project --profile recommended --host all --dry-run
-forge-doctor-data install apply --scope project --profile recommended --host all --yes
+forge-doctor-data install --scope project --profile recommended --host all --dry-run
+forge-doctor-data install --scope project --profile recommended --host all --yes
 # optional components:
-forge-doctor-data install apply --yes --components skills,mcp,tui,graph-studio
+forge-doctor-data install --yes --components skills,mcp,tui,graph-studio
 forge-doctor-data install doctor
 ```
 
