@@ -2142,13 +2142,14 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 **Syntax**
 
 ```text
-forge-doctor-data graph project [path] [fmt]
+forge-doctor-data graph project [path] [fmt] [--out FILE]
 ```
 
 | argument/flag | required | default | description |
 |---|---|---|---|
 | `path` | no | — | Project root. |
 | `fmt` | no | — | json|dot|mermaid |
+| `out` | no | `PATH/.forge-doctor-data/graph/project-graph.json` | Canonical graph JSON snapshot. |
 
 <!-- keep:start -->
 _free notes — errors, examples, next steps (hand-written, preserved)_

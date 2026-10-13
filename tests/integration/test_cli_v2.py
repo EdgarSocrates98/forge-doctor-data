@@ -118,6 +118,9 @@ def test_graph_cli(tmp_path: Path):
     payload = json.loads(result.output)
     assert payload["schema_version"] == "1.0"
     assert payload["nodes"]
+    snapshot = tmp_path / ".forge-doctor-data" / "graph" / "project-graph.json"
+    assert snapshot.is_file()
+    assert json.loads(snapshot.read_text(encoding="utf-8"))["nodes"]
 
 
 def test_schema_diff_cli(tmp_path: Path):
