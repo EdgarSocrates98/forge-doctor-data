@@ -18,6 +18,9 @@ forge-doctor-data install
 Pronto. Abra seu AI host (Devin, Claude, Codex ou Copilot) — as skills do
 forge-doctor-data já estão instaladas.
 
+Em diretório vazio, o wizard remove `Current repository` e instala pelo
+escopo `Entire workspace`, sem exigir Git ou comandos extras.
+
 ## Verificar
 
 ```bash
