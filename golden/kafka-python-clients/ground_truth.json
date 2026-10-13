@@ -1,0 +1,58 @@
+{
+  "entry": "kafka-python-clients",
+  "expected_edges": {
+    "kinds": []
+  },
+  "expected_entities": {
+    "domains": [],
+    "kinds": []
+  },
+  "expected_findings": {
+    "check_id_prefixes": [
+      "KFK"
+    ],
+    "check_ids": []
+  },
+  "expected_unknowns": [
+    {
+      "check_id": "KFK002",
+      "reason": "client-only code declares no topics; partition topology is unprovable"
+    }
+  ],
+  "forbidden_findings": {
+    "check_id_prefixes": [
+      "AIR",
+      "DBT",
+      "DBX",
+      "TRINO",
+      "SRCH",
+      "FLK",
+      "KIN",
+      "SNOW",
+      "PARQ",
+      "DCTR",
+      "NEP",
+      "NEPA",
+      "NEPCD",
+      "NEPGT",
+      "CTM",
+      "DELTA",
+      "EMR",
+      "SFN",
+      "BQ",
+      "ATH",
+      "AZ",
+      "GCP",
+      "DRU",
+      "CH",
+      "PIN",
+      "LAM",
+      "DDBGT",
+      "DDBSTR",
+      "ICE"
+    ],
+    "check_ids": []
+  },
+  "notes": "confluent-kafka-python consumer/producer/avro examples - real client evidence, no TLS/SASL (KFK006 true positive).",
+  "schema_version": "1"
+}

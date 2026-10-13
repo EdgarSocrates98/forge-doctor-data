@@ -1,0 +1,74 @@
+name: benchmarks
+
+# Scheduled scale gate (phase 6.5): heavy benchmarks do not run on every
+# PR. This weekly run re-measures the *validated* envelope (scan n=250,
+# merge n=500) against docs/benchmarks/fleet-budget.json and fails the
+# schedule when a budget key is breached. Manual dispatch runs the same
+# gate on demand; --sizes can be overridden via inputs.
+
+on:
+  schedule:
+    - cron: "17 4 * * 1" # Mondays 04:17 UTC
+  workflow_dispatch:
+    inputs:
+      scan_sizes:
+        description: "Comma-separated repo counts for the scan benchmark"
+        required: false
+        default: "250"
+      merge_sizes:
+        description: "Comma-separated repo counts for the merge benchmark"
+        required: false
+        default: "250,500"
+
+jobs:
+  fleet-envelope:
+    name: fleet-envelope
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pipx install "poetry>=2.2,<3"
+
+      - name: Cache virtualenv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-py3.12-bench-${{ hashFiles('poetry.lock', 'pyproject.toml') }}
+          restore-keys: venv-${{ runner.os }}-py3.12-bench-
+
+      - name: Install dependencies
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --no-interaction
+
+      - name: Scan envelope (budget-gated)
+        run: |
+          poetry run python tools/benchmarks/fleet.py \
+            --sizes "${{ inputs.scan_sizes || '250' }}" \
+            --root .bench/fleet \
+            --out scan-envelope.json \
+            --budget docs/benchmarks/fleet-budget.json
+
+      - name: Merge envelope (budget-gated)
+        run: |
+          poetry run python tools/benchmarks/fleet.py \
+            --merge \
+            --sizes "${{ inputs.merge_sizes || '250,500' }}" \
+            --root .bench/fleet \
+            --out merge-envelope.json \
+            --budget docs/benchmarks/fleet-budget.json
+
+      - name: Upload run artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fleet-envelope-${{ github.run_id }}
+          path: |
+            scan-envelope.json
+            merge-envelope.json
+          retention-days: 90

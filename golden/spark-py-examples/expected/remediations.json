@@ -1,0 +1,14 @@
+[
+  {
+    "actions": [
+      "Replace collect() with take(n)/bounded collect, or write to storage and read back"
+    ],
+    "check_id": "SPARK001",
+    "id": "PLAN-SPARK001",
+    "problem": "collect() pulls the full dataset to the driver",
+    "targets": [
+      "examples/src/main/python/sql/basic.py",
+      "examples/src/main/python/wordcount.py"
+    ]
+  }
+]

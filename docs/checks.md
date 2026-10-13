@@ -1,0 +1,2269 @@
+# Checks
+
+Every rule has a stable id (`--ignore <ID>`), a severity, and an honest
+"when it is OK" — Forge Doctor Data educates, it doesn't just complain.
+
+## Evidence kinds
+
+Every finding also carries an `evidence_kind` classifying *where* its
+supporting fact came from (JSON output field; shown by `explain`):
+
+| kind | source plane | examples |
+|---|---|---|
+| `static` | parsed source code / AST | spark, sql, streaming, airflow, glue, most iceberg/parquet |
+| `config` | declarative config/manifests/IaC | terraform, iac, stepfunctions, controlm, dependencies, ci, docker, python_env, repository, aws |
+| `observed_metadata` | real metadata artifacts | PARQ040–042 on-disk file stats, git index |
+| `derived` | inferred by combining facts | cross-fact checks (ICE001/002/012/013/022/023/025, ICE008–010, CTM003/004/009/010/028, PARQ021, STREAM013) |
+| `runtime` | runtime artifacts | reserved — progress logs / explains (future) |
+
+Tagging is per check, not per domain: an Iceberg finding about a
+`MERGE` statement is `static`, while the same domain's runtime-compat
+finding is `derived`. Untagged plugin findings omit the field, and the
+field never participates in the fingerprint.
+
+## Repository
+
+### REP001 — pyproject.toml · warning
+Missing PEP 621 packaging metadata.
+**Why:** no `pyproject.toml` means no modern build/dependency metadata.
+**When OK:** non-Python repos, or repos that are pure scripts by design.
+**Fix:** add a `pyproject.toml` with a `[project]` table.
+
+### REP002 — README · warning
+No `README.{md,rst,txt}` found.
+**When OK:** internal throwaway utilities.
+**Fix:** even a five-line README pays for itself.
+
+### REP003 — License · info
+No `LICENSE`/`COPYING` file.
+**When OK:** private/internal projects.
+**Fix:** add one — open source without a license isn't usable.
+
+### REP004 — .gitignore · info
+**When OK:** non-git directories.
+**Fix:** add one before the first `__pycache__` slips in.
+
+### REP005 — Tests · info
+No `tests/` directory or `test_*.py` files.
+**When OK:** prototypes you intend to delete.
+
+### REP006 — src layout · info
+Package lives at repo root instead of `src/`.
+**When OK:** small projects; src layout is a preference, not a defect.
+**Why it helps:** prevents accidental imports of the working tree in tests.
+
+### REP007 — Conflicting manifests · warning
+`requirements.txt` + `poetry.lock`, or multiple lockfiles.
+**Why:** two sources of truth will drift.
+**Fix:** pick one dependency manager.
+
+### REP008 — CI configuration · info
+No GitHub Actions/GitLab CI/Azure/CircleCI config.
+**When OK:** early prototypes.
+
+## Python
+
+### PY001 — Python version · pass/info
+The `python` on PATH. Informational anchor for PY003.
+
+### PY002 — requires-python · warning
+`requires-python` (or `tool.poetry.dependencies.python`) not declared.
+**Why:** "any Python" rots — the interpreter and the code diverge silently.
+**When OK:** truly single-interpreter, pinned environments.
+
+### PY003 — Version compatibility · error/pass
+Current interpreter vs `requires-python`, evaluated with `packaging`.
+**Fix:** align the interpreter or the constraint.
+
+### PY004 — Virtual environment · info
+`.venv`/`venv` dir or `VIRTUAL_ENV` detected.
+**When OK:** containerized/global installs by design.
+
+### PY005 — Test configuration · info
+pytest config discovered in pyproject/pytest.ini/tox.ini.
+
+### PY006 — Linter configuration · info
+Ruff/flake8/pre-commit config detected.
+
+### PY007 — Type checker · info
+mypy/pyright config detected.
+
+## Dependencies
+
+### DEP001 — Lock file · warning
+Poetry-managed project without `poetry.lock`.
+**Why:** unresolvable, unrepeatable installs.
+**When OK:** libraries pinned by consumers (still, commit a lock for dev).
+
+### DEP002 — Unrestricted dependency · warning
+`dep = "*"` or a bare name with no constraint.
+**Why:** any future release can break the install.
+**When OK:** private metapackages where you own every release.
+
+### DEP003 — Dev tool as runtime dep · warning
+pytest/ruff/mypy/etc. in runtime dependencies.
+**Fix:** move to a dev group.
+
+### DEP004 — Duplicated runtime/dev dep · info
+Same name in both groups — usually harmless, worth knowing.
+
+### DEP005 — Stale lock · info
+`poetry.lock` older than `pyproject.toml` (mtime heuristic, weak signal).
+**Fix:** `poetry lock --check` / `poetry lock`.
+
+### DEP006 — Poetry available · pass/info
+`poetry` on PATH for Poetry-managed projects.
+
+## Git
+
+### GIT001 — Repository initialized · info
+**When OK:** tarballs, vendored trees.
+
+### GIT002 — Sensitive file tracked · error
+`.env*`, `credentials`, `secrets.*` in `git ls-files`.
+**Fix:** `git rm --cached`, rotate the credential, add to `.gitignore`.
+**Never OK.**
+
+### GIT003 — Python artifacts tracked · warning
+`__pycache__`/`.pyc`/`.egg-info` under version control.
+
+## Spark (AST analysis — never imports PySpark)
+
+### SPARK001 — collect() · warning
+`df.collect()` moves all rows to the driver.
+**When OK:** bounded reference data, tests, single-driver jobs.
+**Fix:** write to storage, or bound with `limit()` first.
+
+### SPARK002 — toPandas() · warning
+Same driver-bound risk as collect, plus Arrow overhead.
+**When OK:** small aggregates destined for plotting/reporting.
+
+### SPARK003 — repartition(1)/coalesce(1) · warning
+Forces all work onto a single task.
+**When OK:** deliberately producing exactly one small output file.
+
+### SPARK004 — Python UDF · info
+Row-serializes through the Python interpreter.
+**When OK:** unavoidable domain logic; prefer built-ins or `pandas_udf`.
+
+### SPARK005 — Action inside a loop · warning
+One job per iteration; lineage can explode.
+**Fix:** restructure to a single action where possible.
+
+### SPARK006 — cache() without unpersist() · info
+Cached frames may never be released. Pairing is per-variable:
+`df.cache()` is only covered by `df.unpersist()`, not any unpersist in the file.
+**When OK:** short-lived sessions; still tidy to `unpersist()`.
+
+### SPARK007 — PySpark usage · pass/info
+Count of files importing `pyspark` — the scan surface anchor.
+
+### SPARK008 — RDD access · info
+`.rdd` drops out of the Catalyst/Tungsten-optimized world.
+**When OK:** partition-level control unavailable in DataFrames.
+**Fix:** prefer DataFrame/SQL APIs; isolate and document RDD code.
+
+### SPARK009 — Cartesian join · warning
+`crossJoin` or `join()` without a condition — quadratic row explosion.
+**When OK:** intentional cross joins on tiny bounded frames.
+**Fix:** add an `on` condition or confirm bounded inputs.
+
+### SPARK010 — Global sort · info
+`orderBy`/`sort` shuffles every row into a single ordering.
+**When OK:** final reporting step on small aggregates.
+**Fix:** `sortWithinPartitions` when global ordering is not needed.
+
+### SPARK011 — withColumn() in loop · warning
+Each iteration wraps the logical plan — optimization time explodes.
+**When OK:** very few iterations on small frames.
+**Fix:** accumulate expressions and `select()` once.
+
+Spark checks report `confidence` — `high` when the receiver resolves to a
+tracked DataFrame (`df = spark.read...` or chained derivations), `medium`
+when the receiver is only DataFrame-probable.
+
+## AWS (local-only, never prints values)
+
+### AWS001 — AWS CLI · pass/info
+`aws` on PATH + reported version.
+
+### AWS002 — Region configured · warning
+No `AWS_REGION`/`AWS_DEFAULT_REGION` env and no `region` in `~/.aws/config`.
+**When OK:** tools that always receive `--region` explicitly.
+
+### AWS003 — Credentials detected · pass/info
+Env var presence or `~/.aws/credentials` existence — values never read.
+
+### AWS004 — Profile · pass/info
+`AWS_PROFILE`/`AWS_DEFAULT_PROFILE` set, or profile names listed from config.
+
+## Docker (textual Dockerfile analysis)
+
+### DOCKER001 — Dockerfile present · pass/info
+Anchor: count of Dockerfile/Dockerfile.* files found.
+
+### DOCKER002 — Base image tag · warning
+`FROM <image>` with no tag, or `:latest`, without a `@sha256:` digest.
+**Why:** untagged bases drift — builds are not repeatable.
+**When OK:** `FROM scratch`, stage aliases, `$ARG` references.
+**Fix:** pin a version tag or digest.
+
+### DOCKER003 — Non-root user · info
+No `USER` instruction — the container runs as root.
+**When OK:** build-stage images, dev containers.
+**Fix:** add a non-root `USER` in the runtime stage.
+
+### DOCKER004 — Secret-looking env name · warning
+`ENV`/`ARG` names matching password/secret/token/api-key patterns.
+Only the variable **name** is reported — values never enter results.
+**Never OK** for real secrets.
+**Fix:** pass secrets at runtime or via a secrets manager.
+
+## Glue (AST analysis — never imports awsglue)
+
+### GLUE001 — Glue usage · pass/info
+Anchor: files importing `awsglue` or calling `client("glue")`.
+
+### GLUE002 — EOL Glue runtime · warning/info
+`glue_version`/`GlueVersion`/`--glue-version` pins compared against the
+bundled Glue knowledge pack: EOL runtimes warn, aging ones inform.
+The pack currently tracks up to Glue 6.0 (Spark 4.1.1, Python 3.13,
+Java 17, Iceberg 1.11.0).
+**Fix:** migrate to a supported runtime — `forge-doctor-data compatibility`
+shows the per-version risk matrix.
+
+### GLUE003 — Job parameters · pass/info
+`getResolvedOptions` usage — job parameters handled properly,
+or a hint that params may be hardcoded when glue usage exists.
+
+### GLUE004 — DynamicFrame/DataFrame mixing · info
+File combines DynamicFrame API (`fromDF`/`DynamicFrame`) with
+PySpark usage or `toDF` conversions.
+**When OK:** deliberate conversion at job boundaries.
+**Why:** mixing APIs complicates lineage and testing.
+
+## CI (textual workflow analysis — no YAML dependency)
+
+### CI001 — CI configured · pass/info
+Anchor: detects GitHub Actions, GitLab CI, Azure Pipelines, CircleCI.
+
+### CI002 — Unpinned actions · warning/info
+`uses:` refs are graded: full commit SHA = quiet, version tag (`@v4`) =
+info (tags are mutable), floating ref (`@main`/`release/v1`/no `@`) =
+warning. The `security` profile upgrades tag findings to warnings.
+**Why:** floating refs execute whatever the ref currently points to.
+**Fix:** pin to a full-length commit SHA (tag is the minimum).
+
+### CI003 — Python version · info
+GHA workflows exist but never set `python-version`/use setup-python.
+**When OK:** non-Python or container-based pipelines.
+
+### CI004 — Test/lint steps · info
+No workflow step mentions pytest, ruff, mypy, tox, lint or test.
+**When OK:** release/deploy-only workflows.
+
+## IaC (Terraform/CloudFormation — lightweight parser, no terraform lib)
+
+### IAC001 — aws_glue_job glue_version · warning/info
+Terraform `resource "aws_glue_job"` `glue_version` pins compared against the
+bundled Glue knowledge pack — same lifecycle status as GLUE002.
+
+### IAC002 — Glue worker sizing · info
+`worker_type`/`number_of_workers` sanity: missing workers, worker_type
+without count, and similar misconfigurations.
+
+### IAC003 — CloudFormation GlueVersion · warning/info
+`AWS::Glue::Job` `GlueVersion` lifecycle status via the knowledge pack.
+
+### IAC004 — CFN Lambda/EMR runtimes · warning/info
+`Runtime:`/`ReleaseLabel:` pins flagged when past end-of-life.
+
+## SQL (requires the `[sql]` extra — sqlglot)
+
+One `SqlIndex` is built per scan: every `*.sql` file is tokenized and split
+into statements, and string literals passed to `*.sql(...)` call sites are
+reused from the semantic index. Statements that fail to parse are counted,
+never fatal.
+
+### SQL000 — SQL surface · pass/info
+Anchor: count of parsed SQL statements (plus any skipped as unparseable).
+
+### SQL001 — SELECT * · warning
+Wildcard projections pull every column — brittle on schema drift, heavier IO.
+**When OK:** exploratory notebooks, throwaway queries.
+**Fix:** project the columns you actually need.
+
+### SQL002 — Cartesian join · warning
+`CROSS JOIN` or implicit comma joins (`FROM a, b`) multiply rows without a
+predicate.
+**When OK:** deliberate products on tiny bounded inputs.
+**Fix:** add the join predicate, or document why the product is intended.
+
+### SQL003 — Non-sargable predicate · warning
+`f(column) = value` in WHERE defeats indexes and partition pruning.
+**When OK:** tiny tables, or predicates the engine rewrites internally.
+**Fix:** rewrite on the constant side — e.g. range bounds instead of `f(col)`.
+
+## Iceberg (IcebergProjectModel — fused from AST index, SQL index, configs, IaC)
+
+One model per scan collects Iceberg evidence: catalog/config settings,
+`USING iceberg` markers, table refs on configured catalogs, write/merge ops,
+table properties (`format-version`, `PARTITIONED BY`), and `CALL
+<cat>.system.<proc>` maintenance procedures. Works without the `[sql]`
+extra (SQL-derived evidence is simply absent).
+
+### ICE000 — Iceberg usage · pass/info
+Anchor: counts of tables/operations/catalogs and evidence kinds.
+
+### ICE001 — Format-version vs operations · warning
+MERGE/UPDATE/DELETE while `format-version` is unset (=1) or explicitly `1`.
+**Fix:** set TBLPROPERTIES `'format-version'='2'` or confirm append-only.
+
+### ICE002 — MERGE without partition evidence · info
+MERGE INTO on a table with no `PARTITIONED BY` anywhere in scanned code.
+
+### ICE008 — No expire_snapshots · warning
+Writes detected but the snapshot-expiry procedure is never called.
+
+### ICE009 — No rewrite_data_files · info
+Writes detected with no compaction strategy — small files accumulate.
+
+### ICE010 — No rewrite_manifests · info
+Writes detected with no manifest compaction — planning degrades.
+
+### ICE012 — Conflicting catalog config · warning
+Same `spark.sql.catalog.<name>` configured with different implementations.
+
+### ICE013 — Iceberg runtime compatibility · warning
+Iceberg usage while an IaC Glue pin is below the compatibility pack floor.
+
+### ICE020 — Legacy writer API · info
+`insertInto`/`saveAsTable`/`write.save` in an Iceberg-evidenced file — the
+V1 writer APIs bypass Iceberg's explicit table API.
+**Fix:** prefer `df.writeTo('<table>').using('iceberg').append()`.
+
+### ICE021 — insertInto on cataloged Iceberg table · info
+`insertInto` on a catalog-qualified table — session-catalog resolution can
+differ from the intended catalog.
+
+### ICE022 — MERGE without Iceberg extensions · warning
+MERGE/UPDATE/DELETE detected but
+`spark.sql.extensions=...IcebergSparkSessionExtensions` is never configured
+in project sources.
+
+### ICE023 — MERGE unlikely to prune partitions · info
+The MERGE `ON` predicate never references a partition column — the target
+scan cannot prune partitions.
+
+### ICE024 — Possible small-file write pattern · info
+`repartition()`/`coalesce()` in a file that also writes — possible
+single-partition write trap (static heuristic).
+
+### ICE025 — Feature vs format-version · warning
+`write.delete.mode=merge-on-read` on a v1 table (needs v2), or
+deletion-vector/row-lineage properties below their format floor. Driven by
+`knowledge/iceberg/spec.json`.
+
+`forge-doctor-data iceberg inspect|maintenance|compatibility|merge|files`
+summarizes the same model without running a full scan.
+
+## Control-M (ControlMModel — Automation API defs + ctm/API references)
+
+One model per scan parses `*.json` workflows-as-code definitions (only when
+the file carries a Control-M `"Type"` marker): folders, jobs, `Defaults`
+inheritance, events produced/consumed, calendars, site standards — plus
+`ctm` CLI calls and `automation-api` URLs in scripts/CI/code. Fully offline;
+`ctm` is never executed.
+
+### CTM000 — Control-M usage · pass/info
+Anchor: counts of jobs/folders/events/calendars/CLI+API refs.
+
+### CTM002 — Job without execution target · warning
+Job with neither `Host` nor `HostGroup` in effective (defaults-merged) props.
+
+### CTM003 — Duplicate job/folder name · warning
+The same job or folder name defined more than once across definitions.
+
+### CTM004 — Job can never fire · info
+No scheduling criteria and no waited events — manual-only execution.
+
+### CTM009 — Event consumed but never produced · warning
+A `WaitForEvents`/`InCondition` name nothing in the project produces.
+**When OK:** produced by another application outside this repo.
+
+### CTM010 — Event produced but never consumed · info
+An emitted event with no consumer — a likely broken or renamed chain.
+
+### CTM028 — Calendar referenced but not defined · warning
+A job references a calendar name no definition declares.
+
+### CTM051 — Missing required metadata · warning
+Effective props missing any of Application/SubApplication/Owner/RunAs
+(list comes from `knowledge/controlm/objects.json`).
+
+### CTM070 — Credential literal in definitions · warning
+Credential-shaped property (`*password*`, `*token*`, `*secret*`, ...) holds
+a literal value — the property NAME is reported, never the value.
+`%%VAR%%`/`${...}` references don't count.
+
+`forge-doctor-data controlm inspect` summarizes the same model without a scan.
+
+## Airflow (AirflowModel — index-flagged files, one AST pass each)
+
+Files importing `airflow*` get a single targeted AST walk: `with DAG(...)` /
+`dag = DAG(...)` / `@dag` definitions, `XxxOperator`/`XxxSensor`/`@task`
+tasks, edges via `>>`, `<<`, `set_upstream/downstream`, `chain`,
+`cross_downstream`, TaskFlow wiring by call, provider imports, and
+module-scope (parse-time) external calls. No `apache-airflow` dependency.
+
+### AIR000 — Airflow usage · pass/info
+Anchor: dags/tasks/sensors/edges/providers/parse-time call counts.
+
+### AIR002 — Duplicate dag_id · warning
+The same `dag_id` defined in more than one place.
+
+### AIR003 — DAG with no tasks · warning
+A DAG that declares zero tasks.
+
+### AIR004 — Orphan task · info
+Task never wired (`>>`, `set_*`, `chain`, TaskFlow call) in a multi-task DAG.
+
+### AIR013 — Dynamic start_date · warning
+`start_date` is a runtime call (`datetime.now()`, `days_ago()`, ...).
+**Fix:** use a constant (`datetime(2024, 1, 1)` / `pendulum.datetime`).
+
+### AIR021 — External call at parse time · warning
+Module-scope `requests`/`boto3`/`urllib`/... call — runs every parse pass.
+
+### AIR025 — Variable.get at parse time · warning
+Top-level `Variable.get()` hits the metadata DB on every parse.
+
+### AIR040 — Sensor in poke mode · info
+`*Sensor` without `deferrable=True` — holds a worker slot while waiting.
+
+### AIR042 — Sensor without timeout · info
+No `timeout`/`execution_timeout` — can wait forever on a stuck dependency.
+
+### AIR100 — Retries without retry_delay · info
+`retries>0` with no `retry_delay` — immediate retries hammer the dependency.
+
+### AIR130 — Imported provider not declared · warning
+`airflow.providers.<x>` imported but `apache-airflow-providers-<x>` absent
+from pyproject dependencies (skipped without a pyproject).
+
+`forge-doctor-data airflow inspect` summarizes the same model without a scan.
+
+## Terraform (TerraformProjectModel — `.tf` block scan on hcl_lite)
+
+Semantic Terraform surface: `terraform`/`provider`/`module`/`resource`/
+`data`/`variable`/`output`/`locals`/`moved`/`import`/`check` blocks plus a
+reference graph between addresses. Dependency-free (hcl_lite machinery).
+
+### TF000 — Terraform usage · pass/info
+Anchor: `.tf` file/block counts and reference-edge count.
+
+### TF001 — Missing required_version · info
+Resources exist but no `terraform { required_version = ... }`.
+
+### TF002 — Provider without version constraint · info
+Provider required without a version, or a `provider` block whose name is
+absent from `required_providers`.
+
+### TF003 — Overly broad provider constraint · warning
+`>=` with no upper bound (`~>` counts as bounded — caps at the last
+component).
+
+### TF020 — Local module detected · info
+`source = "./..."` / `"../..."` modules — noted for ownership review.
+
+### TF021 — Registry module unpinned · warning
+Registry-shaped source (`namespace/name/provider`) with no `version`.
+
+### TF022 — Git module not pinned to immutable ref · warning
+`git::`/`github.com` source with no `?ref=` or `ref=main|master|HEAD|...`.
+**Fix:** pin to a commit SHA or version tag.
+
+### TF130 — Local backend · warning
+`backend "local"` — no state locking or sharing.
+
+`forge-doctor-data terraform inspect` summarizes the same model without a scan.
+
+## Parquet (ParquetProjectModel — code evidence + on-disk file stats)
+
+Two planes: writers/readers/configs from the AST index, and real
+`*.parquet` files (`stat` sizes only — no footer parsing in stage 1).
+
+### PARQ000 — Parquet usage · pass/info
+Anchor: writers/readers/files/config counts.
+
+### PARQ010 — Possible small-file write pattern · info
+`repartition()`/`coalesce()` in a file that also writes parquet.
+
+### PARQ020 — Uncompressed analytical dataset · warning
+`compression` set to `none`/`uncompressed` via `option()` or conf.
+
+### PARQ021 — Inconsistent parquet codecs · info
+Different codecs configured across the project.
+
+### PARQ040 — Small-file proliferation · info
+Median on-disk file size below the pack floor
+(`knowledge/parquet/format.json` `small_file_median_mb`).
+
+### PARQ041 — Excessive file count · info
+File count above the pack `excessive_files` threshold.
+
+### PARQ042 — Inconsistent file-size distribution · info
+p95/median ratio over the pack `size_skew_ratio` — skewed keys or mixed
+writer configs.
+
+`forge-doctor-data parquet inspect` summarizes the same model without a scan.
+
+## Step Functions (StepFunctionsModel — ASL + IaC definitions)
+
+ASL definitions are JSON — parsed stdlib-only from `*.asl.json` /
+`*.states.json` / `*.sfn.json`, any `*.json` with `StartAt`+`States`,
+Terraform `aws_sfn_state_machine` definitions (quoted or heredoc), and
+CFN `AWS::StepFunctions::StateMachine` `DefinitionString`. Map
+`Iterator`/`ItemProcessor` bodies are nested graphs for reachability.
+
+### SFN000 — Step Functions usage · pass/info
+Anchor: machines, states, IaC references.
+
+### SFN002 — Unreachable state · warning
+A state never reached from `StartAt` over `Next`/`Choices`/`Default`/
+`Catch` edges.
+
+### SFN003 — Dead-end path · warning
+A non-terminal state with no `Next` and no `End: true`.
+
+### SFN005 — Choice without Default · info
+Unmatched input raises `States.NoChoiceMatched` at runtime.
+
+### SFN010 — Sync task without timeout · info
+A `.sync` or `.waitForTaskToken` integration with no `TimeoutSeconds`.
+
+### SFN020 — Distributed Map in Express workflow · warning
+`ProcessorConfig.Mode "DISTRIBUTED"` inside a `type = "EXPRESS"` machine —
+Distributed Map requires Standard.
+
+`forge-doctor-data stepfunctions inspect` summarizes the same model without a
+scan.
+
+## Streaming (StreamingProjectModel — platform-agnostic queries)
+
+`readStream`/`writeStream` chains recovered from the AST index (never
+executed), grouped into queries by stream-variable lineage
+(`agg = orders.groupBy(…)` links both halves of one logical query).
+
+### STREAM001 — Streaming workload detected · pass/info
+Anchor: query/source/sink counts.
+
+### STREAM002 — Streaming query without checkpoint · warning
+A `writeStream` with no `checkpointLocation` observed statically —
+restart cannot recover progress.
+
+### STREAM003 — Checkpoint under temporary path · warning
+`checkpointLocation` under `/tmp`-style volatile storage.
+
+### STREAM013 — Shared checkpoint location · warning
+Two queries bound to one checkpoint directory corrupt each other's
+offsets/state.
+
+### STREAM014 — Dynamic checkpoint location · warning
+Path composed from f-string/datetime/uuid/env — changes between
+restarts, abandoning recovery state.
+
+### STREAM020 — Stateful operation without watermark · info
+Watermark-required stateful ops (pack `needs_watermark`) with no
+`withWatermark` observed.
+
+### STREAM070 — foreachBatch sink · info
+Arbitrary per-batch code — idempotency and `batch_id` usage need manual
+verification.
+
+`forge-doctor-data streaming inspect` summarizes the same model without a
+scan.
+
+## Graph (GraphProjectModel — query files, call sites, bulk-load headers)
+
+The model separates property-graph evidence (Gremlin/openCypher:
+vertices/edges, both carry properties) from RDF evidence (SPARQL:
+subject/predicate/object) — the two paradigms are never conflated.
+All GRAPH findings are INFO/WARNING with LOW/MEDIUM confidence: the
+model reports structure and traversal shape, never estimated cost.
+
+### GRAPH001 — Graph workload detected · info
+Anchor: counts traversals, artifacts, languages, paradigms, labels.
+
+### GRAPH002 — Disconnected graph components · info
+Vertex labels cluster into >1 component by traversal evidence — the
+model may be split or linking edges were not found.
+
+### GRAPH003 — Likely orphan vertex type · info
+A vertex label that never appears alongside an edge type.
+
+### GRAPH004 — Edge references undefined vertex type · info
+An edge traversed with no vertex type on at least one endpoint.
+
+### GRAPH005 — Inconsistent relationship direction · info
+The same edge type traversed both out and in across the project.
+
+### GRAPH006 — Relationship represented redundantly · info
+The same label appears as both an edge type and a vertex label.
+
+### GRAPH007 — Overly generic relationship type · info
+Edge labels like `RELATED`/`LINKS` carry no domain meaning.
+
+### GRAPH008 — Wide property vocabulary · info
+Data-dependent (spec-deferred to INFO): ≥8 distinct property keys —
+a static fan-out hint, cardinality needs runtime data.
+
+### GRAPH009 — Probable supernode pattern · info
+Data-dependent (spec-deferred to INFO): a vertex type touching ≥5
+distinct edge types — candidate only, not a confirmed hotspot.
+
+### GRAPH010 — Graph modeled as relational rows · info
+Bulk-load/data artifacts exist but no traversal/query usage was found.
+
+### GRAPH020 — Traversal without selective starting point · warning
+`g.V()` / bare `MATCH (n)` — cost scales with total graph size.
+
+### GRAPH021 — Traversal without a result bound · info
+Hops with no `LIMIT`/`limit()`/`tail()` — unbounded working set.
+
+### GRAPH022 — Variable-length traversal without depth bound · warning
+`[*]`/`[*1..]`/unbounded `repeat()` — paths of arbitrary depth.
+
+### GRAPH023 — High-fanout traversal risk · info
+≥3 hops with no filter — fan-out candidate, needs explain/profile.
+
+### GRAPH024 — Late filtering · info
+First filter lands at step ≥3 — the traversal fanned out first.
+
+### GRAPH025 — Repeated identical traversal pattern · info
+The same traversal shape at multiple call sites.
+
+### GRAPH026 — Excessive full-graph starting traversals · info
+Extension: ≥3 traversals project-wide start unselectively.
+
+### GRAPH030 — Mixed graph paradigms · info/warning
+Extension: property-graph and RDF evidence in the same project (INFO)
+or same file (WARNING) with no explicit boundary.
+
+`forge-doctor-data graph inspect`, `graph schema`, and `graph traversals`
+summarize the model without a scan. The pre-existing project
+intelligence dump remains available as `forge-doctor-data graph <path>`
+(unchanged) and `forge-doctor-data graph project`.
+
+## DynamoDB (DynamoDBProjectModel — IaC tables + boto3 call sites)
+
+Tables come from `aws_dynamodb_table` / `AWS::DynamoDB::*` resources
+(nested gsi/lsi/replica/ttl/pitr blocks included) and from boto3
+bindings in code (`boto3.resource("dynamodb")`, `.Table("name")`);
+access operations resolve TableName literals, bound table vars, key
+conditions, projections, filters, and `ConsistentRead`. Everything is
+static-risk framing — no capacity math, no throttling claims without
+runtime metrics. Single-table vs multi-table is reported, never
+recommended.
+
+### DDB001 — DynamoDB workload detected · info
+Anchor: tables, global tables, streams, op mix, index count.
+
+### DDB002 — Scan on a latency-sensitive path · warning
+`scan` inside a handler/route-shaped function.
+
+### DDB003 — Scan without projection/filter strategy · info
+Unfiltered, unprojected scan reads every item in full.
+
+### DDB004 — Partition key likely poor cardinality · info
+PK attribute named like a low-cardinality field (status/type/…).
+
+### DDB005 — Hot-partition candidate · warning
+The same static PK literal drives multiple write sites.
+
+### DDB006 — Constant partition-key literal · info
+A write whose partition key is a pure constant.
+
+### DDB007 — Time-only sort key write pattern · info
+`sk` bound by a bare timestamp-shaped variable.
+
+### DDB008 — GSI duplicates base-table access · info
+GSI partition key identical to the table's.
+
+### DDB009 — GSI partition key likely hot · info
+GSI on a low-cardinality attribute — index hotspot risk.
+
+### DDB010 — GSI count vs observed access patterns · info
+Declared-but-unqueried GSIs and code-referenced-undeclared indexes.
+
+### DDBSTR001 — Stream enabled, no consumer detected · info
+### DDBSTR002 — Stream consumer lacks idempotency signal · info
+No `ReportBatchItemFailures`/`batchItemFailures` observed.
+### DDBSTR003 — Duplicate-processing risk · info
+One stream feeding ≥2 consumers — each replays every record.
+### DDBSTR004 — Stream retention/recovery mismatch · info
+No PITR/failure-destination; records expire after ~24h.
+### DDBSTR005 — Replicated stream events on global table · warning
+Per-region stream copies repeat downstream side effects.
+
+### DDBGT001 — Multi-region write-conflict risk · info
+Writes against a global table (last-writer-wins replication).
+### DDBGT002 — MREC transaction semantics · info
+Transactions are atomic only in the invoking region (registry-sourced).
+### DDBGT003 — Transactions on MRSC global table · error
+Resolved through the capability registry: MRSC transaction support is
+UNSUPPORTED.
+### DDBGT005 — Region routing strategy unclear · info
+Global table with no visible region pinning in code or providers.
+
+`forge-doctor-data dynamodb inspect|access-patterns|indexes|streams|
+global-tables|capacity` summarize the model without a scan.
+
+## Neptune (NeptuneProjectModel — IaC + client code + query shapes)
+
+Separates Amazon Neptune Database (Gremlin/openCypher on property graph,
+SPARQL on RDF) from Neptune Analytics (a distinct service with built-in
+algorithms). Clusters/instances/subnet+parameter groups/global clusters
+come from `aws_neptune_*` Terraform and `AWS::Neptune*` CloudFormation;
+endpoints (`*.neptune.amazonaws.com:8182`, `DriverRemoteConnection`),
+boto3 `neptune`/`neptunedata`/`neptune-graph` bindings, and
+`start_loader_job` call sites come from code. Query shapes reuse the
+Graph Intelligence extractors — nothing executes.
+
+### NEP001 — Neptune workload detected · info
+Anchor: product, clusters, instances, endpoints, bulk loads, languages.
+
+### NEP010 — Query language incompatible with graph paradigm · warning
+Registry-derived: openCypher/Gremlin vs RDF-loaded data, SPARQL vs
+property-graph data.
+
+### NEP020 — Traversal without selective start · warning
+`g.V()`/`MATCH` with no bound start predicate.
+
+### NEP021 — Unbounded variable-length traversal · warning
+`[*]` / `repeat()` without `times()`/`until`/`LIMIT` bound.
+
+### NEP022 — Cartesian graph pattern · warning
+Disconnected `MATCH` patterns with no joining relationship.
+
+### NEP023 — Large unbounded result projection · info
+`RETURN *` / `SELECT *` with no `LIMIT`.
+
+### NEP024 — Property filter applied post-traversal · warning
+First filter lands after hop expansion — late-filtering risk.
+
+### NEP030 — Row-by-row ingestion pattern · warning
+Repeated write-per-item calls with no bulk-loader evidence.
+
+### NEP031 — Bulk-loader candidate · info
+Write-heavy workload where the S3 bulk loader is absent.
+
+### NEP032 — Bulk-load IAM/S3 relationship incomplete · warning/info
+`start_loader_job` without `iamRoleArn`, or a role whose S3 access is
+not visible in the project.
+
+### NEP033 — Malformed graph input risk · info
+A query-language file/string that produced no parsed traversal.
+
+### NEP040 — Read-heavy workload, no replica evidence · info
+Only when read/write asymmetry is observable; otherwise silent.
+
+### NEP041 — Weak backup/PITR posture · info/warning
+No `backup_retention_period`, or `skip_final_snapshot=true`.
+
+### NEP042 — Public-access assumption · warning
+`publicly_accessible = true` on a cluster instance.
+
+### NEP043 — IAM-auth configuration mismatch · info
+Cluster `iam_database_authentication_enabled` vs client SigV4 evidence.
+
+### NEP044 — Security-group topology risk · info
+No attached SGs, or no SG opens the Neptune port.
+
+### NEP045 — Cluster/instance configuration mismatch · warning/info
+`db.serverless` required on serverless clusters; clusters without
+instances.
+
+### NEPGT001 — Write expectation in a secondary region · warning
+Writes aimed at a non-primary region of a global database.
+
+### NEPGT002 — Multi-region active-active write assumption · info
+Write traffic spanning multiple endpoint regions.
+
+### NEPGT003 — Cross-region recovery topology incomplete · info
+Global cluster with no secondary cluster evidence.
+
+### NEPA001 — Manual algorithm with Analytics available · info
+Hand-rolled graph algorithm while Neptune Analytics is configured.
+
+### NEPA002 — Algorithm call incompatible with detected product · info
+Algorithm-style usage with no Analytics evidence.
+
+### NEPCD001 — Stream-fed Neptune mutation lacks idempotency · warning
+DynamoDB stream consumer (no idempotency signal) plus graph writes —
+replayed records may double-apply mutations.
+
+`forge-doctor-data neptune inspect|schema|queries|ingest|explain|compatibility`
+summarize the model; `neptune explain|analyze-explain <file>` reads an
+exported explain/profile artifact offline (STATIC / OBSERVED_METADATA /
+RUNTIME classification, large-intermediate / broad-start / late-filter
+flags). `forge-doctor-data data-model inspect` reports the access-style
+breakdown (key lookups vs bounded queries vs scans vs multi-hop
+traversals) as facts only — no platform recommendation.
+
+## Platform (cross-domain)
+
+PLAT### findings are emitted by the cross-domain rule engine
+(`core/crossdomain.py`): each rule declares the entity kinds,
+relationship kinds, and capability ids it needs, and fires only when all
+prerequisites are observably present. Findings list their contributing
+facts instead of asserting a bare risk label.
+
+### PLAT001 — Orchestration retry + non-idempotent sink · warning
+A retried orchestration task (Airflow `retries>0`, DAG `default_args`
+included) plus append-style Iceberg writes with no merge/overwrite/
+createOrReplace evidence — retries can duplicate rows.
+
+### PLAT002 — Runtime/config feature incompatibility · warning
+Declared runtime version evaluates UNSUPPORTED for a capability the
+source exercises (e.g. Glue 3.0 + Iceberg MERGE/UPDATE/DELETE).
+
+### PLAT003 — Continuous writer + storage maintenance gap · info
+A `processingTime`/`continuous` micro-batch sink to Iceberg/Delta with
+no compaction or snapshot-expiry evidence in the project.
+
+### PLAT004 — Duplicate orchestration ownership · warning
+The same compute job is invoked from two orchestrator domains
+(Airflow / Control-M / Step Functions) — double-run risk.
+
+### PLAT005 — IaC runtime config vs source assumptions · warning/info
+Terraform `aws_lambda_function.runtime` below `requires-python`, or a
+`glue_version` pin in code that differs from the Terraform declaration.
+
+### PLAT006 — Table format + consumer compatibility mismatch · info/warning
+An Iceberg `format-version=2` table has consumers; severity upgrades to
+warning when the capability engine proves the consumer unsupported.
+
+### PLAT007 — Stream sink retry + side-effect idempotency risk · warning
+A microbatch writer sinks into a non-transactional store
+(DynamoDB/Neptune or `foreachBatch`) with no checkpoint or dedup
+(`ConditionExpression`, `batch_id` in the item key) evidence.
+
+### PLAT008 — EMR + Iceberg writes under Lake Formation · warning
+An EMR cluster performs Iceberg row-level writes
+(`merge`/`update`/`delete`/`overwrite*`) while Lake Formation governs
+the catalog, but the cluster declares no `security_configuration` —
+that path bypasses the LF grants.
+
+### PLAT009 — Databricks runtime below Delta feature floor · warning
+A Delta feature (deletion vectors, liquid clustering, CDF, column
+mapping) is exercised on a Databricks cluster whose `spark_version`
+predates the feature's protocol floor — the capability registry's
+UNSUPPORTED verdict or the floor check produces the finding.
+
+### PLAT010 — SFN + Lambda poller where native `.sync` exists · info
+A state machine invokes a Lambda Task while the project contains a
+client-side Athena poll pair (`start_query_execution` +
+`get_query_execution`) — the Task is a candidate for
+`states:::aws-sdk:athena:startQueryExecution.sync`.
+
+### PLAT011 — Distributed Map concurrency > Lambda reserved concurrency · warning
+A DISTRIBUTED Map whose ItemProcessor invokes a Lambda function is
+configured with `MaxConcurrency` above the function's
+`reserved_concurrent_executions` — items throttle instead of running.
+
+`forge-doctor-data platform findings` renders only this category; the same
+checks also run inside `forge-doctor-data scan` under `category=platform`.
+
+## Runtime evidence (offline artifacts)
+
+`forge-doctor-data runtime inspect <artifact>` normalizes a user-exported
+runtime artifact into `RuntimeEvidenceModel` facts — executions,
+metrics, errors, timings, throughput, lag, retries, resource usage —
+without any cloud access. Auto-detected adapters:
+
+- `spark_eventlog` — Spark History event log (NDJSON `SparkListener*`
+  records): jobs/stages, shuffle/spill/GC/input-output metrics,
+  executor loss, per-stage task skew.
+- `spark_ss_progress` — Structured Streaming `StreamingQueryProgress`
+  JSON: input vs processed rate, batch `durationMs` phases, state
+  operator rows, source offsets, watermark.
+- `athena_stats` — `GetQueryExecution` statistics JSON (nested or flat):
+  DataScannedInBytes plus queue/planning/execution timings.
+- `lambda_report` — CloudWatch `REPORT RequestId:` lines: duration,
+  billed duration, memory size/used, init duration, timeouts.
+- `sfn_history` — `GetExecutionHistory` JSON: state transitions,
+  failures with causes, retry counts, execution duration.
+- `glue_logs` — Glue job log text: JobRunId/Job Name identifiers plus
+  conservative error extraction (OOM, executor loss, Spark/Glue
+  exceptions).
+- `neptune_explain` — the phase-4 explain/profile parser exposed as a
+  runtime adapter (steps, max cardinality, flags).
+- `flink_checkpoints` — Flink REST checkpoint history JSON
+  (`checkpoints.counts` + `history`): per-checkpoint executions,
+  completed/failed counts, `CheckpointFailed` errors.
+- `stream_metrics` — generic metric-point exports (`{name, value,
+  unit}` lists/maps): `MillisBehindLatest`, `records-lag`,
+  consumer-lag, `IncomingRecords`.
+
+`runtime diagnose <artifact>` additionally matches the artifact's text
+and extracted errors against the known-error signature packs.
+`streaming progress <file>` renders a progress artifact directly.
+Artifacts join platform-graph entities only through demonstrable
+identifiers (ARN, job name, query id, execution id) — never fuzzy.
+
+## Root cause
+
+`forge-doctor-data root-cause . [--runtime artifact.json ...]` correlates scan
+findings with runtime evidence:
+
+- **Promotions** — a `FindingPromotion` lifts a finding when runtime facts
+  are consistent with it (e.g. `repartition(1)` + a stage that ran one
+  task; streaming backlog when processed rate < input rate; retries
+  observed for a retry+non-idempotent finding). Levels: CONFIRMED (exact
+  identity join required), STRONGLY_SUPPORTED (targeted rule, domain
+  only), POSSIBLE (shared-domain errors). The original finding and its
+  fingerprint are never modified — `base_fingerprint` + deterministic
+  `promotion_id` preserve correlation.
+- **Causal clusters** — deterministic chains with evidenced nodes:
+  `RC_STREAM_COMMITS` (micro-batch → commit amplification → small files
+  → consumer planning/scan overhead) and `RC_SPARK_SKEW` (join/shuffle
+  key → skew → spill → long stage). CONFIRMED needs every node evidenced
+  with runtime facts; fewer nodes degrade to STRONGLY_SUPPORTED/POSSIBLE.
+  A single evidenced node never forms a cluster.
+
+## Remediation planning
+
+`forge-doctor-data remediate . [--root-cause <id>]` prints deterministic
+`RemediationPlan`s from `knowledge/remediation/` packs: ordered actions
+with rationale, expected effect, per-action validation and `depends_on`
+edges, plus prerequisites, risks, validation steps and rollback notes.
+Plans are advisory — `remediate` itself never edits code, generates
+patches, commits, deploys, or runs Terraform/migrations. Findings
+without a remediation mapping produce no plan.
+
+## Safe fixes
+
+`forge-doctor-data fix .` turns findings into **safety-classified** fix
+proposals (`core/fixes.py`): `safe` transforms are pure, bounded,
+idempotent text edits (e.g. declare `requires-python` in pyproject,
+append ignore patterns to `.gitignore`, create a default `.gitignore`);
+`review-required` proposals (e.g. dropping a duplicate
+`requirements.txt` when `poetry.lock` exists) apply only with
+`--apply --class review`; `manual-only` findings (IaC resource
+semantics, IAM/Lake Formation, partition/table changes) print guidance
+and have no code path that can write. Default is a dry run printing
+unified diffs; `--apply` writes `safe` only, re-reading each file and
+aborting on stale sources, with a JSON audit record under `--json`.
+Nothing is committed or pushed — version control is the rollback.
+
+## Architecture contract + drift
+
+An optional `platform-contract.yml` at the project root declares the
+*desired* architecture (versioned schema: `contract_version`,
+`pipelines` with compute/storage/orchestration/sla/semantics/ownership/
+capabilities, `datasets`, `governance.allowed_dependencies`).
+`forge-doctor-data contract validate <file>` checks structure and schema
+version; `forge-doctor-data architecture drift .` (or a plain `scan` when a
+contract exists) compares it against declared (Terraform), implemented
+(code), and runtime (`--runtime` artifacts) planes:
+
+- **ARCH001** runtime/implemented platform differs from contract · warning
+- **ARCH002** configured version differs from contract version · warning
+- **ARCH003** implemented storage format differs from contract · warning
+- **ARCH004** dependency used but absent from `allowed_dependencies` · warning
+- **ARCH005** runtime execution duration violates contracted SLA · error
+- **ARCH006** `idempotent: true` contract without write evidence · warning
+- **ARCH007** same resource provisioned by multiple owners (Terraform vs
+  manual `boto3 create_*`) · warning
+- **ARCH008** implemented feature outside the pipeline's approved
+  capabilities · info
+
+Absent contract, missing runtime, or missing config evidence never
+produces drift — unknown stays unknown.
+
+## Lake Formation
+
+`forge-doctor-data lakeformation` builds a `LakeFormationProjectModel` from
+Terraform (`aws_lakeformation_*`, `aws_glue_catalog_*`, `aws_ram_*`,
+IAM policies naming `lakeformation:`/`glue:` actions), CloudFormation
+(`AWS::LakeFormation::*`, `AWS::Glue::*`, `AWS::RAM::*`), and boto3
+`lakeformation`/`glue` call-sites — grants, admins, default permissions,
+registered data locations, resource links, LF tags, data-cells filters,
+RAM shares, and the consumer/producer cross-account paths. FGAC/FTA
+support per engine is capability-driven
+(`knowledge/capabilities/lakeformation.json`), evaluated through the
+registry rather than hardcoded in checks. In the platform graph, grants
+become `principal -[GOVERNS]-> catalog/location` edges and resource
+links become `DEPENDS_ON` edges to the producer catalog.
+
+- **LF000** Lake Formation usage census · info (anchor)
+- **LF001** resource-link/cross-account target without RAM evidence · warning
+- **LF002** `IAMAllowedPrincipals` alongside FGAC/LF-tag evidence · warning
+- **LF010** grants/locations present, no `data_lake_settings` declared · info
+- **LF011** `IAMAllowedPrincipals` retained in default permissions · warning
+- **LF012** resource link referenced by no grant · warning
+- **LF013** grant to external account without RAM principal association · warning
+- **LF014** `data_location` grant on an unregistered S3 arn · warning
+- **LF015** `lf_tag` grant on an undefined tag key / LF-TBAC summary · warning/info
+- **LF016** data-cells filter referenced by no grant · info
+- **LF017** hybrid access: IAM defaults retained while FGAC/LF-TBAC in use · warning
+- **LF018** grant option delegated to an external account · warning
+
+## EMR
+
+The EMR, Databricks, and Delta Lake sections below all belong to the
+`platforms` check category.
+
+`forge-doctor-data emr` builds an `EmrProjectModel` from Terraform
+(`aws_emr_cluster`, `aws_emrserverless_application`,
+`aws_emrcontainers_virtual_cluster`, `aws_emr_step`,
+`aws_emr_managed_scaling_policy`), CloudFormation (`AWS::EMR::*`,
+`AWS::EMRServerless::*`, `AWS::EMRContainers::*`), and boto3
+`emr`/`emr-serverless`/`emr-containers` call-sites — release labels,
+instance fleets (spot/on-demand), autoscaling, dynamic allocation,
+roles, bootstrap actions, logging, security configuration, and step
+failure actions. Commands: `emr inspect`, `emr findings`.
+
+- **EMR000** EMR usage census · info (anchor)
+- **EMR001** release label below emr-6.x · warning
+- **EMR002** EC2 cluster without scaling/dynamic allocation · info
+- **EMR003** all-Spot instance fleets · warning
+- **EMR004** cluster without `log_uri` · info
+- **EMR005** cluster without security configuration · info
+- **EMR006** step without `action_on_failure` · info
+- **EMR007** serverless application without maximum capacity · info
+
+## Databricks
+
+`forge-doctor-data databricks` builds a `DatabricksProjectModel` from the
+`databricks_*` Terraform provider (jobs, clusters, SQL warehouses,
+pipelines, Unity Catalog objects, workspaces), `databricks.yml` asset
+bundles, and Python sdk/dbutils/notebook evidence — DBR versions,
+autoscale/spot/serverless posture, job-vs-existing-cluster usage, UC
+coverage. Commands: `databricks inspect`, `databricks findings`.
+
+- **DBX000** Databricks usage census · info (anchor)
+- **DBX001** job task pinned to `existing_cluster_id` · warning
+- **DBX002** fixed `num_workers` without autoscale · info
+- **DBX003** cluster on pre-13.3-LTS DBR · warning
+- **DBX004** Databricks IaC but no Unity Catalog objects · info
+- **DBX005** external_location without a storage_credential · warning
+- **DBX006** jobs/pipelines but no `databricks.yml` bundle · info
+
+## Delta Lake
+
+`forge-doctor-data delta` builds a `DeltaProjectModel` from SQL
+(`USING DELTA`, `MERGE INTO`, `UPDATE`, `DELETE`, `OPTIMIZE`,
+`VACUUM`, `RESTORE`, `CLUSTER BY`, `TBLPROPERTIES`), Python
+`DeltaTable`/`spark.sql` call-sites, `.format("delta")` reads/writes,
+and structured-streaming delta endpoints — table features (deletion
+vectors, CDF, liquid clustering, column mapping, schema evolution,
+identity columns) and reader/writer protocol floors. Commands:
+`delta inspect`, `delta findings`, `delta features`.
+
+- **DELTA000** Delta usage census · info (anchor)
+- **DELTA001** MERGE/UPDATE/DELETE churn without OPTIMIZE · warning
+- **DELTA002** deletion vectors — protocol/runtime floor warning · warning
+- **DELTA003** auto-merge schema-evolution flags · info
+- **DELTA004** change data feed enabled with no consumer · info
+
+Cross-domain rules added by this stage: **PLAT008** (EMR Iceberg
+writes under Lake Formation with no LF-integrated security
+configuration) and **PLAT009** (Databricks runtime below a detected
+Delta feature's protocol floor).
+
+## Athena
+
+`forge-doctor-data athena` builds an `AthenaProjectModel` from Terraform
+(`aws_athena_workgroup`, `aws_athena_data_catalog`,
+`aws_athena_database`, `aws_athena_named_query`,
+`aws_athena_prepared_statement`), CloudFormation (`AWS::Athena::*`),
+Athena-shaped SQL (CTAS, UNLOAD, PREPARE/EXECUTE, Iceberg DDL), and
+boto3 `athena` call-sites — engine versions, result configuration,
+bytes-scanned cutoffs, and query operations. Commands:
+`athena inspect`, `athena findings`.
+
+- **ATH000** Athena usage census · info (anchor)
+- **ATH001** engine < 3 with Iceberg DDL evidence · warning
+- **ATH002** workgroup without enforced result location · info
+- **ATH003** workgroup without `bytes_scanned_cutoff_per_query` · info
+- **ATH004** CTAS/UNLOAD/PREPARE SQL but no declared workgroup · info
+- **ATH005** boto3 `start_query_execution` + `get_query_execution`
+  polling pair · info
+
+## Lambda
+
+`forge-doctor-data lambda` builds a `LambdaProjectModel` from Terraform
+(`aws_lambda_function`, `aws_lambda_event_source_mapping`,
+`aws_lambda_permission`, `aws_lambda_function_event_invoke_config`,
+`aws_lambda_provisioned_concurrency_config`, `aws_lambda_layer_version`,
+S3/SNS/schedule trigger resources), CloudFormation (`AWS::Lambda::*`),
+and boto3 `lambda` call-sites — runtime, architecture, memory, timeout,
+ephemeral storage, concurrency controls, VPC, DLQ, layers, event
+sources, destinations, and idempotency-library evidence. Commands:
+`lambda inspect`, `lambda findings`.
+
+- **LAM000** Lambda usage census · info (anchor)
+- **LAM001** end-of-life runtime · warning
+- **LAM002** event-triggered function without DLQ/destination · info
+- **LAM003** stream-triggered function without concurrency bound · info
+- **LAM004** timeout unset or at the 15-minute ceiling · info
+- **LAM005** VPC-attached function on default 128MB memory · info
+
+## Step Functions (deepened)
+
+The `StepFunctionsModel` now captures per-machine `QueryLanguage`
+(JSONPath default vs JSONata opt-in), per-state payload keys
+(`InputPath`/`Parameters`/`ResultSelector`/`ResultPath`/`Arguments`/
+`Output`/`Assign`/`ItemSelector`/`ItemBatcher`), retry semantics
+(`MaxAttempts` sums, `ErrorEquals` sets on Retry and Catch), the
+invoked Lambda `target` (`Parameters.FunctionName` or literal ARN), and
+Distributed Map `MaxConcurrency`/`ToleratedFailurePercentage`.
+
+- **SFN030** JSONata-only keys under a JSONPath machine · warning
+- **SFN031** DISTRIBUTED Map with no retry/catch/tolerance · info
+- **SFN032** Wait+poll loop around a `.sync`-capable integration · warning
+
+Cross-domain rules added: **PLAT010** (SFN + Lambda poller → native
+`.sync` candidate) and **PLAT011** (Distributed Map concurrency exceeds
+the invoked Lambda's reserved concurrency).
+
+## Streaming bus (Kafka / Kinesis / Flink)
+
+Deep models fuse Terraform/CFN resources, Spark SS source options, and
+Python client calls into per-domain project models:
+
+- `KafkaProjectModel` — MSK clusters (encryption-in-transit, auth,
+  broker count, public access), topics (partitions/replication/config),
+  SS options (`subscribe`, `startingOffsets`, `maxOffsetsPerTrigger`,
+  `failOnDataLoss`, `kafka.group.id`), Python clients
+  (`KafkaConsumer`/`KafkaProducer`/`SchemaRegistryClient`), consumer
+  groups, schema-registry presence, TLS/SASL evidence.
+- `KinesisProjectModel` — streams (shards, stream_mode, retention,
+  encryption), EFO consumers, Firehose streams, managed-Flink apps,
+  SS kinesis options, boto3 `kinesis` calls (with StreamName/Consumer
+  literals).
+- `FlinkProjectModel` — jobs (code entrypoints + managed
+  KinesisAnalyticsV2 apps), evidence kinds (env, source, keyed_op,
+  window, timer, checkpoint, savepoint, parallelism, sink,
+  delivery_mode, state_backend, watermark), checkpoint mode/interval.
+
+Checks:
+
+- **KFK000** anchor · info — cluster/topic/call census.
+- **KFK001** MSK plaintext client-broker · warning
+- **KFK002** single-partition topic · warning
+- **KFK003** kafka source without `maxOffsetsPerTrigger` · warning
+- **KFK004** kafka without schema-registry evidence · warning
+- **KFK005** `KafkaConsumer` without `group.id` · warning
+- **KFK006** kafka without any TLS/SASL evidence · warning
+- **KIN000** anchor · info — stream/consumer/api census.
+- **KIN001** single-shard provisioned stream · warning
+- **KIN002** stream at default (≤24h) retention · warning
+- **KIN003** multiple polling consumers without EFO · warning
+- **FLK000** anchor · info — job/evidence census.
+- **FLK001** flink job without checkpointing · warning
+- **FLK002** keyed state without checkpointing · error
+- **FLK003** managed app without autoscaling/parallelism · warning
+- **FLK004** declared `AT_LEAST_ONCE` mode · warning
+- **STREAM080** derived delivery semantics per query · info/warning —
+  reports `at-most-once`/`at-least-once`/`effectively-once`/
+  `exactly-once-claim`/`unknown` with the full basis tuple
+  (source+checkpoint+engine+sink+idempotency). A checkpoint alone never
+  yields exactly-once.
+
+Runtime streaming diagnostics (`streaming diagnose <progress*.json>`)
+derive from a `StreamingQueryProgress` batch series:
+
+- **SRATE001** input rate exceeds processing rate → backlog growth
+- **SSTATE002** monotonic state-row growth across ≥3 batches
+- **SWM003** watermark far behind max event time (>60s)
+- **SCKPT004** walCommit/commit phase instability (>3× baseline)
+- **SKFK005** non-zero source partition backlog (kafka offsets)
+- **SDUR006** slow micro-batch (>30s) — trigger-interval fit
+
+New runtime adapters: `flink_checkpoints` (Flink REST checkpoint
+history: counts/history/failed) and `stream_metrics` (generic metric
+exports: `MillisBehindLatest`, `records-lag`, consumer lag).
+
+`streaming semantics` renders the derived delivery claims;
+`kafka|kinesis|flink inspect|findings` expose the models and risks.
+Platform-graph integration adds `stream:kafka:*`, `stream:kinesis:*`,
+`stream:firehose:*`, `compute_job:flink:*`, `principal:kafka:group:*`
+and `principal:kinesis:*` (EFO consumer → stream `CONSUMES` edges).
+Knowledge packs: `streaming/delivery`, `kafka/config`,
+`kinesis/config`, `flink/config`, `capabilities/{kafka,kinesis,flink}`.
+
+## What-if + migration planning
+
+`forge-doctor-data what-if --change target=value .` simulates a property
+change without executing anything. Known targets:
+`glue-version`, `iceberg-format-version`, `databricks-runtime`,
+`lambda-runtime`, `emr-release`. The evaluation reports:
+
+- **affected entities** — platform-graph entities the change touches
+- **capability transitions** — per-capability status at `from` → `to`
+  (lost capabilities are blockers, gained are enablers)
+- **compatibility notes** — domain-pack facts (`glue/compatibility`
+  change lists, `iceberg/compatibility` runtime bundling,
+  `databricks/runtime` DBR status, `lambda/runtimes` eol set,
+  `iceberg/versions` format versions)
+- **contract conflicts** — pipeline `compute.version` pins the change
+  would violate (pre-drifted ARCH002)
+- **unknowns** — dimensions the packs don't cover
+
+`forge-doctor-data migrate plan .` enumerates applicable named paths:
+
+- `glue-4-to-5`, `iceberg-v1-to-v2`, `databricks-runtime-upgrade`,
+  `parquet-to-delta`, `parquet-to-iceberg`, `streaming-modernize`,
+  `lambda-runtime-upgrade`
+
+Each `MigrationPlan` carries source/target environments, affected
+entities, blockers, warnings, required changes, validation steps, and
+rollback considerations — generated from knowledge packs only, never
+executed. Facts the packs lack surface as UNKNOWN entries.
+
+## Forge Lab
+
+`labs/<domain>/<scenario>/` holds reproducible mini-projects with a
+declared `expected.json` ground truth:
+
+```json
+{
+  "expected_findings": ["SPARK003", "PARQ040@jobs/etl.py"],
+  "forbidden_findings": ["DELTA001"],
+  "expected_graph_edges": ["writes|compute_job:glue:etl->dataset:parquet:out"],
+  "expected_capabilities": ["iceberg:ICEBERG_MERGE_WRITE;format_version=2=supported"],
+  "expected_root_causes": ["RC_STREAM_COMMITS"],
+  "expected_signals": ["scan_amplification"],
+  "forbidden_signals": ["queue_pressure"],
+  "expected_cost_drivers": ["scan_volume"],
+  "expected_sla_status": ["events.freshness=violated"],
+  "expected_optimization_candidates": ["partition_pruning"]
+}
+```
+
+`forge-doctor-data lab run` executes the full engine per scenario and compares
+against truth — missed expectations and forbidden hits fail; detected
+but undeclared findings are reported as `extra` for FP analysis.
+Optional `runtime/` artifact dirs feed root-cause clustering, execution
+adapters (Spark eventlog, Snowflake/BigQuery/Redshift/Trino/ClickHouse
+exports) for signal and cost-driver ground truth, and the SLA /
+optimization-candidate categories. `lab list` / `lab report` / `--json`
+supported; exit code 1 on failure.
+
+`forge-doctor-data lab experiment` has two modes. With `--hypothesis`, a
+named transform is applied to a scenario copy and findings are diffed.
+With `--before`/`--after`, two exported artifact bundles are compared on
+measured metrics; `--expect metric:op:value` declares expected effects
+and `--protect metric:op:value` declares protected constraints. Verdicts:
+SUPPORTED, NOT_SUPPORTED, INCONCLUSIVE, CONSTRAINT_VIOLATED (protected
+constraints override benefits; unmeasured metrics are reported, never
+invented).
+
+`forge-doctor-data lab metrics` rolls the comparisons into quality numbers
+per domain plus a TOTAL row:
+
+- **precision / recall / FPR** — FP candidates are undeclared
+  WARNING+ findings not covered by `allowed_findings` (scenario-level)
+  or `labs/_defaults.json` (lab-level noise budget). FPR is measured
+  against `forbidden_findings` declarations.
+- **parser coverage** — fraction of `.py` files with a parsed AST.
+- **graph edge recall / capability accuracy / root-cause recall** —
+  matched expectations per category.
+
+`-` marks a metric with zero denominator (nothing to measure).
+`--json` emits the same numbers for CI.
+
+## Golden repositories
+
+`golden/<name>/repo/` holds realistic mini-projects;
+`golden/<name>/expected/` pins the *full* deterministic output —
+findings (with fingerprints), platform graph, root-cause clusters,
+remediation plans, migration plans — as sorted JSON snapshots.
+
+```bash
+forge-doctor-data golden list            # corpus inventory
+forge-doctor-data golden run             # diff engine vs snapshots (CI gate)
+forge-doctor-data golden update          # regenerate — review diff, then commit
+```
+
+Any semantic regression surfaces as an add/remove diff per artifact.
+The scan is scoped to `repo/` so snapshot text can never contaminate
+evidence. Seed corpus: `airflow-glue-athena`, `databricks-delta`,
+`dynamodb-neptune`, `dynamodb-streams-lambda`, `emr-iceberg`,
+`glue-4-to-5`, `kafka-spark-iceberg`, `lf-cross-account`.
+
+## Performance benchmark
+
+`forge-doctor-data bench run` measures the engine on a project — or a
+deterministic synthetic corpus (`--files N --seed S`):
+
+```text
+files=200 py=122 findings=103
+cold=13050ms warm=5538ms ratio=0.42 packs=74 (34ms)
+ast=122/122 graph=1317ms (117 ent/63 rel) peak=12MB
+```
+
+- **cold / warm** — full check pass, cold vs disk-cached index
+- **ast=N/M** — one AST parse per `.py` file is the ideal
+- **graph** — platform-graph build time + size
+- **packs** — knowledge-pack load, **peak** — tracemalloc MB
+
+Budgets (`--budget b.json`) are portable ratios/counts, not wall clocks:
+`warm_ratio_max`, `ast_parse_max_ratio`, `graph_ms_per_1k_files`,
+`cold_ms_per_1k_files`. Violations print and exit 1.
+
+## Workspace intelligence
+
+`forge-doctor-data workspace inspect` merges per-repo platform graphs into a
+`WorkspaceModel`: sibling sub-projects are discovered by marker files
+(`pyproject.toml`, `*.tf`, `databricks.yml`, `airflow.cfg`, `dags/`
+content — outermost marker dir wins), each repo's `DataPlatformGraph` is
+built independently, and canonical entity ids converge so the same
+`compute_job:glue:orders-etl` declared in `terraform-repo`, implemented
+in `glue-jobs`, and invoked by `airflow-dags` becomes one node with
+three `repo:workspace:<name>` edges:
+
+| Edge | Meaning |
+|------|---------|
+| `DEFINES` | the repo's IaC/config declares the entity |
+| `IMPLEMENTS` | a glue-code file whose normalized stem matches the job name |
+| `INVOKES` | the repo's workflows invoke an entity defined elsewhere |
+
+Internal `task:*` targets and same-repo invocations are not links.
+`--format json` emits the full repo/link/graph model for tooling.
+
+## Semantic diff
+
+`forge-doctor-data diff <base>...<head> --semantic` upgrades the findings
+diff into a PR-review report built on the platform graph:
+
+```text
+risk: HIGH   1 files changed   +0 new findings   -0 fixed
+  - modified structural entity compute_job:glue:orders-etl impacts 2 dependents
+| modified | compute_job:glue:orders-etl | glue_version | 2 |
+blast radius -> task:airflow:load, workflow:airflow:daily_load
+```
+
+- **added / removed / modified / touched** — entity-level changes;
+  `touched` means the file changed but extracted attrs are identical.
+- **blast radius** — transitive dependents (callers count: inbound
+  INVOKES/DEPENDS_ON/READS edges are followed, unlike impact-reach).
+- **risk** — HIGH when a removed entity has dependents or a structural
+  entity (table/stream/dataset/catalog/workflow/compute_job) with
+  dependents is modified; MEDIUM for touched-with-dependents or bare
+  removals; LOW otherwise. Reasons are printed per classification.
+- Exit 1 on new findings or HIGH risk — CI-gateable.
+
+Version attrs (`glue_version`, `runtime`, `engine_version`,
+`release_label`, `format_version`, `spark_version`) propagate from
+Terraform onto typed entities so a `4.0 → 5.0` bump registers as
+`modified`, not just `touched`.
+
+## Policy
+
+### Organization policy packs
+
+Org rules are data, not code — drop `*.yml|*.yaml|*.json` files in
+`.forge-doctor-data/policy/` (or `policy.yml` / `org-policy.yml` at the
+root, or `[tool.forge-doctor-data] policy_packs = ["org.yml"]`):
+
+```yaml
+pack: org-security
+version: "1.0"
+rules:
+  - id: ORG001
+    severity: error
+    message: RDS instances must not be publicly accessible
+    forbid:
+      terraform:
+        resource_type: aws_db_instance
+        attr: publicly_accessible
+        op: equals            # equals | matches | present
+        value: "true"
+  - id: ORG002
+    severity: warning
+    message: CODEOWNERS is required
+    require:
+      file: CODEOWNERS
+```
+
+- `forbid.pattern` + `file_glob` — per-line regex violations.
+- `forbid.terraform` — per-resource attr checks.
+- `require.file` — the glob must match ≥1 project file.
+- `require.file_glob` + `contains` — every matching file must contain
+  the regex (zero matches = no violation).
+- `require.terraform` — every resource of the type must satisfy
+  `attr`+`op` (`present` by default).
+
+**Layering.** A pack may `extends` another pack (by name or
+project-relative path). Parent rules merge into the child; on a rule-id
+collision the child wins. Cycles and missing references become
+`POLICY010` errors:
+
+```yaml
+pack: repo-rules
+extends: org-base          # inherits all of org-base's rules
+require_approval: true      # suppressions must carry approved_by
+rules:
+  - id: ORG001             # same id overrides the parent's rule
+    severity: warning
+    message: weaker for this repo
+    ...
+```
+
+Findings carry the org rule ids (`ORG001`…) so severity policy and
+suppressions govern them like built-ins. Broken packs surface as a
+`POLICY010` error finding — never silent. Commands: `policy list`,
+`policy eval [-f json]`, `policy report [-f json]` (compliance summary:
+packs, violations by rule, suppression audit), `policy validate <file>`.
+
+### POLICY001 — Expired suppression · warning
+
+### POLICY001 — Expired suppression · warning
+A `[[tool.forge-doctor-data.suppressions]]` entry past its `expires` date —
+the underlying finding reactivates and this warning fires.
+
+### POLICY002 — Unused suppression · info
+A suppression that matched no finding — the exception may be dead weight
+(or the suppressed check is gone).
+
+### POLICY010 — Organization policy packs · error
+Runs every discovered org pack; emits `POLICY010` itself only for an
+invalid pack file — violations carry each rule's own id (`ORG###`).
+
+### POLICY011 — Suppression lacks approval · warning
+A pack with `require_approval: true` was loaded and a configured
+suppression has no `approved_by`. Approvals live in
+`[[tool.forge-doctor-data.suppressions]]` — add `approved_by = "name"`.
+
+See `forge-doctor-data suppressions` for the full audit.
+
+## Warehouse (vendor-neutral WarehouseProjectModel — Terraform + SQL evidence)
+
+`warehouse_model` normalizes analytic-warehouse evidence before the
+vendor adapters land: declarative `snowflake_*` / `google_bigquery_*` /
+`aws_redshift*` Terraform resources map to compute, database, schema,
+table, view, and workload-management facts; warehouse-dialect DDL in
+`.sql` files (sqlglot extra) maps to tables, views, materialized views,
+and external tables. Nothing here is vendor-specific — rows that only
+make sense per-vendor live behind `attrs`.
+
+### WARE001 — Warehouse surface · pass/info
+Anchor: platform count, compute, namespaces, tables, views, queries.
+
+### WARE010 — Unprofiled warehouse table · info
+A declared table has no observed storage/statistics evidence — cost,
+cardinality, and layout decisions run blind.
+**Fix:** ingest table statistics (catalog exports) so checks can
+profile them.
+
+### WARE020 — View references unknown base table · warning
+A view's `tables_read` includes a name absent from the model — either
+an external dependency (undiagnosed) or a broken reference.
+**Fix:** declare the base table or mark the dependency external.
+
+### WARE030 — Compute without workload management · info
+Warehouse/cluster compute exists with no queue, reservation, or WLM
+config observed.
+**Fix:** attach workload-management config to the compute resource.
+
+## Snowflake (SnowflakeProjectModel — vendor adapter on the warehouse core)
+
+Evidence: Snowflake-only DDL shapes in `.sql` (`CREATE
+WAREHOUSE|STAGE|PIPE|STREAM|TASK`, `COPY INTO`, `CREATE [MATERIALIZED]
+VIEW`), Terraform `snowflake_*` resources (size, auto_suspend/resume,
+database, schema, stage, pipe, task, grants), and observed metadata
+exports (`SHOW`/`INFORMATION_SCHEMA` rows as JSON/CSV under
+`snowflake/`, `.forge-doctor-data/evidence/`, or `information_schema*`
+names). A `.sql` file counts as Snowflake only when it carries a
+vendor-exclusive marker — non-Snowflake SQL never trips these rules.
+
+### SNOW000 — Snowflake surface · pass/info
+Anchor census: warehouses, namespaces, tables, views, vendor objects,
+COPY INTO statements, observed rows.
+
+### SNOW001 — Warehouse without auto_suspend · warning
+No positive `auto_suspend` — credits burn while the warehouse idles.
+**Fix:** set `AUTO_SUSPEND = <seconds>` (e.g. 300).
+
+### SNOW002 — auto_suspend without auto_resume · info
+Suspends but never auto-resumes — asymmetric lifecycle config.
+**Fix:** set `AUTO_RESUME = TRUE` alongside auto_suspend.
+
+### SNOW003 — Large table without clustering · warning
+Observed table ≥1 GB with no clustering keys — pruning can't help it.
+**Fix:** `CLUSTER BY (...)` on the dominant filter/join columns.
+
+### SNOW004 — COPY INTO insecure stage · warning
+COPY reads a literal URI, a user/table stage (`@~`/`@%`/`@*public*`),
+or a declared stage with no `storage_integration`/`credentials`.
+**Fix:** use an internal stage backed by a storage integration.
+
+### SNOW005 — SELECT * in persisted DDL · warning
+A view/materialized view/procedure selects `*` — silent breakage when
+the base gains columns.
+**Fix:** name the column list explicitly in the DDL.
+
+## BigQuery (BigQueryProjectModel — vendor adapter on the warehouse core)
+
+Evidence: BigQuery DDL shapes in `.sql` (`CREATE SCHEMA|TABLE|VIEW|
+MATERIALIZED VIEW|EXTERNAL TABLE|RESERVATION` with `PARTITION BY`,
+`CLUSTER BY`, `OPTIONS(...)`), Terraform `google_bigquery_*` /
+`google_biglake_*` resources (datasets, tables, reservations, capacity,
+dataset access/authorized views, connections), and observed
+`INFORMATION_SCHEMA` exports (tables, partitions, jobs-by-project) under
+`bigquery/` or `.forge-doctor-data/evidence/` (claimed only with a positive
+BigQuery field signal — generic shared-dir rows stay unclaimed). A
+`.sql` file counts as BigQuery only when it carries a vendor-exclusive
+marker — `CLUSTER BY` alone is shared with Snowflake and does not
+attribute. Non-BigQuery SQL never trips these rules.
+
+### BQ000 — BigQuery surface · pass/info
+Anchor census: datasets, tables, views, vendor objects, queries,
+observed rows.
+
+### BQ001 — Large table without partitioning · warning
+Observed table ≥1 GB with no partitioning evidence — every query is a
+full scan billed per byte.
+**Fix:** `PARTITION BY` on the dominant filter column (usually the
+event date).
+
+### BQ002 — Partitioned table queried without partition filter · warning/error
+A query reads a partitioned table with no filter on the partition
+column or `_PARTITIONTIME`/`_PARTITIONDATE`. Authored SQL warns; an
+observed job doing it is an error (it already bills).
+**Fix:** add a `WHERE` on the partition column.
+
+### BQ003 — SELECT * on columnar-billed engine · warning
+`SELECT *` reads every column of every scanned partition — BigQuery
+bills by bytes processed.
+**Fix:** name the columns the query actually needs.
+
+### BQ004 — Public/external dataset or undocumented authorized view · error/warning
+`allUsers`/`allAuthorizedUsers` access grants are public surfaces
+(error); a `dataset_access` authorized view without a `description`
+is an unreviewed sharing path (warning).
+**Fix:** remove public grants; document authorized views.
+
+### BQ005 — Materialized view over mutable base without staleness policy · warning
+The base table receives writes (authored DML or observed jobs) and the
+view declares no `max_staleness` — it silently serves stale data.
+**Fix:** `OPTIONS(max_staleness = INTERVAL ...)`.
+
+## Redshift (RedshiftProjectModel — vendor adapter on the warehouse core)
+
+Evidence: Redshift-only DDL in `.sql` (`CREATE TABLE ...
+DISTSTYLE|DISTKEY|SORTKEY|ENCODE`, `CREATE EXTERNAL SCHEMA|TABLE`
+(Spectrum), `CREATE MATERIALIZED VIEW`, `CREATE DATASHARE`, `UNLOAD
+TO`, `IAM_ROLE`), Terraform `aws_redshift*` resources (clusters,
+serverless workgroups/namespaces, parameter/subnet groups, datashares),
+and observed `SVV_*`/`STL_*`/`STV_*` exports under `redshift/` or
+`.forge-doctor-data/evidence/` (claimed only with a positive Redshift field
+signal). `VACUUM`/`ANALYZE` alone are not markers — Postgres shares
+them, and the adversarial lab pins that. Findings grounded in STL/SVV
+exports carry `evidence_kind=observed_metadata`.
+
+### RS000 — Redshift surface · pass/info
+Anchor census: compute, namespaces, tables, views, vendor objects,
+queries, observed rows.
+
+### RS001 — Large table with broadcast/even distribution under joins · warning
+Observed table (≥1 GB or ≥10 M rows) with `DISTSTYLE EVEN|ALL` and join
+evidence (authored SQL or STL query text) — forced data movement.
+**Fix:** `DISTSTYLE KEY` + `DISTKEY(<join column>)`, or enable ATO.
+
+### RS002 — Unsorted table scanned by range predicates · warning
+A table without `SORTKEY` is read through `WHERE` range filters
+(`BETWEEN`, `>`, `<`) — zone maps cannot prune.
+**Fix:** `SORTKEY(<range column>)` or enable ATO.
+
+### RS003 — automatic_table_optimization off with skewed tables · warning
+A parameter group disables `auto_analyze`/ATO (or a cluster sets
+`automatic_table_optimization` off) while observed tables carry skew.
+**Fix:** remove the disabling parameter or set `auto_analyze=true`.
+
+### RS004 — Public or unencrypted cluster · error/warning
+`publicly_accessible=true` (error) or `encrypted=false` (warning) on a
+declared cluster/workgroup.
+**Fix:** `publicly_accessible=false`, `encrypted=true` (or KMS).
+
+### RS005 — Manual VACUUM/ANALYZE scripts with ATO available · info
+Authored `VACUUM`/`ANALYZE` statements while ATO-eligible compute
+(ra3+/dc2+/serverless) exists — hand-rolled maintenance drifts.
+**Fix:** prefer `automatic_table_optimization`/`auto_analyze`.
+
+## dbt (DbtProjectModel — transformation-layer adapter)
+
+Evidence: `dbt_project.yml` (required gate — no dbt attribution without
+it or a `manifest.json`), `profiles.yml` (key names only — env-var
+secrets are never surfaced as values), `schema.yml`/`models/*.yml`
+properties files, model `.sql` (`{{ ref(...) }}`/`{{ source(...) }}`,
+`config(materialized=...)`, `unique_key`, `is_incremental()`), `seeds/`,
+`snapshots/`, `tests/*.sql` (singular tests), macros, exposures, and the
+observed artifacts `target/manifest.json` + `target/run_results.json`.
+dbt is never executed — artifacts are read only. `ref()`/`source()`
+produce `READS_FROM`/`WRITES_TO` graph edges; output relations link to
+warehouse entities by tail-name match when a vendor adapter (213–215)
+already claimed them.
+
+### DBT000 — dbt surface · pass/info
+Anchor census: models, sources, seeds, snapshots, tests, exposures,
+manifest nodes, run-result rows.
+
+### DBT001 — Model without any test · warning
+A model has no column/generic test in schema properties and no singular
+test targeting it.
+**Fix:** add `tests:` in the model's schema yml (or a singular test).
+
+### DBT002 — Incremental model without unique_key · warning
+`materialized='incremental'` without `unique_key` — merge/insert logic
+cannot dedupe reprocessed rows.
+**Fix:** `{{ config(materialized='incremental', unique_key='<key>') }}`.
+
+### DBT003 — Source without freshness block · warning
+A declared source table carries no `freshness:` clause — stale input
+goes undetected by `dbt source freshness`.
+**Fix:** add `freshness: warn_after/error_after` to the source.
+
+### DBT004 — Source declared but never referenced · info
+A source is declared in properties yml but no model calls
+`source('<name>', ...)` — dead documentation drifting from reality.
+**Fix:** remove the declaration or wire the consuming model.
+
+### DBT005 — Low model documentation coverage · info
+Described models fall below 50% of the total — the semantic layer
+consumers see unnamed tables.
+**Fix:** add `description:` to undocumented models in schema yml.
+
+## Data contracts (DataContractModel — contract lint + schema evolution)
+
+Evidence: `datacontract.yml|yaml`, `*.datacontract.*`, `*.odcs.*`, or
+any YAML/JSON doc carrying `dataContractSpecification`/`kind:
+DataContract` — datacontract-cli and ODCS shapes normalize to a minimal
+subset (id, owner, servers, schema fields+types, SLA properties,
+quality terms). Top-level keys outside the subset are recorded as
+parsed-but-unchecked, never silently dropped. Detected table schemas
+for cross-checks come from `CREATE TABLE` column defs (sql index),
+Terraform `google_bigquery_table` `schema` JSON, and observed column
+exports (`columns` shape rows). DCTR004 lives in `diff --semantic`: a
+governed relation's `field.*` attrs diff to removed/narrowed fields,
+which classify as breaking (high risk) and surface blast radius to
+consuming models.
+
+### DCTR000 — Contract surface · pass/info
+Anchor census: contracts, fields, SLA props, servers, detected schemas.
+
+### DCTR001 — Contract missing schema section · warning
+Contract file declares no schema fields — consumers cannot type-check.
+**Fix:** add a `schema:`/`properties` section with named objects and
+typed fields.
+
+### DCTR002 — Production contract without SLA · warning
+A contract declares a production server (`prod`/`production` name or
+environment) but no `servicelevels`/`slaProperties` — availability and
+freshness are unguarded.
+**Fix:** declare SLA properties for the production server.
+
+### DCTR003 — Contract field type drift · warning
+A contract field's normalized type family disagrees with the detected
+real schema (DDL, Terraform schema, or column export) for the governed
+relation. The finding carries the detected schema's evidence plane.
+**Fix:** align the contract type or the table; re-scan.
+
+### DCTR004 — Breaking contract change in semantic diff · high risk
+In `diff --semantic`: a governed relation's field was removed or its
+type narrowed/changed between refs (`field.*` attr diff). Surfaced as a
+"Breaking contract changes" section + `contract_changes` rows in JSON,
+and bumps risk to HIGH with blast radius to consuming models.
+
+## Trino (TrinoProjectModel — federated-SQL adapter)
+
+Evidence is config-centric: `etc/catalog/*.properties` (one file per
+catalog, `connector.name=` is the attribution marker), `config.properties`
+(coordinator/worker flags, memory limits, spill keys,
+`resource-groups.config-file`), `node.properties`, `jvm.config`, plus
+authored SQL using `catalog.schema.table` three-part names and optional
+observed cluster exports (JSON under `trino/` or `.forge-doctor-data/evidence/`
+with `coordinator`/`nodeVersion`/`environment` fields). `.properties`
+parsing is a deterministic `key=value` + comments subset — no JVM. Plain
+`.properties` files and three-part SQL alone never attribute to Trino.
+Presto (distinct coordinator semantics) is deferred to its own spec.
+
+### TRINO000 — Trino surface · pass/info
+Anchor census: catalogs by connector, node role, three-part refs,
+observed rows.
+
+### TRINO001 — Hive catalog without metastore · warning
+A `connector.name=hive` catalog file declares no `hive.metastore.*`
+config — the catalog cannot resolve table metadata.
+**Fix:** add `hive.metastore.uri` or `hive.metastore=glue`.
+
+### TRINO002 — Coordinator without spill-to-disk · warning
+`coordinator=true` with no spill keys while authored SQL writes exist —
+ETL-style queries can OOM instead of degrading to disk.
+**Fix:** set `spill-enabled` + `spiller-spill-path`.
+
+### TRINO003 — Test connector catalog in deployment · warning
+`tpch`/`jmx`/`system`/`blackhole`-style connector in a deployment that
+also has real data catalogs — benchmark weight leaking into prod.
+**Fix:** remove the test catalog or gate it to dev clusters.
+
+### TRINO004 — Multi-catalog deployment without resource groups · warning
+Two or more catalogs on one coordinator and no `resource-groups` config —
+no admission control between workloads.
+**Fix:** add `resource-groups.json` + `resource-groups.config-file`.
+
+### TRINO005 — Three-part SQL ref to unknown catalog · warning (medium confidence)
+`catalog.schema.table` in authored SQL whose catalog prefix has no
+declared catalog file — a typo or missing catalog fails at run time.
+Confidence is MEDIUM: in a mixed-vendor repo a three-part name may
+legitimately belong to another engine.
+**Fix:** create the catalog properties file or fix the reference.
+
+## Analytical engines (AnalyticalEngineModel — ClickHouse / Pinot / Druid)
+
+Shared model over three thin adapters. ClickHouse evidence is authored
+DDL (`CREATE TABLE ... ENGINE = <family>` — an explicit family
+allowlist so `ENGINE=InnoDB`/MySQL never attributes); Pinot evidence is
+table-config JSON (`tableName` + `tableType`/`segmentsConfig`) and
+schema JSON (`schemaName` + `dimensionFieldSpecs`/`metricFieldSpecs`);
+Druid evidence is ingestion-spec JSON (`ingestionSpec`/`spec` +
+`dataSchema` + `ioConfig`). Observed metadata comes only from exported
+artifacts under `clickhouse/`/`pinot/`/`druid/` or
+`.forge-doctor-data/evidence/` with positive field signals. StarRocks/Doris
+deferred per spec — the model assumes no closed membership.
+
+### CH000 — ClickHouse surface · info
+Anchor census: tables/views by engine family.
+
+### CH001 — MergeTree table without ORDER BY · warning
+A MergeTree-family table without an ordering key gets `tuple()` sort —
+full scans and no dedupe.
+**Fix:** add `ORDER BY` matching the access pattern.
+
+### CH002 — Replicated engine without keeper config · warning
+`Replicated*` engine but no keeper/zookeeper config file in the
+project — replication never engages.
+**Fix:** add keeper/zookeeper config or use a non-replicated engine.
+
+### CH003 — Distributed table without local shard · warning
+`Distributed(cluster, db, local)` references a local table never
+defined in the project — writes land nowhere.
+**Fix:** define the referenced local shard table.
+
+### CH004 — Kafka ingestion without dedupe plan · warning
+`ENGINE=Kafka` table with no dedupe-family sink (`Replacing*`/
+`Summing*`/`Aggregating*`/`Collapsing*`) and no materialized view —
+consumer restarts re-deliver duplicates.
+**Fix:** add a dedupe-family target or `MATERIALIZED VIEW` sink.
+
+### PIN000 — Pinot surface · info
+Anchor census: tables by type, schema files.
+
+### PIN001 — Realtime table without retention · warning
+`tableType=REALTIME` without `segmentsConfig.retentionTimeValue` —
+realtime segments accumulate forever.
+**Fix:** set `retentionTimeValue`/`retentionTimeUnit`.
+
+### PIN002 — High-cardinality dim filtered without inverted index · warning (medium confidence)
+A dimension with high-cardinality evidence (`cardinality` in the
+schema, or listed in `noDictionaryColumns`) that appears in an authored
+`WHERE` clause but is absent from `invertedIndexColumns` and indexed
+`fieldConfigList` entries. Confidence MEDIUM — filter evidence is a
+text heuristic.
+**Fix:** add the dim to `invertedIndexColumns` or a `fieldConfigList`
+index.
+
+### PIN003 — No star-tree index on group-by-heavy table · warning (medium confidence)
+Observed query-log exports show ≥2 `GROUP BY` queries against a table
+whose `tableIndexConfig` lacks `starTreeIndexConfigs`.
+**Fix:** add `starTreeIndexConfigs` (or verify the export is stale).
+
+### DRU000 — Druid surface · info
+Anchor census: datasources from ingestion specs.
+
+### DRU001 — Datasource without partitioning config · warning
+`ingestionSpec` with no `tuningConfig.partitionsSpec` — falls back to
+default dynamic partitioning; segment sizes drift.
+**Fix:** add `partitionsSpec` (`hashed`/`numShards`/`range`).
+
+### DRU002 — Rollup disabled on high-cardinality datasource · warning
+`granularitySpec.rollup=false` with ≥3 declared metrics+dims — raw
+events stored unaggregated.
+**Fix:** set `rollup=true` or trim dims/metrics.
+
+## Search platforms (SearchPlatformModel — OpenSearch + Elasticsearch)
+
+One shared `SRCH` check family — the spec's open-question decision:
+vendor-agnostic rules with the vendor named in the message. Evidence is
+compound-gated (high false-positive risk on generic JSON): index docs
+need filename conventions (`*index-template*`/`*mapping*`/… or an
+`opensearch`/`elasticsearch` dir) *and* search key shape
+(`index_patterns`, `template{settings|mappings}`, `settings.index.*`,
+`mappings` with `properties`/`dynamic`). Policies need ISM
+(`states`/`ism_template` → opensearch) or ILM (`phases` →
+elasticsearch) keys. Terraform `aws_opensearch_domain`/
+`aws_elasticsearch_domain`/`elasticsearch_domain`/`opensearch_domain`/
+`aws_opensearchserverless_collection`/`aws_elasticsearch_cluster` are
+domain surfaces. Observed cluster exports only under
+`opensearch/`/`elastic*/`/`.forge-doctor-data/evidence/` with cluster field
+signals.
+
+### SRCH000 — Search surface · pass/info
+Anchor census: indices/templates, policies, pipelines, domains, vendors.
+
+### SRCH001 — Prod index template without replicas · warning
+A template whose name/patterns contain `prod`/`production` declares no
+`number_of_replicas` (or 0) — shard copies lost on node failure.
+**Fix:** set `index.number_of_replicas` ≥ 1.
+
+### SRCH002 — Wildcard index pattern without lifecycle policy · warning
+A `*`-suffixed or `logs-*`/`metrics-*` pattern has no ISM/ILM policy
+covering it — indices grow forever, no rollover/retention.
+**Fix:** attach an ISM/ILM policy with rollover + delete.
+
+### SRCH003 — Mapping field-explosion risk · warning
+More than five open `object`/untyped nested fields without
+`enabled:false` or `dynamic:false`/`strict` — per-document field count
+multiplies against cluster state.
+**Fix:** pin `dynamic=false`/`strict` or `enabled:false` on verbose
+objects.
+
+### SRCH004 — Search domain without encryption at rest / TLS · warning
+Terraform domain resource lacks `encrypt_at_rest.enabled` or
+`node_to_node_encryption.enabled`.
+**Fix:** enable both blocks.
+
+## Metadata catalogs (MetadataEstateModel — DataHub, OpenMetadata, Glue, Unity)
+
+Catalog drift checks — the declared catalog estate is compared against
+the detected platform graph in *both* directions; findings name which
+side drives them. Evidence is vendor-gated: DataHub needs
+`*.datahub.json` filenames or `urn:li:`/`entityUrn` shapes; OpenMetadata
+needs `*.ometa.json` filenames or `fullyQualifiedName`/`entityType`
+shape; Glue/Unity only under `glue*/`/`unity*/` path hints or export
+dirs. Ingestion recipes contribute connector *types* only — secrets and
+connection values are never ingested.
+
+### META000 — Catalog surface · pass/info
+Anchor census: vendors, datasets, owners, tags, lineage edges, recipes.
+
+### META001 — Stale catalog entry · warning
+Cataloged dataset has no corresponding entity in the detected platform
+graph (metadata-domain entities excluded — they can't self-match).
+**Fix:** drop or re-ingest the catalog entry (declared-side finding —
+not an auto-fix).
+
+### META002 — Platform entity absent from catalog · info (grouped)
+Detected table/dataset/view/model entities with no catalog record.
+Capped and grouped — usually a coverage gap, not an incident.
+**Fix:** add ingestion coverage (declared-side gap).
+
+### META003 — Cataloged dataset without owner · warning
+Dataset has no ownership record in the catalog export.
+**Fix:** assign an owner in the catalog (declared-side).
+
+### META004 — Production asset without description/tags · warning
+`PROD`-environment dataset has neither a description nor tags.
+**Fix:** document and tag the asset (declared-side).
+
+### META005 — Declared lineage contradicts detected lineage · warning
+Catalog upstreams differ from lineage detected in the platform graph
+(SQL query mediation resolved through read/write hops).
+**Fix:** reconcile the catalog lineage with actual pipelines (both
+directions are findings, not auto-fixes).
+
+## Data quality (DataQualityModel — Deequ, Great Expectations, SodaCL, dbt)
+
+Expectation suites are *evidence of intent*: the model captures what is
+declared (suites, columns, gates) and compares it against the detected
+platform graph. Great Expectations needs `expectations/*.json` suites
+with `expectation_suite_name`/`expectation_type` shapes; checkpoints
+and `uncommitted/validations/` exports wire and observe them. SodaCL
+needs a top-level `checks for <dataset>:` key — a CI `checks:` key
+alone never attributes. Deequ suites are code-bound (`VerificationSuite`
+/`Check(` analyzer calls) and always count as wired. dbt tests reuse
+the spec-216 model and wire via `dbt test|build`/`Dbt*Operator`
+invocations. Suites are parsed, never executed.
+
+### DQ000 — Data quality surface · pass/info
+Anchor census: suites per engine, gates, observed runs, covered tables.
+
+### DQ001 — Prod table without expectations · warning (medium confidence)
+A prod-signaled detected table has zero expectations while the project
+declares at least one suite — a coverage gap, not an absent practice.
+**Fix:** add a suite covering the prod table.
+
+### DQ002 — Suite never wired to a gate · warning
+Defined but no checkpoint reference, CI invocation, operator call, or
+observed run — intent without enforcement (capped at 10 + summary).
+**Fix:** wire the suite into a checkpoint/pipeline or remove it.
+
+### DQ003 — Suite targets a missing table · warning
+The suite's target has no detected entity — dropped table or stale
+suite (declared-side finding).
+**Fix:** retarget or remove the suite.
+
+### DQ004 — Expectation on dropped column · warning
+A column expectation names a field the detected schema (contract
+`field.*` attrs) no longer carries; unknown schemas stay silent.
+**Fix:** update the suite or restore the column.
+
+## Multi-cloud abstractions (CloudAbstractionModel — AWS/Azure/GCP parity)
+
+A *view over* existing evidence — Terraform `aws_*`/`azurerm_*`/
+`google_*` data-platform resources and vendor-attributed graph entities
+fold into six vendor-neutral abstractions: `object_storage` (s3 /
+adls_gen2/storage_account / gcs), `stream` (kinesis / eventhubs /
+pubsub / msk / kafka), `compute_engine` (emr / synapse / databricks /
+dataproc / glue), `catalog` (glue / purview / unity / datacatalog),
+`operational_store` (dynamodb / cosmosdb / bigtable), `warehouse`
+(redshift / synapse_sql / bigquery / snowflake). Attribute
+normalization is shallow by design: name, region/location, encryption,
+public exposure, plus a bounded vendor-attrs passthrough. Existing
+check ids and semantics are untouched — abstractions replace nothing.
+
+### CLOUD000 — Multi-cloud surface · pass/info
+Anchor census: abstracted services per kind and clouds in the estate.
+
+### CLOUD001 — Platform entity outside abstraction coverage · info
+A data-bearing entity in a platform domain (trino, analytical, search,
+neptune…) resolves to no abstraction — a blind spot in the
+vendor-neutral view; internal signal, capped at 15.
+**Fix:** extend the abstraction map (adapter-layer work, not user debt).
+
+### CLOUD002 — Single-cloud abstraction in a mixed estate · info
+The project uses ≥2 real clouds but an abstraction kind exists on only
+one, with no declared replication/migration link (`*replicat*`/
+`*mirror*`/`*failover*`/`geo_location` keys or bodies). **Fix:** deploy
+the equivalent service or declare the link.
+
+## Azure data platform (AZ###)
+
+Deterministic checks over `azurerm_*` Terraform resources (spec 233);
+facts feed the `object_storage`/`stream`/`compute_engine`/`catalog`/
+`orchestrator` abstractions.
+
+### AZ000 — Azure data-platform surface · pass/info
+Anchor census of the detected Azure estate feeding the AZ checks.
+
+### AZ001 — ADLS Gen2 filesystem on non-hierarchical account · warning
+A storage account hosts `azurerm_storage_data_lake_gen2_filesystem`
+resources but `is_hns_enabled` is false/unset — flat namespace is not
+ADLS Gen2 (no ACLs, no atomic renames). **Fix:** set
+`is_hns_enabled = true`.
+
+### AZ002 — Event Hub with minimum message retention · warning
+`message_retention_in_days` is 1 (or unset) with no
+`capture_description` — a day's outage loses events. **Fix:** raise
+retention or add capture.
+
+### AZ003 — Azure data estate without governance plane · info
+ADLS/Synapse/Fabric evidence exists but no `azurerm_purview_account` is
+declared — no classification/lineage plane. **Fix:** declare Purview or
+document the external catalog.
+
+## GCP data platform (GCP###)
+
+Deterministic checks over `google_*` Terraform resources (spec 233);
+facts fold into the same vendor-neutral abstractions.
+
+### GCP000 — GCP data-platform surface · pass/info
+Anchor census of the detected GCP estate feeding the GCP checks.
+
+### GCP001 — Pub/Sub subscription without dead-letter policy · warning
+No `dead_letter_policy` — undeliverable messages are dropped after the
+delivery-attempt default. **Fix:** add `dead_letter_policy` with a DLQ
+topic.
+
+### GCP002 — GCS bucket force_destroy with versioning off · warning
+`force_destroy=true` lets Terraform delete a non-empty bucket; without
+versioning there is no recovery path. **Fix:** `force_destroy=false`
+and/or `versioning { enabled = true }`.
+
+### GCP003 — Dataflow job cancelled (not drained) on delete · warning
+`on_delete=cancel` abandons in-flight data on teardown; `drain` finishes
+it. **Fix:** remove `on_delete=cancel` or set `drain`.
+
+## Cross-platform migration (plan-scoped — MIGR###, SQLPORT###)
+
+`migrate plan`/`migrate explain` also emit SQLPORT findings when both
+`--from` and `--to` name a known SQL dialect (snowflake, bigquery,
+redshift, trino, spark, databricks, clickhouse). Findings come from
+static text analysis of committed `.sql` files — never a transpiler.
+
+### SQLPORT001 — Dialect function without target equivalent · warning
+A source-dialect function (`IFF`, `SAFE_CAST`, `GETDATE`, `EXPLODE`, …)
+appears in SQL with no mapped equivalent on the target.
+
+### SQLPORT002 — MERGE semantics differ · warning
+MERGE exists but target semantics differ (or ClickHouse lacks MERGE
+entirely — MergeTree engines instead).
+
+### SQLPORT003 — QUALIFY unsupported on target · warning
+QUALIFY used where the target dialect lacks it (redshift, trino, spark,
+databricks, clickhouse) — rewrite as a windowed subquery filter.
+
+### SQLPORT004 — Timestamp/timezone model differs · warning
+Explicit tz semantics (`TIMESTAMP_TZ`, `CONVERT_TIMEZONE`, `AT TIME
+ZONE`) meet a different tz model on the target.
+
+### SQLPORT005 — Identifier quoting differs · info
+Double-quoted vs backtick identifiers cross dialects.
+
+### SQLPORT006 — Nested/semi-structured model differs · warning
+STRUCT/VARIANT/ROW/Tuple/object syntax hits a different nested-type
+model on the target.
+
+### SQLPORT007 — NULL ordering defaults differ · warning
+ORDER BY without explicit NULLS FIRST/LAST crosses dialects whose ASC
+null-position defaults disagree.
+
+
+
+MIGR findings are not project-scan checks; they're emitted by
+`forge-doctor-data migrate plan --from <platform> --to <platform>` and
+`what-if --change platform=<target>` on the abstraction layer. The plan
+maps detected services through the spec-223 abstractions onto the
+target ecosystem, diffs the capability packs (lost / gained /
+equivalent / review), and orders work catalog → schema → data →
+compute → consumers. Plans are reports — never executable deploys.
+
+### MIGR001 — Feature/service with no target equivalent · error
+A capability supported on the source is unsupported on the target, or
+a service has no target ecosystem equivalent — hard blocker.
+**Fix:** compensating pattern or re-scope.
+
+### MIGR002 — Capability semantics differ · warning
+Status differs but isn't a clean loss (conditional/unknown either
+side) — e.g. time-travel window semantics.
+**Fix:** manual semantic review before cutover.
+
+### MIGR003 — Unmapped downstream consumer · warning
+A consumer entity reads migrated assets but has no target link.
+**Fix:** rewire onto the target or run parallel.
+
+## Runtime performance (runtime-scoped — PERF###, PHY###)
+
+PERF/PHY findings are not project-scan checks; they are emitted by
+`forge-doctor-data runtime performance` over exported execution artifacts
+(`runtime executions` input) plus declared physical designs on the
+platform graph. Thresholds come from `knowledge/performance/` packs or
+explicit policy config — without a bound, a signal stays an
+informational observation, never a warning on a magic number.
+
+### PERF001 — High scan amplification · warning
+Bytes scanned far exceed bytes logically required (ratio only when the
+logical denominator is measured, never fabricated).
+### PERF002 — Poor partition pruning · warning
+Share of partitions scanned exceeds the policy bound.
+### PERF003 — High data exchange amplification · warning
+Shuffle/exchange/redistribution volume elevated relative to input.
+### PERF004 — Confirmed skew · warning
+Task-duration distribution shows real skew (requires n>=4 task records;
+never inferred from code alone).
+### PERF005 — Spill pressure · warning
+Spill bytes relative to input exceed the bound (per-engine metric, no
+cross-engine equivalence claimed).
+### PERF006 — Excessive queue time · warning
+Queue/slot/WLM/resource-group wait share exceeds the bound.
+### PERF007 — Remote I/O amplification · warning
+Remote reads dominate local reads beyond the bound.
+### PERF008 — Low parallelism · info
+Stage parallelism below the policy floor.
+### PERF009 — Small-file penalty · warning
+Average bytes/file below the pack threshold — tiny-file overhead.
+### PERF010 — Repeated materialization · info
+Multiple materialize stages suggest review.
+
+### PHY001 — No data-organization keys declared · info
+Design declares secondary features only (replication/caching/indexing/
+sharding) with no partitioning, clustering, ordering or distribution.
+### PHY002 — Pruning ineffective · warning
+Runtime pruning evidence contradicts the declared partitioning.
+### PHY003 — Distribution mismatch · info
+Exchange/skew signals suggest distribution/layout review.
+### PHY004 — Storage layout under pressure · info
+Small-file/write/materialization/remote-IO signals suggest
+layout/compaction review.
+### PHY005 — Excessive physical representation count · warning
+Same subject materialized in 4+ physical designs.
+
+## Cost drivers (runtime-scoped — COST###)
+
+COST findings are emitted by `forge-doctor-data runtime cost` over exported
+execution artifacts plus (with `--root`) entity evidence from the
+platform graph. They report technical driver units — bytes, slot-ms,
+credits, executor-ms — never prices; no monetary claim is made without
+explicit pricing/config evidence in the repo.
+
+### COST001 — Idle compute evidence · info
+Execution ran with duration but no bytes read or written.
+### COST002 — Repeated high scan volume · warning
+Same subject scanned repeatedly above the pack bound.
+### COST003 — Cross-cloud data movement · warning
+Engine reads an input entity whose cloud differs from its own —
+emitted only when both clouds are known evidence.
+### COST004 — Replication footprint declared · warning
+Replica count exceeds the bound; storage multiplier shown.
+### COST005 — Materialization duplication · info
+Same subject written by >=3 distinct executions.
+### COST006 — Shuffle/spill cost driver · warning
+Exchange/spill bytes above the pack bound.
+### COST007 — Tiny-file overhead driver · warning
+Avg bytes/file below the bound; requires an exported file count.
+
+## Reliability & SLA (runtime-scoped — REL###)
+
+REL findings are emitted by `forge-doctor-data runtime reliability <root>`
+over declared config attrs plus optional runtime artifacts. Delivery
+semantics are composed per subject — exactly-once is never asserted
+without full-path evidence (retries + idempotency + dedup +
+checkpoint + declared intent).
+
+### REL001 — Retry without idempotency · info
+Retries declared but no idempotency evidence — replay may duplicate.
+### REL002 — Stateful stream without checkpoint · warning
+Stream subject with no checkpointing evidence.
+### REL003 — SLA freshness mismatch / unverifiable · warning
+Path lag exceeds objective, or PARTIAL path blocks verification.
+### REL004 — Observed latency exceeds objective · warning
+Runtime duration over declared latency objective.
+### REL005 — RPO mismatch · info
+RPO declared but no backup/checkpoint evidence in scope.
+### REL006 — RTO path incomplete · info
+RTO declared but no recovery/failover evidence in scope.
+### REL007 — Missing DLQ on retrying path · warning
+Retries declared with DLQ absent or unevidenced.
+### REL008 — Failover topology unresolved · info
+Replication declared with no failover mechanism evidence.
+### REL009 — At-least-once without dedup evidence · info
+Duplicates possible downstream; no dedup evidence.
+### REL010 — Backup without restore evidence · info
+Backup declared, restore/pitr unevidenced — recoverability unproven.
+
+## Regression Intelligence (runtime-scoped — PERFREG###)
+
+Baseline-aware regression detection over recorded execution history.
+Severity is WARNING only for PERSISTENT episodes — single-run breaches
+report as INFO candidates (one slow run never pages anyone).
+
+### PERFREG001 — Duration regression · warning
+Latest-window duration median breached the baseline (p95/median-factor/MAD rule) persistently.
+### PERFREG002 — Queue regression · warning
+Queue-time share rose persistently vs baseline.
+### PERFREG003 — Scan regression · warning
+Scan volume grew persistently vs baseline.
+### PERFREG004 — Shuffle regression · warning
+Exchange/shuffle bytes grew persistently vs baseline.
+### PERFREG005 — Spill regression · warning
+Spill volume grew persistently vs baseline.
+### PERFREG006 — Memory regression · warning
+Peak memory grew persistently vs baseline.
+### PERFREG007 — Freshness regression · warning
+Freshness lag grew persistently vs baseline.
+### PERFREG008 — Throughput regression · warning
+Rows/second fell persistently vs baseline (lower-is-better direction).
+### PERFREG009 — Volatility increase · info
+Baseline dispersion (MAD/median) exceeds the declared ratio — the series itself is unstable.
+
+## Change ↔ Runtime Correlation (runtime-scoped)
+
+`runtime correlate <events.json>` and `diff --runtime-impact` pair change
+events (`ChangeEvent`: semantic-diff entity changes, deployment exports,
+CI/TF/dbt apply summaries) with regression episodes from recorded history.
+
+A `ChangeRuntimeCorrelation` is emitted only when the change demonstrably
+reaches the subject — entity overlap or a bounded graph path — *and* the
+changed property plausibly moves the regressed dimension (`matching_dimensions`).
+Confidence is an exposed evidence breakdown, not a score:
+
+- **high** — all four legs: temporal precedence within the window,
+  entity overlap, graph path, metric relevance
+- **medium** — three legs
+- **low** — locality + metric relevance only
+
+Without clock-aligned timestamps (`TimestampQuality`) no temporal leg is
+claimed; without locality nothing is emitted — a docs-only commit cannot
+correlate with a regression. Language stays `correlated with` /
+`preceded by`; `confirmed cause` is reserved for deterministic
+graph + runtime + change evidence chains (spec 244).
+
+## Incident Intelligence (runtime-scoped)
+
+`incident inspect` groups co-occurring regression episodes into
+`IncidentEpisode` windows; `incident explain <id>` narrates the evidence
+path of one incident.
+
+Each `CandidateCause` carries an explicit evidence path —
+`N/5 expected links confirmed` (change event, temporal precedence, entity
+overlap, graph path, metric relevance) plus `limitations` stating what
+could *not* be shown. Confidence reuses the diagnosis ladder:
+
+- **confirmed** — all 5 links + a persistent breach
+- **strongly_supported** — 3–4 links
+- **possible** — fewer, or structural causes (twin drift, capability gaps)
+
+`SymptomPropagation` reports directed graph hops
+(`upstream --KIND--> ... -> symptom`) — cross-engine chains surface when
+the graph evidences them; `path_found=false` when it doesn't.
+`downstream_effects` lists entities depending on the affected ones, and
+`owners` routes to entity owner/team/domain for display only.
+Resolved incidents can record `RecoveryEvent`s.
+
+## SLO & Critical Path (runtime-scoped — SLO###)
+
+`reliability path` enumerates source→sink critical paths over data-flow
+edges only (PRODUCES/CONSUMES/READS/WRITES/TRIGGERS/INVOKES/DEPENDS_ON —
+consumer-side edges are traversed in flow direction). Each segment shows
+measured latency (job/query-named executions or explicit attrs) or is
+reported `unknown` — never inferred. `bottleneck` is the largest
+*observed* contributor; coverage is always `N known / M unknown`.
+
+`reliability slo` decomposes declared objectives (`sla_*`/`rpo`/`rto`
+attrs — datacontract `servicelevels`/`slaProperties` land on governed
+entities) into `SLOBudget`s per matching path: consumed / remaining /
+which segments consumed the budget.
+
+### SLO001 — End-to-end freshness violation · warning
+Freshness budget exhausted over a critical path; consuming segments listed.
+### SLO002 — Latency budget exhausted · warning
+Summed measured latency exceeds the objective; top consumers listed.
+### SLO003 — Unknown critical segment · info
+A path segment carries no latency/freshness evidence — coverage is partial.
+### SLO004 — RPO mismatch · warning
+Declared `rpo` on a path entity with no replication/failover evidence.
+### SLO005 — RTO mismatch · warning
+Declared `rto` on a path entity with no replication/failover evidence.
+### SLO006 — Critical dependency without failover · info
+Entity under an SLO scope on a critical path, no failover attrs.
+
+## Capacity / Saturation (runtime-scoped — CAP###)
+
+`runtime capacity` evaluates saturation over recorded history plus
+configured capacity. Threshold provenance is **config > platform pack >
+historical baseline** and is always reported; a dimension without any
+threshold source reports UNKNOWN — there is no global
+"CPU > 80% = bad" rule. Trends are rising/flat/falling + headroom; the
+optional linear extrapolation is labelled "simple projection", never a
+prediction. Observed usage with no resolvable threshold emits an INFO
+note under the dimension's finding id ("unverifiable") instead of a
+saturation verdict.
+
+### CAP001 — Queue saturation · warning
+Queue-wait usage vs configured/pack/baseline threshold is elevated or saturated.
+### CAP002 — Memory saturation · warning
+Peak memory vs configured capacity is elevated or saturated.
+### CAP003 — Storage-layout saturation · warning
+Partition/shard/storage-object counts vs declared capacity are elevated or saturated.
+### CAP004 — Worker saturation · warning
+Worker/executor pool usage vs declared capacity is elevated or saturated.
+### CAP005 — Concurrency saturation · warning
+Concurrency/slots/warehouse-load/request-rate usage vs declared capacity is elevated or saturated.
+### CAP006 — Capacity trend increasing · info
+Utilization series is rising; reports headroom and (when capacity is configured) a simple projection to saturation.
+### CAP007 — Low headroom on critical workload · warning
+A critical-path resource retains <20% headroom on a measured dimension.

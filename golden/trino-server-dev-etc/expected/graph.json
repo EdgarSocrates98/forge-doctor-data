@@ -1,0 +1,33 @@
+{
+  "entities": [
+    {
+      "domain": "trino",
+      "file": "testing/trino-server-dev/etc/catalog/blackhole.properties",
+      "id": "catalog:trino:blackhole",
+      "kind": "catalog",
+      "line": null
+    },
+    {
+      "domain": "trino",
+      "file": "testing/trino-server-dev/etc/catalog/hive.properties",
+      "id": "catalog:trino:hive",
+      "kind": "catalog",
+      "line": null
+    },
+    {
+      "domain": "trino",
+      "file": "testing/trino-server-dev/etc/catalog/iceberg.properties",
+      "id": "catalog:trino:iceberg",
+      "kind": "catalog",
+      "line": null
+    },
+    {
+      "domain": "trino",
+      "file": "testing/trino-server-dev/etc/catalog/jmx.properties",
+      "id": "catalog:trino:jmx",
+      "kind": "catalog",
+      "line": null
+    }
+  ],
+  "relationships": []
+}

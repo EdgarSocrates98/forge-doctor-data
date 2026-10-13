@@ -1,0 +1,65 @@
+{
+  "entry": "elasticsearch-terraform-module",
+  "expected_edges": {
+    "kinds": []
+  },
+  "expected_entities": {
+    "domains": [
+      "search",
+      "aws"
+    ],
+    "kinds": [
+      "infrastructure_resource"
+    ]
+  },
+  "expected_findings": {
+    "check_id_prefixes": [
+      "SRCH",
+      "TF"
+    ],
+    "check_ids": []
+  },
+  "expected_unknowns": [
+    {
+      "check_id": "SRCH001",
+      "reason": "module IaC declares no index templates; replica policy is unprovable"
+    }
+  ],
+  "forbidden_findings": {
+    "check_id_prefixes": [
+      "AIR",
+      "DBT",
+      "DBX",
+      "TRINO",
+      "FLK",
+      "KFK",
+      "KIN",
+      "STREAM",
+      "SNOW",
+      "PARQ",
+      "DCTR",
+      "NEP",
+      "NEPA",
+      "NEPCD",
+      "NEPGT",
+      "CTM",
+      "DELTA",
+      "EMR",
+      "SFN",
+      "BQ",
+      "ATH",
+      "AZ",
+      "GCP",
+      "DRU",
+      "CH",
+      "PIN",
+      "LAM",
+      "DDBGT",
+      "DDBSTR",
+      "ICE"
+    ],
+    "check_ids": []
+  },
+  "notes": "cloudposse/terraform-aws-elasticsearch module - var-driven encryption; node_to_node default=false is the honest warning.",
+  "schema_version": "1"
+}

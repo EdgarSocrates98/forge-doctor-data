@@ -1,0 +1,67 @@
+{
+  "entry": "airflow-example-dags",
+  "expected_edges": {
+    "kinds": [
+      "depends_on",
+      "invokes"
+    ]
+  },
+  "expected_entities": {
+    "domains": [
+      "airflow"
+    ],
+    "kinds": [
+      "task",
+      "workflow"
+    ]
+  },
+  "expected_findings": {
+    "check_id_prefixes": [
+      "AIR"
+    ],
+    "check_ids": []
+  },
+  "expected_unknowns": [
+    {
+      "check_id": "AIR004",
+      "reason": "official example DAGs wire every task into the graph - no orphans to prove"
+    }
+  ],
+  "forbidden_findings": {
+    "check_id_prefixes": [
+      "DBT",
+      "DBX",
+      "TRINO",
+      "SRCH",
+      "FLK",
+      "KFK",
+      "KIN",
+      "STREAM",
+      "SNOW",
+      "PARQ",
+      "DCTR",
+      "NEP",
+      "NEPA",
+      "NEPCD",
+      "NEPGT",
+      "CTM",
+      "DELTA",
+      "EMR",
+      "SFN",
+      "BQ",
+      "ATH",
+      "AZ",
+      "GCP",
+      "DRU",
+      "CH",
+      "PIN",
+      "LAM",
+      "DDBGT",
+      "DDBSTR",
+      "ICE"
+    ],
+    "check_ids": []
+  },
+  "notes": "Five Airflow 2.10.5 example DAGs (bash, python, branch, task-group, complex).",
+  "schema_version": "1"
+}

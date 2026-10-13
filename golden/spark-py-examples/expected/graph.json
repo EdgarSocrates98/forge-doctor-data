@@ -1,0 +1,68 @@
+{
+  "entities": [
+    {
+      "domain": "sql",
+      "file": "examples/src/main/python/sql/basic.py",
+      "id": "query:sql:examples/src/main/python/sql/basic.py:102",
+      "kind": "query",
+      "line": 102
+    },
+    {
+      "domain": "sql",
+      "file": "examples/src/main/python/sql/basic.py",
+      "id": "query:sql:examples/src/main/python/sql/basic.py:118",
+      "kind": "query",
+      "line": 118
+    },
+    {
+      "domain": "sql",
+      "file": "examples/src/main/python/sql/basic.py",
+      "id": "query:sql:examples/src/main/python/sql/basic.py:153",
+      "kind": "query",
+      "line": 153
+    },
+    {
+      "domain": "sql",
+      "file": "examples/src/main/python/sql/basic.py",
+      "id": "query:sql:examples/src/main/python/sql/basic.py:187",
+      "kind": "query",
+      "line": 187
+    },
+    {
+      "domain": "sql",
+      "file": null,
+      "id": "table:sql:global_temp.people",
+      "kind": "table",
+      "line": null
+    },
+    {
+      "domain": "sql",
+      "file": null,
+      "id": "table:sql:people",
+      "kind": "table",
+      "line": null
+    }
+  ],
+  "relationships": [
+    {
+      "dst": "table:sql:global_temp.people",
+      "kind": "reads",
+      "src": "query:sql:examples/src/main/python/sql/basic.py:118"
+    },
+    {
+      "dst": "table:sql:people",
+      "kind": "reads",
+      "src": "query:sql:examples/src/main/python/sql/basic.py:102"
+    },
+    {
+      "dst": "table:sql:people",
+      "kind": "reads",
+      "src": "query:sql:examples/src/main/python/sql/basic.py:153"
+    },
+    {
+      "dst": "table:sql:people",
+      "kind": "reads",
+      "src": "query:sql:examples/src/main/python/sql/basic.py:187"
+    }
+  ]
+}

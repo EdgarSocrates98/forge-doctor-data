@@ -1,0 +1,82 @@
+{
+  "entities": [
+    {
+      "domain": "aws",
+      "file": "elasticsearch_domain.tf",
+      "id": "infrastructure_resource:aws:aws_elasticsearch_domain.default",
+      "kind": "infrastructure_resource",
+      "line": 10
+    },
+    {
+      "domain": "aws",
+      "file": "elasticsearch_domain.tf",
+      "id": "infrastructure_resource:aws:aws_elasticsearch_domain_policy.default",
+      "kind": "infrastructure_resource",
+      "line": 4
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_iam_role.elasticsearch_user",
+      "kind": "infrastructure_resource",
+      "line": 85
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_iam_service_linked_role.default",
+      "kind": "infrastructure_resource",
+      "line": 78
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_security_group.default",
+      "kind": "infrastructure_resource",
+      "line": 31
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_security_group_rule.egress",
+      "kind": "infrastructure_resource",
+      "line": 65
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_security_group_rule.ingress_cidr_blocks",
+      "kind": "infrastructure_resource",
+      "line": 54
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_security_group_rule.ingress_security_groups",
+      "kind": "infrastructure_resource",
+      "line": 43
+    },
+    {
+      "domain": "aws",
+      "file": "opensearch_domain.tf",
+      "id": "infrastructure_resource:aws:aws_opensearch_domain.default",
+      "kind": "infrastructure_resource",
+      "line": 10
+    },
+    {
+      "domain": "aws",
+      "file": "opensearch_domain.tf",
+      "id": "infrastructure_resource:aws:aws_opensearch_domain_policy.default",
+      "kind": "infrastructure_resource",
+      "line": 4
+    },
+    {
+      "domain": "search",
+      "file": "elasticsearch_domain.tf",
+      "id": "infrastructure_resource:search:default",
+      "kind": "infrastructure_resource",
+      "line": 10
+    }
+  ],
+  "relationships": []
+}

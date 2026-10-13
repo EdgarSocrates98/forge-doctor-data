@@ -1,0 +1,530 @@
+{
+  "entities": [
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_customer_gateway.this",
+      "kind": "infrastructure_resource",
+      "line": 1287
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_db_subnet_group.database",
+      "kind": "infrastructure_resource",
+      "line": 453
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_default_network_acl.this",
+      "kind": "infrastructure_resource",
+      "line": 1450
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_default_route_table.default",
+      "kind": "infrastructure_resource",
+      "line": 1505
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_default_security_group.this",
+      "kind": "infrastructure_resource",
+      "line": 1402
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_default_vpc.this",
+      "kind": "infrastructure_resource",
+      "line": 1387
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_egress_only_internet_gateway.this",
+      "kind": "infrastructure_resource",
+      "line": 1173
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_eip.nat",
+      "kind": "infrastructure_resource",
+      "line": 1206
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_elasticache_subnet_group.elasticache",
+      "kind": "infrastructure_resource",
+      "line": 810
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_internet_gateway.this",
+      "kind": "infrastructure_resource",
+      "line": 1159
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_nat_gateway.this",
+      "kind": "infrastructure_resource",
+      "line": 1227
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl.database",
+      "kind": "infrastructure_resource",
+      "line": 566
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl.elasticache",
+      "kind": "infrastructure_resource",
+      "line": 863
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl.intra",
+      "kind": "infrastructure_resource",
+      "line": 990
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl.outpost",
+      "kind": "infrastructure_resource",
+      "line": 1102
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl.private",
+      "kind": "infrastructure_resource",
+      "line": 362
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl.public",
+      "kind": "infrastructure_resource",
+      "line": 231
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl.redshift",
+      "kind": "infrastructure_resource",
+      "line": 719
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.database_inbound",
+      "kind": "infrastructure_resource",
+      "line": 581
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.database_outbound",
+      "kind": "infrastructure_resource",
+      "line": 600
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.elasticache_inbound",
+      "kind": "infrastructure_resource",
+      "line": 878
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.elasticache_outbound",
+      "kind": "infrastructure_resource",
+      "line": 897
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.intra_inbound",
+      "kind": "infrastructure_resource",
+      "line": 1005
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.intra_outbound",
+      "kind": "infrastructure_resource",
+      "line": 1024
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.outpost_inbound",
+      "kind": "infrastructure_resource",
+      "line": 1117
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.outpost_outbound",
+      "kind": "infrastructure_resource",
+      "line": 1136
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.private_inbound",
+      "kind": "infrastructure_resource",
+      "line": 377
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.private_outbound",
+      "kind": "infrastructure_resource",
+      "line": 396
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.public_inbound",
+      "kind": "infrastructure_resource",
+      "line": 246
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.public_outbound",
+      "kind": "infrastructure_resource",
+      "line": 265
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.redshift_inbound",
+      "kind": "infrastructure_resource",
+      "line": 734
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_network_acl_rule.redshift_outbound",
+      "kind": "infrastructure_resource",
+      "line": 753
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_redshift_subnet_group.redshift",
+      "kind": "infrastructure_resource",
+      "line": 657
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route.database_dns64_nat_gateway",
+      "kind": "infrastructure_resource",
+      "line": 530
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route.database_internet_gateway",
+      "kind": "infrastructure_resource",
+      "line": 502
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route.database_ipv6_egress",
+      "kind": "infrastructure_resource",
+      "line": 544
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route.database_nat_gateway",
+      "kind": "infrastructure_resource",
+      "line": 516
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route.private_dns64_nat_gateway",
+      "kind": "infrastructure_resource",
+      "line": 1269
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route.private_ipv6_egress",
+      "kind": "infrastructure_resource",
+      "line": 1187
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route.private_nat_gateway",
+      "kind": "infrastructure_resource",
+      "line": 1255
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route.public_internet_gateway",
+      "kind": "infrastructure_resource",
+      "line": 203
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route.public_internet_gateway_ipv6",
+      "kind": "infrastructure_resource",
+      "line": 217
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table.database",
+      "kind": "infrastructure_resource",
+      "line": 471
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table.elasticache",
+      "kind": "infrastructure_resource",
+      "line": 826
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table.intra",
+      "kind": "infrastructure_resource",
+      "line": 954
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table.private",
+      "kind": "infrastructure_resource",
+      "line": 324
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table.public",
+      "kind": "infrastructure_resource",
+      "line": 175
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table.redshift",
+      "kind": "infrastructure_resource",
+      "line": 673
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table_association.database",
+      "kind": "infrastructure_resource",
+      "line": 490
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table_association.elasticache",
+      "kind": "infrastructure_resource",
+      "line": 840
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table_association.intra",
+      "kind": "infrastructure_resource",
+      "line": 973
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table_association.outpost",
+      "kind": "infrastructure_resource",
+      "line": 1082
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table_association.private",
+      "kind": "infrastructure_resource",
+      "line": 342
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table_association.public",
+      "kind": "infrastructure_resource",
+      "line": 194
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table_association.redshift",
+      "kind": "infrastructure_resource",
+      "line": 687
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_route_table_association.redshift_public",
+      "kind": "infrastructure_resource",
+      "line": 699
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_subnet.database",
+      "kind": "infrastructure_resource",
+      "line": 424
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_subnet.elasticache",
+      "kind": "infrastructure_resource",
+      "line": 781
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_subnet.intra",
+      "kind": "infrastructure_resource",
+      "line": 925
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_subnet.outpost",
+      "kind": "infrastructure_resource",
+      "line": 1051
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_subnet.private",
+      "kind": "infrastructure_resource",
+      "line": 292
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_subnet.public",
+      "kind": "infrastructure_resource",
+      "line": 144
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_subnet.redshift",
+      "kind": "infrastructure_resource",
+      "line": 628
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_vpc.this",
+      "kind": "infrastructure_resource",
+      "line": 27
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_vpc_block_public_access_exclusion.this",
+      "kind": "infrastructure_resource",
+      "line": 73
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_vpc_block_public_access_options.this",
+      "kind": "infrastructure_resource",
+      "line": 65
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_vpc_dhcp_options.this",
+      "kind": "infrastructure_resource",
+      "line": 106
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_vpc_dhcp_options_association.this",
+      "kind": "infrastructure_resource",
+      "line": 125
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_vpc_ipv4_cidr_block_association.this",
+      "kind": "infrastructure_resource",
+      "line": 54
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_vpn_gateway.this",
+      "kind": "infrastructure_resource",
+      "line": 1313
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_vpn_gateway_attachment.this",
+      "kind": "infrastructure_resource",
+      "line": 1329
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_vpn_gateway_route_propagation.intra",
+      "kind": "infrastructure_resource",
+      "line": 1368
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_vpn_gateway_route_propagation.private",
+      "kind": "infrastructure_resource",
+      "line": 1353
+    },
+    {
+      "domain": "aws",
+      "file": "main.tf",
+      "id": "infrastructure_resource:aws:aws_vpn_gateway_route_propagation.public",
+      "kind": "infrastructure_resource",
+      "line": 1338
+    },
+    {
+      "domain": "warehouse",
+      "file": "main.tf",
+      "id": "infrastructure_resource:warehouse:redshift/subnet_group:lower(coalesce(var.redshift_subnet_group_name, var.name))",
+      "kind": "infrastructure_resource",
+      "line": 657
+    }
+  ],
+  "relationships": []
+}
