@@ -142,6 +142,16 @@ def graph_traversals(path: _PathOpt = Path(".")) -> None:
 def graph_project(
     path: _PathOpt = Path("."),
     fmt: Annotated[str, typer.Option("--format", "-f", help="json|dot|mermaid")] = "json",
+    out: Annotated[
+        Path | None,
+        typer.Option(
+            "--out",
+            help=(
+                "Write canonical graph JSON. Defaults to "
+                "PATH/.forge-doctor-data/graph/project-graph.json."
+            ),
+        ),
+    ] = None,
 ) -> None:
     """Project Intelligence Graph: jobs, datasets, infra, orchestrators."""
     import json as _json
@@ -151,13 +161,32 @@ def graph_project(
     if not path.is_dir():
         _stderr.print(f"[red]Not a directory:[/red] {path}")
         raise typer.Exit(INTERNAL_ERROR_EXIT)
-    graph = build_graph(ProjectContext(root=path))
+    root = path.resolve()
+    graph = build_graph(ProjectContext(root=root))
+    graph_out = (out or root / ".forge-doctor-data" / "graph" / "project-graph.json").resolve()
+    _write_graph_json(graph.to_dict(), graph_out)
     if fmt == "dot":
         typer.echo(graph.to_dot())
     elif fmt == "mermaid":
         typer.echo(graph.to_mermaid())
-    else:
+    elif fmt == "json":
         typer.echo(_json.dumps(graph.to_dict(), indent=2, ensure_ascii=False))
+    else:
+        _stderr.print(f"unknown graph format: {fmt} (expected json|dot|mermaid)")
+        raise typer.Exit(INTERNAL_ERROR_EXIT)
+
+
+def _write_graph_json(payload: dict[str, object], output: Path) -> None:
+    """Persist a complete graph snapshot atomically."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+    temporary = output.with_name(f".{output.name}.tmp")
+    import json as _json
+
+    temporary.write_text(
+        _json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    temporary.replace(output)
 
 
 @graph_app.command(name="view")

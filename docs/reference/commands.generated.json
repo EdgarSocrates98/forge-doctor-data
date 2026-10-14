@@ -3031,6 +3031,17 @@
           "choices": null,
           "positional": false,
           "help": "json|dot|mermaid"
+        },
+        {
+          "name": "out",
+          "flags": [
+            "--out"
+          ],
+          "required": false,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": "Write canonical graph JSON. Defaults to PATH/.forge-doctor-data/graph/project-graph.json."
         }
       ]
     },
@@ -4402,6 +4413,17 @@
           "choices": null,
           "positional": false,
           "help": "Optional components csv: skills,agents,mcp,tui,graph-studio."
+        },
+        {
+          "name": "gateway_profile",
+          "flags": [
+            "--gateway-profile"
+          ],
+          "required": false,
+          "default": "balanced",
+          "choices": null,
+          "positional": false,
+          "help": "Execution profile: economy|balanced|deep."
         }
       ],
       "group": true
