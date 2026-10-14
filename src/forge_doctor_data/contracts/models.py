@@ -65,7 +65,7 @@ def _opt_int(d: Json, key: str) -> int | None:
         return None
     if isinstance(value, bool) or not isinstance(value, int):
         raise ValueError(f"field {key!r} must be an integer or null, got {value!r}")
-    return value
+    return int(value)
 
 
 def _opt_bool(d: Json, key: str) -> bool | None:

@@ -176,7 +176,7 @@ def graph_project(
         raise typer.Exit(INTERNAL_ERROR_EXIT)
 
 
-def _write_graph_json(payload: dict, output: Path) -> None:
+def _write_graph_json(payload: dict[str, object], output: Path) -> None:
     """Persist a complete graph snapshot atomically."""
     output.parent.mkdir(parents=True, exist_ok=True)
     temporary = output.with_name(f".{output.name}.tmp")
