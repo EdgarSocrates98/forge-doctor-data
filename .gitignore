@@ -45,3 +45,5 @@ uv.lock
 *.log
 *.err
 *-suite*.xml
+factory/runs/*
+.forge/
