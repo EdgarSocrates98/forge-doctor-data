@@ -5,20 +5,20 @@ over labs/ ground-truth scenarios and emits forge/BenchmarkResult/v1.
 Deterministic, offline, stdlib-only. Unsupported/unmeasurable metrics are
 reported as explicit states, never zero.
 """
+
 from __future__ import annotations
 
 import argparse
 import json
+import re as _re
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 FORGE = "forge-doctor-data"
 SUITE = "forge-doctor-data-lab"
 
-
-import re as _re
 
 def _slug(s: object) -> str:
     return _re.sub(r"[^a-z0-9-]+", "-", str(s).lower()).strip("-") or "scenario"
@@ -59,9 +59,7 @@ def main() -> int:
             "precision": m("measured", precision, "ratio")
             if precision is not None
             else m("not_available"),
-            "recall": m("measured", recall, "ratio")
-            if recall is not None
-            else m("not_available"),
+            "recall": m("measured", recall, "ratio") if recall is not None else m("not_available"),
             "false_positives": m("measured", forbidden + extra),
             "cost_usd": m("not_applicable"),
             "tokens": m("not_applicable"),
@@ -89,7 +87,7 @@ def main() -> int:
         )
 
     receipt = {
-        "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "created_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "external": False,
         "suite": SUITE,
         "forge": FORGE,
