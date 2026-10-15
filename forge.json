@@ -9,5 +9,23 @@
     "forge-doctor-data",
     "mcp"
   ],
-  "extras": []
+  "extras": [],
+  "lab": {
+    "command": [
+      "{python}",
+      "scripts/lab/forge_doctor_data_lab.py",
+      "--checkout",
+      "{checkout}",
+      "--mode",
+      "{mode}",
+      "--result-out",
+      "{receipt}"
+    ],
+    "receipt": ".forge/lab-result.json",
+    "modes": [
+      "A"
+    ],
+    "suite": "forge-doctor-data-lab",
+    "timeout_s": 300
+  }
 }

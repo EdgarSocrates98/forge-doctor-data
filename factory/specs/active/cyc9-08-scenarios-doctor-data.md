@@ -1,7 +1,7 @@
 ---
 id: cyc9-08
 title: scenarios-doctor-data
-status: inbox
+status: active
 created: 2026-10-15
 owner: forge-doctor-data
 scope: repo
