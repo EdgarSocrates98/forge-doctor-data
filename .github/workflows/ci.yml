@@ -12,6 +12,9 @@ on:
 # a major range matching requires-poetry and cache the in-project venv keyed on
 # the lockfile hash instead.
 
+permissions:
+  contents: read
+
 jobs:
   static-analysis:
     name: static-analysis
