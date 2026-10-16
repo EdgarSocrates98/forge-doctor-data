@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-16
+
+GA — promotion of `1.0.0-rc1` after ecosystem certification
+(cycle-10.2 CERTIFIED) and Release-1 approval. No functional changes
+versus rc1; version bump only.
+
 ## [1.0.0-rc1] - 2026-10-05
 
 Release candidate. The public surface is frozen, the real-world

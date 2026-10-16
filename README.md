@@ -189,7 +189,7 @@ forge-doctor-data scan . --emit text --emit sarif:report.sarif --emit html:repor
 ```text
 ╭─ Forge Doctor Data ───────────────────────╮
 │ Project  /home/me/etl                │
-│ Version  1.0.0rc1                       │
+│ Version  1.0.0                       │
 │  Checks  51                          │
 ╰──────────────────────────────────────╯
 
@@ -277,9 +277,9 @@ forge-doctor-data scan . --format json
 
 ```json
 {
-  "tool": {"name": "forge-doctor-data", "version": "1.0.0rc1"},
+  "tool": {"name": "forge-doctor-data", "version": "1.0.0"},
   "schema_version": "3.0",
-  "version": "1.0.0rc1",
+  "version": "1.0.0",
   "project": {"name": "etl"},
   "summary": {"passed": 17, "info": 3, "warnings": 4, "errors": 0},
   "results": [
