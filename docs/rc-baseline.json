@@ -28,9 +28,9 @@
     "scan_validated_envelope": 250
   },
   "git": {
-    "branch": "main",
+    "branch": "release-1/v1.0.0",
     "dirty": true,
-    "head": "9b77a3717b3b273a0a8d7e0784d70a79f63a6e4e"
+    "head": "e0a565e59f70fac46083f9d280520d89b9f8ba94"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -41,16 +41,16 @@
   },
   "package": {
     "name": "forge-doctor-data",
-    "version": "1.0.0rc1"
+    "version": "1.0.0"
   },
   "public_api": {
-    "public_api_sha256": "6ae1f35f53182ab5b06b65d23d014b826b9b9abdf649fb52ddc08490810e80bf",
+    "public_api_sha256": "86f09c948a3ab67418cb5ec7e21e1b5c90bb93b73ef4a4b3695fad6e471e9fd1",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
   "schema_version": "1",
   "verification": {
-    "coverage_percent": 80.37,
-    "test_count": 2657
+    "coverage_percent": 84.17,
+    "test_count": 2668
   }
 }
