@@ -8,7 +8,7 @@ license = "MIT"
 requires-python = ">=3.11"
 keywords = ["data-engineering", "diagnostics", "lint", "spark", "cli"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
@@ -31,7 +31,10 @@ schemas = ["pyyaml>=6.0"]
 sql = ["sqlglot>=26,<29"]
 
 [project.urls]
+Homepage = "https://github.com/EdgarSocrates98/forge-doctor-data"
 Repository = "https://github.com/EdgarSocrates98/forge-doctor-data"
+Documentation = "https://github.com/EdgarSocrates98/forge-doctor-data/blob/main/docs/architecture.md"
+Issues = "https://github.com/EdgarSocrates98/forge-doctor-data/issues"
 Changelog = "https://github.com/EdgarSocrates98/forge-doctor-data/blob/main/CHANGELOG.md"
 
 [project.scripts]
