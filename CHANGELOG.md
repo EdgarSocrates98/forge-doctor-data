@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `doc_manifest._check_links` now verifies `#fragment` anchors on
+  tag-pinned repo URLs (they were silently dropped), exempts GitHub line
+  refs (`#L10`, `#L10-L20`) and rejects `%5C` backslash escapes.
+
+### Changed
+
+- Packaging metadata: classifiers justified at Beta, `project.urls`
+  added; README links/images pinned to `v1.0.0` absolute URLs.
+
 ## [1.0.0] - 2026-10-16
 
 GA — promotion of `1.0.0-rc1` after ecosystem certification
