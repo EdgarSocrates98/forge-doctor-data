@@ -343,9 +343,7 @@ def _check_links(repo: Path, rel: Path, links: list[str]) -> list[dict[str, str]
         mapped = _repo_url_path(raw, slug, repo)
         # Root-relative targets are external-site paths (e.g. quoted
         # devin.ai docs), never repo files — skip alongside http/mailto.
-        if mapped is None and raw.startswith(
-            ("http://", "https://", "mailto:", "#", "/")
-        ):
+        if mapped is None and raw.startswith(("http://", "https://", "mailto:", "#", "/")):
             if raw.startswith("#") and len(raw) > 1:
                 continue  # same-file anchor checked via target==self below
             continue
@@ -372,9 +370,7 @@ def _check_links(repo: Path, rel: Path, links: list[str]) -> list[dict[str, str]
             continue
         if frag and p.suffix == ".md":
             try:
-                _, anchors = _links_and_anchors(
-                    p.read_text(encoding="utf-8", errors="replace")
-                )
+                _, anchors = _links_and_anchors(p.read_text(encoding="utf-8", errors="replace"))
                 if frag.lower() not in anchors:
                     findings.append(
                         {
