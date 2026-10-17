@@ -1,8 +1,8 @@
 
-> Instalação portátil: [`docs/installation/quickstart.md`](docs/installation/quickstart.md) — clone → setup → install. Delegação agêntica: [forge.agentic.json](forge.agentic.json) (SpecialistAgenticManifest/v1).
-> Docs: [commands](docs/reference/commands.md) · [skills](docs/reference/skills.md) · [agents](docs/reference/agents.md) · [tutorial](docs/tutorials/first-run.md) · [economy](docs/economy.md) · [troubleshooting](docs/installation/troubleshooting.md)
+> Instalação portátil: [`docs/installation/quickstart.md`](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/installation/quickstart.md) — clone → setup → install. Delegação agêntica: [forge.agentic.json](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/forge.agentic.json) (SpecialistAgenticManifest/v1).
+> Docs: [commands](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/reference/commands.md) · [skills](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/reference/skills.md) · [agents](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/reference/agents.md) · [tutorial](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/tutorials/first-run.md) · [economy](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/economy.md) · [troubleshooting](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/installation/troubleshooting.md)
 <p align="center">
-  <img src="docs/assets/logo.png" alt="Forge Doctor Data" width="440">
+  <img src="https://raw.githubusercontent.com/EdgarSocrates98/forge-doctor-data/v1.0.0/docs/assets/logo.png" alt="Forge Doctor Data" width="440">
 </p>
 
 # Forge Doctor Data
@@ -26,7 +26,7 @@ actually fine.
 pipx install forge-doctor-data
 ```
 
-New here? Walk through [docs/getting-started.md](docs/getting-started.md) —
+New here? Walk through [docs/getting-started.md](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/getting-started.md) —
 install to a gated CI scan in five steps.
 
 Or from source:
@@ -267,7 +267,7 @@ colors; `--output` also works for plain text reports.
 | policy | POLICY rules | suppressions audit, org policy-pack violations |
 
 Full per-rule documentation (including *when it's OK*) lives in
-[docs/checks.md](docs/checks.md).
+[docs/checks.md](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/checks.md).
 
 ## JSON output
 
@@ -296,8 +296,8 @@ forge-doctor-data scan . --format json
 The JSON contract is stable and meant for CI, GitHub, and agent consumers —
 `forge-doctor-data schema contracts` emits the JSON Schemas for every public
 artifact, `forge-doctor-data contracts verify` validates artifacts against
-them, and [docs/api.md](docs/api.md) +
-[docs/contracts.md](docs/contracts.md) record the versioning and
+them, and [docs/api.md](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/api.md) +
+[docs/contracts.md](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/contracts.md) record the versioning and
 interop rules.
 Every finding carries a stable `fingerprint`; optional fields (`confidence`,
 `evidence`, `evidence_kind`, `tags`, `docs_uri`, `source`, `fixable`,
@@ -313,12 +313,12 @@ forge-doctor-data scan . --format sarif -o forge-doctor-data.sarif
 
 SARIF 2.1.0 with rules, locations, snippets, `partialFingerprints` and
 `fixes` — upload via `github/codeql-action/upload-sarif` or use the
-composite action in [action.yml](action.yml), which installs the CLI,
+composite action in [action.yml](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/action.yml), which installs the CLI,
 scans, and uploads SARIF in one step.
 
 ## Pre-commit
 
-[.pre-commit-hooks.yaml](.pre-commit-hooks.yaml) ships a `forge-doctor-data`
+[.pre-commit-hooks.yaml](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/.pre-commit-hooks.yaml) ships a `forge-doctor-data`
 hook; pre-commit feeds it the changed filenames via `--files`, so only the
 files under review produce findings.
 
@@ -471,7 +471,7 @@ golden / bench / policy packs
 
 Checks are small classes implementing a `Check` protocol
 (`id`/`title`/`category`/`run(ctx) -> list[CheckResult]`). They never print and
-never see the terminal. See [docs/architecture.md](docs/architecture.md).
+never see the terminal. See [docs/architecture.md](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/docs/architecture.md).
 
 ## Plugins
 
@@ -498,13 +498,13 @@ poetry run mypy
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). New checks: implement the `Check`
+See [CONTRIBUTING.md](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/CONTRIBUTING.md). New checks: implement the `Check`
 protocol, pick a stable id, register it in the category module's `CHECKS` list,
 add tests and a `docs/checks.md` entry.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](https://github.com/EdgarSocrates98/forge-doctor-data/blob/v1.0.0/LICENSE).
 
 ## Graph Studio
 
