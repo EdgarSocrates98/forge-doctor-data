@@ -44,7 +44,7 @@
     "version": "1.0.0"
   },
   "public_api": {
-    "public_api_sha256": "a2bf9422910ce3c33758d880d16d921a3a3509484cbaaf2475b06b13b16e2f7c",
+    "public_api_sha256": "8aa4f2e52d4dad69c4fa20eb6237b44d27f28340af905ef6c6a51b58773ab03d",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
