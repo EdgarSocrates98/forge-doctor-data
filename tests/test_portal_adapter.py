@@ -291,6 +291,40 @@ def test_docs_search_needs_inventory() -> None:
         assert set(h) >= {"path", "title", "excerpt", "category"}
 
 
+# --- telemetry — forge/PortalEvent/1 via vendored _portal_telemetry ------------
+
+
+def test_telemetry_events_and_metrics(target: Path) -> None:
+    server = _server(ForgeDoctorDataPortal(target))
+    try:
+        # /health first: records operation.start + operation.end into the buffer
+        code, health = _get(server, "/health", token=server.session_token)
+        assert code == 200, health
+
+        code, doc = _get(server, "/events", token=server.session_token)
+        assert code == 200, doc
+        report = doc["data"]
+        assert report["schema"] == "forge/PortalEventReport/1"
+        ends = [e for e in report["events"] if e.get("event_type") == "operation.end"]
+        assert ends
+        ev = ends[0]
+        assert ev["schema"] == "forge/PortalEvent/1"
+        assert ev["correlation_id"]
+        assert ev["status"] == "ok"
+        assert isinstance(ev["duration_ms"], (int, float))
+
+        code, doc = _get(server, "/metrics", token=server.session_token)
+        assert code == 200, doc
+        metrics = doc["data"]
+        assert metrics["generated_at"]
+        assert metrics["counters"]["operation.end"] >= 1
+        assert isinstance(metrics["events"], list)
+        assert metrics["truncated"] is False
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
 # --- cli verb -----------------------------------------------------------------
 
 

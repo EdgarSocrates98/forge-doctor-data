@@ -12,6 +12,7 @@ from typing import Any
 
 from forge_doctor_data import __version__
 from forge_doctor_data import _forge_portal as fp
+from forge_doctor_data import _portal_telemetry as _pt
 from forge_doctor_data.install import service
 
 _PACKAGE_ROOT = Path(__file__).resolve().parent
@@ -69,14 +70,18 @@ class ForgeDoctorDataPortal(fp.PortalAdapter):
         self.assets_dir = _ASSETS_DIR
         self._tasks: list[dict[str, Any]] = []
         self._task_seq = 0
+        self._telemetry_recorder = _pt.EventRecorder()
+        self.event_sink = self._telemetry_recorder.emit
         self.ops = [
             *fp.default_operations(self),
+            *_pt.operations(self._telemetry_recorder, self),
             fp.Operation("GET", "/profiles", lambda ctx: self._profiles()),
             fp.Operation("GET", "/hosts", lambda ctx: self._hosts()),
             fp.Operation("GET", "/mcp/servers", lambda ctx: self._mcp_servers()),
             fp.Operation("GET", "/skills", lambda ctx: self._skills()),
             fp.Operation("GET", "/agents", lambda ctx: self._agents()),
             fp.Operation("GET", "/tasks", lambda ctx: list(self._tasks)),
+            _pt.task_events_op(self._telemetry_recorder, lambda: list(self._tasks)),
             fp.Operation("GET", "/graphs", lambda ctx: self._graphs()),
             fp.Operation("GET", "/docs/search", lambda ctx: self._docs_search(ctx)),
             fp.Operation("POST", "/installation/plan", self._install_plan, mutating=True),
