@@ -120,6 +120,7 @@ ignore = ["RUF001"]  # severity icons (ℹ ⚠) are deliberate
 "src/forge_doctor_data/cli/**" = ["B006"]  # Typer list-valued options use [] defaults
 "src/forge_doctor_data/_installkit.py" = ["ALL"]  # vendored shared source — canonical copy is the lint target
 "src/forge_doctor_data/_forge_portal.py" = ["ALL"]  # vendored portal server — canonical copy is the lint target
+"src/forge_doctor_data/_portal_telemetry.py" = ["ALL"]  # vendored portal telemetry — canonical copy is the lint target
 "scripts/forge_installkit.py" = ["ALL"]
 "scripts/forge_bootstrap.py" = ["ALL"]
 
@@ -129,6 +130,7 @@ ignore = ["RUF001"]  # severity icons (ℹ ⚠) are deliberate
 # vendored exemptions above).
 exclude = [
     "src/forge_doctor_data/_forge_portal.py",
+    "src/forge_doctor_data/_portal_telemetry.py",
     "src/forge_doctor_data/_graphview.py",
     "src/forge_doctor_data/_graphstudio.py",
     "src/forge_doctor_data/_installkit.py",
@@ -165,7 +167,7 @@ ignore_errors = true
 # Vendored portal server — canonical copy in forge-portal/portal_core is
 # the typecheck target; do not diverge the byte-parity copy for typing.
 [[tool.mypy.overrides]]
-module = ["forge_doctor_data._forge_portal"]
+module = ["forge_doctor_data._forge_portal", "forge_doctor_data._portal_telemetry"]
 ignore_errors = true
 
 # Vendored Graph Studio view + Forge UI kit — canonical copies in
