@@ -932,7 +932,9 @@ def knowledge_new(
             purelib = Path(sysconfig.get_paths()["purelib"]).resolve()
             root.resolve().relative_to(purelib)
             in_purelib = True
-        except (OSError, ValueError):
+        except (OSError, RuntimeError, ValueError):
+            # RuntimeError: resolve() pode falhar em loop de symlink —
+            # sem prova de que root esta fora do site-packages, recusamos.
             pass
         if in_purelib or not bundled_is_real_fs:
             _stderr.print(
