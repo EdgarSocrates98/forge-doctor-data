@@ -85,6 +85,12 @@ jobs:
       - name: Environment manifest
         run: poetry run python tools/env_manifest.py
 
+      # lf-0019 B2 — install.windows.sh é a rota Git Bash no Windows;
+      # `bash -n` pega erro de sintaxe/CRLF vendored.
+      - name: Git Bash installer syntax (lf-0019)
+        shell: bash
+        run: bash -n install.windows.sh
+
       - name: Tests
         run: poetry run pytest --cov --cov-report=term-missing
 
