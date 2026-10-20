@@ -919,14 +919,22 @@ def knowledge_new(
 
     root = directory or _bundled_knowledge_root()
     if directory is None:
-        try:
-            import sysconfig
+        # Refuse when the bundled root is the installed package's copy — under
+        # zipimport `_packaged_dir` materializes to a temp dir (not under
+        # purelib, so containment alone misses it) that dies at process exit.
+        import sysconfig
+        from importlib.resources import files
 
+        traversable = files("forge_doctor_data") / "knowledge"
+        bundled_is_real_fs = isinstance(traversable, Path)
+        in_purelib = False
+        try:
             purelib = Path(sysconfig.get_paths()["purelib"]).resolve()
             root.resolve().relative_to(purelib)
+            in_purelib = True
         except (OSError, ValueError):
             pass
-        else:
+        if in_purelib or not bundled_is_real_fs:
             _stderr.print(
                 "[red]bundled knowledge is inside the installed package"
                 f" ({root}) — refuse to write into site-packages.[/red]\n"
