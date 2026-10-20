@@ -28,9 +28,9 @@
     "scan_validated_envelope": 250
   },
   "git": {
-    "branch": "feat/portal-telemetry",
+    "branch": "main",
     "dirty": true,
-    "head": "fce6512167d97f14750a2ddffd1b28dd9cb2ada3"
+    "head": "12a9e519c11823cf235de02f94be3324dba9e08c"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -41,16 +41,16 @@
   },
   "package": {
     "name": "forge-doctor-data",
-    "version": "1.0.0"
+    "version": "1.0.3"
   },
   "public_api": {
-    "public_api_sha256": "8aa4f2e52d4dad69c4fa20eb6237b44d27f28340af905ef6c6a51b58773ab03d",
+    "public_api_sha256": "c211b62f916e6992dd58f82d659259c142e0016c39dadc6e642267f4f1874bbf",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
   "schema_version": "1",
   "verification": {
-    "coverage_percent": 80.3,
-    "test_count": 2686
+    "coverage_percent": 84.01,
+    "test_count": 2696
   }
 }
