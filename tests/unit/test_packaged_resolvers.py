@@ -94,3 +94,16 @@ def test_knowledge_new_explicit_dir_writes(tmp_path: Path) -> None:
         knowledge_app, ["new", "snowflake", "--dir", str(tmp_path / "kn")]
     )
     assert result.exit_code == 0
+
+
+def test_knowledge_new_refuses_when_resolve_fails(monkeypatch, capsys):
+    """resolve() que falha nao prova fora-do-site-packages: recusa, nao escreve."""
+    from forge_doctor_data.cli.misc import knowledge_new
+    import typer
+
+    monkeypatch.setattr(Path, "resolve", lambda self, *a, **k: (_ for _ in ()).throw(
+        RuntimeError("symlink loop")
+    ))
+    with pytest.raises(typer.Exit) as exc:
+        knowledge_new("snowflake")
+    assert exc.value.exit_code == 2

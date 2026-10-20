@@ -928,15 +928,17 @@ def knowledge_new(
         traversable = files("forge_doctor_data") / "knowledge"
         bundled_is_real_fs = isinstance(traversable, Path)
         in_purelib = False
+        unresolvable = False
         try:
             purelib = Path(sysconfig.get_paths()["purelib"]).resolve()
-            root.resolve().relative_to(purelib)
-            in_purelib = True
-        except (OSError, RuntimeError, ValueError):
+            resolved_root = root.resolve()
+        except (OSError, RuntimeError):
             # RuntimeError: resolve() pode falhar em loop de symlink —
             # sem prova de que root esta fora do site-packages, recusamos.
-            pass
-        if in_purelib or not bundled_is_real_fs:
+            unresolvable = True
+        else:
+            in_purelib = resolved_root == purelib or purelib in resolved_root.parents
+        if in_purelib or unresolvable or not bundled_is_real_fs:
             _stderr.print(
                 "[red]bundled knowledge is inside the installed package"
                 f" ({root}) — refuse to write into site-packages.[/red]\n"

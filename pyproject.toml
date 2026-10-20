@@ -47,6 +47,9 @@ dev = [
     "ruff>=0.9",
     "mypy>=1.13",
     "sqlglot>=26,<29",
+    # Sem isto `.[dev]` nao traz `python -m build` e o teste de conteudo
+    # de artefato pula as assercoes de `_data` (paridade api-forge R7).
+    "build>=1.0",
     # P7: official MCP SDK - dev-only conformance validation of our
     # wire payloads against mcp.types models. Not a runtime dependency.
     "mcp>=1.9,<2",
