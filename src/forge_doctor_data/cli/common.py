@@ -890,4 +890,9 @@ def _packaged_dir(anchor: str) -> Path:
     from importlib.resources import as_file, files
 
     traversable = files("forge_doctor_data").joinpath(*anchor.split("/"))
+    if not traversable.is_dir():
+        # Âncora ausente (editable sem a camada _data, ou zipimport sem o
+        # diretório): devolve um Path inexistente — callers testam .is_dir()
+        # sem que as_file() levante FileNotFoundError num traversable de zip.
+        return Path(str(traversable))
     return _RESOURCE_EXITS.enter_context(as_file(traversable))
