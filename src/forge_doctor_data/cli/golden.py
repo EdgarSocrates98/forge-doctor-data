@@ -29,9 +29,9 @@ def _golden_root(root: Path, *, for_write: bool = False) -> Path:
     """cwd/explicit root wins; packaged `_data/golden` is the read fallback."""
     if root.is_dir() or root != Path(GOLDEN_ROOT):
         return root
-    from forge_doctor_data.cli.common import packaged_dir
+    from forge_doctor_data.cli.common import _packaged_dir
 
-    packaged = packaged_dir("_data/golden")
+    packaged = _packaged_dir("_data/golden")
     if not packaged.is_dir():
         return root
     if for_write:

@@ -946,9 +946,9 @@ def knowledge_new(
 
 
 def _bundled_knowledge_root() -> Path:
-    from forge_doctor_data.cli.common import packaged_dir
+    from forge_doctor_data.cli.common import _packaged_dir
 
-    return packaged_dir("knowledge")
+    return _packaged_dir("knowledge")
 
 
 @knowledge_app.command(name="diff")

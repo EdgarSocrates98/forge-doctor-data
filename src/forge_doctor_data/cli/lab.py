@@ -30,9 +30,9 @@ def _default_labs() -> Path:
     local = Path.cwd() / "labs"
     if local.is_dir():
         return local
-    from forge_doctor_data.cli.common import packaged_dir
+    from forge_doctor_data.cli.common import _packaged_dir
 
-    packaged = packaged_dir("_data/labs")
+    packaged = _packaged_dir("_data/labs")
     return packaged if packaged.is_dir() else local
 
 

@@ -878,7 +878,7 @@ def _close_resource_exits() -> None:
 atexit.register(_close_resource_exits)
 
 
-def packaged_dir(anchor: str) -> Path:
+def _packaged_dir(anchor: str) -> Path:
     """Packaged data dir as a real filesystem path, valid for process lifetime.
 
     `importlib.resources.files()` returns a `Traversable` that only maps to a
