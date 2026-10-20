@@ -918,6 +918,21 @@ def knowledge_new(
     from forge_doctor_data.core.knowledge import SCAFFOLD_KINDS, write_scaffold
 
     root = directory or _bundled_knowledge_root()
+    if directory is None:
+        try:
+            import sysconfig
+
+            purelib = Path(sysconfig.get_paths()["purelib"]).resolve()
+            root.resolve().relative_to(purelib)
+        except (OSError, ValueError):
+            pass
+        else:
+            _stderr.print(
+                "[red]bundled knowledge is inside the installed package"
+                f" ({root}) — refuse to write into site-packages.[/red]\n"
+                "pass --dir <path> to scaffold into a writable knowledge root."
+            )
+            raise typer.Exit(2)
     console = Console()
     try:
         target = write_scaffold(root, domain, kind)
@@ -931,9 +946,9 @@ def knowledge_new(
 
 
 def _bundled_knowledge_root() -> Path:
-    from importlib.resources import files
+    from forge_doctor_data.cli.common import packaged_dir
 
-    return Path(str(files("forge_doctor_data") / "knowledge"))
+    return packaged_dir("knowledge")
 
 
 @knowledge_app.command(name="diff")

@@ -25,9 +25,28 @@ _RootOpt = Annotated[Path, typer.Option("--root", help="Golden corpus root.")]
 _JsonOpt = Annotated[bool, typer.Option("--json", help="Machine-readable output.")]
 
 
+def _golden_root(root: Path, *, for_write: bool = False) -> Path:
+    """cwd/explicit root wins; packaged `_data/golden` is the read fallback."""
+    if root.is_dir() or root != Path(GOLDEN_ROOT):
+        return root
+    from forge_doctor_data.cli.common import packaged_dir
+
+    packaged = packaged_dir("_data/golden")
+    if not packaged.is_dir():
+        return root
+    if for_write:
+        _stderr.print(
+            f"[red]packaged golden corpus is read-only[/red] ({packaged})\n"
+            "pass --root <dir> to regenerate snapshots in a writable copy."
+        )
+        raise typer.Exit(2)
+    return packaged
+
+
 @golden_app.command(name="list")
 def golden_list(root: _RootOpt = Path(GOLDEN_ROOT)) -> None:
     """List golden repositories."""
+    root = _golden_root(root)
     repos = discover_golden(root)
     if not repos:
         _stderr.print(f"[yellow]no golden repos under[/yellow] {root}")
@@ -46,6 +65,7 @@ def golden_run(
     as_json: _JsonOpt = False,
 ) -> None:
     """Diff current engine output against stored snapshots."""
+    root = _golden_root(root)
     reports = run_all_golden(root, name)
     if as_json:
         typer.echo(
@@ -98,6 +118,7 @@ def golden_update(
     root: _RootOpt = Path(GOLDEN_ROOT),
 ) -> None:
     """Regenerate snapshots — review the diff before committing."""
+    root = _golden_root(root, for_write=True)
     repos = discover_golden(root)
     updated = 0
     for repo_dir in repos:

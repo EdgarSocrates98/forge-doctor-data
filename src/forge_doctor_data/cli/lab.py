@@ -27,7 +27,13 @@ _JsonOpt = Annotated[bool, typer.Option("--json", help="Machine-readable output.
 
 
 def _default_labs() -> Path:
-    return Path.cwd() / "labs"
+    local = Path.cwd() / "labs"
+    if local.is_dir():
+        return local
+    from forge_doctor_data.cli.common import packaged_dir
+
+    packaged = packaged_dir("_data/labs")
+    return packaged if packaged.is_dir() else local
 
 
 def _report_dict(report: LabReport) -> dict[str, object]:

@@ -53,7 +53,13 @@ dev = [
 ]
 
 [tool.poetry]
-packages = [{ include = "forge_doctor_data", from = "src" }]
+packages = [
+    { include = "forge_doctor_data", from = "src" },
+    # Corpora de lab/golden (Cycle 12): sobem como `forge_doctor_data/_data/` no
+    # wheel; os defaults de CLI resolvem _data quando a raiz nao existe no cwd.
+    { include = "labs", to = "forge_doctor_data/_data" },
+    { include = "golden", to = "forge_doctor_data/_data" },
+]
 include = [
     { path = "src/forge_doctor_data/knowledge", format = ["sdist", "wheel"] },
     { path = "src/forge_doctor_data/contracts/fixtures", format = ["sdist", "wheel"] },

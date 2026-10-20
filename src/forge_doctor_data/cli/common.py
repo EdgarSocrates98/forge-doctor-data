@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import atexit
 import contextlib
 import json as _json
 import shutil
@@ -865,3 +866,28 @@ def _ref_schemas(repo: Path, ref: str) -> dict[str, SchemaInfo] | None:
             timeout=60,
         )
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+_RESOURCE_EXITS = contextlib.ExitStack()
+
+
+def _close_resource_exits() -> None:
+    _RESOURCE_EXITS.close()
+
+
+atexit.register(_close_resource_exits)
+
+
+def packaged_dir(anchor: str) -> Path:
+    """Packaged data dir as a real filesystem path, valid for process lifetime.
+
+    `importlib.resources.files()` returns a `Traversable` that only maps to a
+    real `Path` when the package is unpacked — under zipimport `Path(str(t))`
+    yields a bogus in-zip path whose `is_dir()` is False and whose children
+    cannot be globbed. `as_file` materializes it (no-op for real dirs); the
+    `ExitStack` keeps the temp path alive until interpreter exit.
+    """
+    from importlib.resources import as_file, files
+
+    traversable = files("forge_doctor_data").joinpath(*anchor.split("/"))
+    return _RESOURCE_EXITS.enter_context(as_file(traversable))
