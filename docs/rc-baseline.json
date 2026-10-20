@@ -30,7 +30,7 @@
   "git": {
     "branch": "main",
     "dirty": true,
-    "head": "12a9e519c11823cf235de02f94be3324dba9e08c"
+    "head": "e165ac1ac965750db546be483e6fcb357a56a0ef"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -41,16 +41,16 @@
   },
   "package": {
     "name": "forge-doctor-data",
-    "version": "1.0.3"
+    "version": "1.0.4"
   },
   "public_api": {
-    "public_api_sha256": "c211b62f916e6992dd58f82d659259c142e0016c39dadc6e642267f4f1874bbf",
+    "public_api_sha256": "b59d2b9f108a61bec33a2867eb4a0a86d21e7048921fd6f54e28213315af674a",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
   "schema_version": "1",
   "verification": {
     "coverage_percent": 84.01,
-    "test_count": 2696
+    "test_count": null
   }
 }
