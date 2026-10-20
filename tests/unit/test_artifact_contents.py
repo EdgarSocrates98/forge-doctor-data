@@ -53,8 +53,6 @@ def test_wheel_data_matches_checkout(wheel):
     for group in ("labs", "golden"):
         wheel_files = _rel_set(wheel, f"forge_doctor_data/_data/{group}/")
         checkout = {
-            p.relative_to(ROOT / group).as_posix()
-            for p in (ROOT / group).rglob("*")
-            if p.is_file()
+            p.relative_to(ROOT / group).as_posix() for p in (ROOT / group).rglob("*") if p.is_file()
         }
         assert wheel_files == checkout, f"_data/{group} diverges from checkout"

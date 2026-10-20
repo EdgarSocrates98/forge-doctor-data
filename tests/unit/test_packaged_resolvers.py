@@ -66,9 +66,7 @@ def test_default_labs_packaged_fallback(tmp_path: Path, monkeypatch) -> None:
 def test_knowledge_new_refuses_purelib_write(monkeypatch) -> None:
     purelib = Path(sysconfig.get_paths()["purelib"])
     fake = purelib / "forge_doctor_data" / "knowledge"
-    monkeypatch.setattr(
-        "forge_doctor_data.cli.misc._bundled_knowledge_root", lambda: fake
-    )
+    monkeypatch.setattr("forge_doctor_data.cli.misc._bundled_knowledge_root", lambda: fake)
     result = runner.invoke(knowledge_app, ["new", "snowflake"])
     assert result.exit_code == 2
     assert "refuse to write" in (result.output + getattr(result, "stderr", ""))
@@ -90,20 +88,19 @@ def test_knowledge_new_refuses_non_fs_traversable(tmp_path: Path, monkeypatch) -
 
 
 def test_knowledge_new_explicit_dir_writes(tmp_path: Path) -> None:
-    result = runner.invoke(
-        knowledge_app, ["new", "snowflake", "--dir", str(tmp_path / "kn")]
-    )
+    result = runner.invoke(knowledge_app, ["new", "snowflake", "--dir", str(tmp_path / "kn")])
     assert result.exit_code == 0
 
 
 def test_knowledge_new_refuses_when_resolve_fails(monkeypatch, capsys):
     """resolve() que falha nao prova fora-do-site-packages: recusa, nao escreve."""
-    from forge_doctor_data.cli.misc import knowledge_new
     import typer
 
-    monkeypatch.setattr(Path, "resolve", lambda self, *a, **k: (_ for _ in ()).throw(
-        RuntimeError("symlink loop")
-    ))
+    from forge_doctor_data.cli.misc import knowledge_new
+
+    monkeypatch.setattr(
+        Path, "resolve", lambda self, *a, **k: (_ for _ in ()).throw(RuntimeError("symlink loop"))
+    )
     with pytest.raises(typer.Exit) as exc:
         knowledge_new("snowflake")
     assert exc.value.exit_code == 2
