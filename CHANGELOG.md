@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.0.3] - 2026-10-20
+
+### Changed
+- Cycle 12 portable distribution: `_data/{labs,golden}` packaged corpora;
+  `packaged_labs_dir`/`_packaged_dir` existence-check before `as_file`;
+  `knowledge_new` site-packages write guard.
+- Wheel artifact tests prove packaged corpora file-by-file.
 
 ## [1.0.2] - 2026-10-18
 
