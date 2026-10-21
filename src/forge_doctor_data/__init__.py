@@ -7,4 +7,4 @@ try:
     # Single source of truth: the [project] version in pyproject.toml.
     __version__ = _dist_version("forge-doctor-data")
 except PackageNotFoundError:  # src tree without install (editable checkouts)
-    __version__ = "1.0.4"
+    __version__ = "1.0.5"
