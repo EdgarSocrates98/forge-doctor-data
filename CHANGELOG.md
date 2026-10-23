@@ -33,6 +33,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [1.0.7] - 2026-10-22
+
+### Fixed
+
+- `_installkit` v1.0.2 + `forge_bootstrap` v1.1.1 vendored: userinfo
+  credential-redaction regex hardened (`[^/\s]+@` — previously leaked
+  `user:pw` fragments in wheelhouse URLs), stale-lock `created_at`
+  fallback for undecidable PIDs, argv trim, empty-stdout smoke.
+  Security fix — published wheels previously carried v1.0.0.
+
 ## [1.0.6] - 2026-10-21
 
 ### Changed
