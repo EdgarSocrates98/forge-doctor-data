@@ -1,6 +1,6 @@
 [project]
 name = "forge-doctor-data"
-version = "1.0.7"
+version = "1.0.8"
 description = "Deterministic diagnostics for data engineering projects"
 authors = [{ name = "Forge Doctor Data contributors" }]
 readme = "README.md"
