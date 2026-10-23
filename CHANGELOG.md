@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.0.8] - 2026-10-29
+
+### Fixed
+
+- `_installkit` v1.0.3 vendored: asset/ledger paths validated before any
+  disk touch — `..`, absolute, drive or backslash refs refused as
+  `FORGE-INSTALL-UNSAFE-PATH`, never written or unlinked outside the
+  install root; `_Lock` carries a unique ownership token (no foreign-lock
+  unlink, reclaim race → named refusal); `_atomic_write` preserves file
+  modes. The wheel ships `_installkit.py`, so the containment + lock
+  fixes must be published.
+
 ## [1.0.5] - 2026-10-21
 
 ### Changed
