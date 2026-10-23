@@ -30,7 +30,7 @@
   "git": {
     "branch": "release/1.1.0-minor",
     "dirty": false,
-    "head": "edb163ad4d411df5263405a8df3882ab8a1ad80d"
+    "head": "4aef0db9294e5e10b14e09d0ae429cc9f5a6c7b2"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -51,6 +51,6 @@
   "schema_version": "1",
   "verification": {
     "coverage_percent": 84.0,
-    "test_count": null
+    "test_count": 2700
   }
 }
