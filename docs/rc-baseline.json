@@ -28,9 +28,9 @@
     "scan_validated_envelope": 250
   },
   "git": {
-    "branch": "fix/install-2.0-hardening-forge-doctor-data",
-    "dirty": false,
-    "head": "97905caeda45da2fd524e710bebd40ca13ddca53"
+    "branch": "main",
+    "dirty": true,
+    "head": "df47a791fd10cbad1fe3de673ad56ff3f339382d"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -51,6 +51,6 @@
   "schema_version": "1",
   "verification": {
     "coverage_percent": 84.0,
-    "test_count": 2700
+    "test_count": null
   }
 }
