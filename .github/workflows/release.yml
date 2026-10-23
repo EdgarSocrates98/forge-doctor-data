@@ -37,7 +37,7 @@ jobs:
           poetry run pytest
           poetry build
           poetry run python tools/verify_release.py --dist dist
-          python -m pip install --no-deps dist/*.whl
+          python -m pip install dist/*.whl
           forge-doctor-data doctor .
           # Full release-candidate artifact set: SBOM, SHA256SUMS,
           # published schemas, release manifest, provenance, env manifest.
