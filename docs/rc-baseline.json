@@ -28,9 +28,9 @@
     "scan_validated_envelope": 250
   },
   "git": {
-    "branch": "fix/installkit-1.0.4-1.0.9",
+    "branch": "release/1.1.0-minor",
     "dirty": false,
-    "head": "76d1103ac34b9b1a206b6062a83cb9dd8c8efe8c"
+    "head": "4aef0db9294e5e10b14e09d0ae429cc9f5a6c7b2"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -41,10 +41,10 @@
   },
   "package": {
     "name": "forge-doctor-data",
-    "version": "1.0.9"
+    "version": "1.1.0"
   },
   "public_api": {
-    "public_api_sha256": "d1169c8e4e299bd5a9c3b5ac548a4f25c916bbe1916776963095cbda64658e66",
+    "public_api_sha256": "e19d688baa2a5aca46055d64dcb46ad25cf700298e7ec283d4315bf596a852aa",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
