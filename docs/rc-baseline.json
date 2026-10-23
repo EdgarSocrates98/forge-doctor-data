@@ -28,9 +28,9 @@
     "scan_validated_envelope": 250
   },
   "git": {
-    "branch": "fix/install-2.0-hardening-forge-doctor-data",
+    "branch": "fix/installkit-1.0.4-1.0.9",
     "dirty": false,
-    "head": "97905caeda45da2fd524e710bebd40ca13ddca53"
+    "head": "76d1103ac34b9b1a206b6062a83cb9dd8c8efe8c"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -41,10 +41,10 @@
   },
   "package": {
     "name": "forge-doctor-data",
-    "version": "1.0.8"
+    "version": "1.0.9"
   },
   "public_api": {
-    "public_api_sha256": "f426f4957c6e8c7085b0f7b799f1f4b7637436c45bf5f79339fc69b8f643b968",
+    "public_api_sha256": "d1169c8e4e299bd5a9c3b5ac548a4f25c916bbe1916776963095cbda64658e66",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
