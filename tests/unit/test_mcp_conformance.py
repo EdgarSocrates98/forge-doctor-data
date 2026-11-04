@@ -52,8 +52,8 @@ def _call(
 def test_initialize_result_matches_official_model(version: str) -> None:
     out = _call("initialize", {"protocolVersion": version})
     parsed = mcp_types.InitializeResult.model_validate(out["result"])
-    assert parsed.protocolVersion == version
-    assert parsed.serverInfo.name == "forge-doctor-data"
+    assert parsed.protocol_version == version
+    assert parsed.server_info.name == "forge-doctor-data"
 
 
 def test_unknown_version_negotiates_to_newest() -> None:

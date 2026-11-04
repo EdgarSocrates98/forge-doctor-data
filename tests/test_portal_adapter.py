@@ -188,7 +188,7 @@ def test_hosts_launch_refuses_absent_host(target: Path) -> None:
     doc = a._hosts_launch(type("C", (), {"body": {"host": "copilot"}})())
     # copilot is absent on this machine — named refusal, command None.
     # (if a future env ships it, the command must be a real string)
-    if doc["refusal"] == "PORTAL-HOST-ABSENT":
+    if doc.get("refusal") == "PORTAL-HOST-ABSENT":
         assert doc["command"] is None
     else:
         assert isinstance(doc["command"], str)
