@@ -8,6 +8,7 @@ from pathlib import Path
 from typer.testing import CliRunner
 
 from forge_doctor_data.cli.app import app
+from forge_doctor_data.core.history import HistoryError
 from forge_doctor_data.core.models import EvidenceKind
 from forge_doctor_data.core.platform_graph import DataPlatformGraph, Entity, EntityKind
 from forge_doctor_data.core.twin_states import (
@@ -185,6 +186,26 @@ def test_record_and_load_roundtrip(tmp_path: Path) -> None:
     loaded = load_twin_snapshot(tmp_path, "snap1")
     assert loaded["format"] == "forge-doctor-data/twin-state@1"
     assert loaded["entities"] == snap["entities"]
+
+
+def test_snapshot_refs_cannot_escape_history_or_project(tmp_path: Path) -> None:
+    snap = twin_state_snapshot(_graph(), (), "snap1")
+    for bad in ("../escape", r"..\escape", "C:\\outside"):
+        try:
+            record_twin_snapshot(tmp_path, snap, bad)
+        except HistoryError:
+            pass
+        else:
+            raise AssertionError(f"unsafe snapshot name accepted: {bad!r}")
+
+    outside = tmp_path.parent / "outside-snapshot.json"
+    outside.write_text(json.dumps(snap), encoding="utf-8")
+    try:
+        load_twin_snapshot(tmp_path, str(outside))
+    except HistoryError:
+        pass
+    else:
+        raise AssertionError("absolute snapshot ref escaped the project root")
 
 
 # --- CLI -------------------------------------------------------------------------

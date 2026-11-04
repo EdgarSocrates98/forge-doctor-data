@@ -24,13 +24,12 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path, PureWindowsPath
 from typing import TYPE_CHECKING
 
 from forge_doctor_data.core.models import EvidenceKind
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
     from forge_doctor_data.core.contract import PlatformContract
     from forge_doctor_data.core.platform_graph import DataPlatformGraph
     from forge_doctor_data.core.whatif import WhatIfReport
@@ -501,21 +500,50 @@ def record_twin_snapshot(root: Path, snapshot: dict[str, object], name: str) -> 
     """Persist a twin-state snapshot under the history dir."""
     import json
 
+    name = _safe_snapshot_name(name)
     target = twin_history_dir(root)
     target.mkdir(parents=True, exist_ok=True)
     path = target / f"{name}.json"
+    if path.is_symlink():
+        from forge_doctor_data.core.history import HistoryError
+
+        raise HistoryError(f"snapshot path is a symlink: {name!r}")
     path.write_text(json.dumps(snapshot, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return path
+
+
+def _safe_snapshot_name(name: str) -> str:
+    """Accept only a single portable filename component for history refs."""
+    from forge_doctor_data.core.history import HistoryError
+
+    if (
+        not isinstance(name, str)
+        or not name
+        or name in {".", ".."}
+        or "\x00" in name
+        or any(sep in name for sep in ("/", "\\", ":"))
+        or PureWindowsPath(name).is_absolute()
+        or PureWindowsPath(name).name != name
+        or Path(name).name != name
+    ):
+        raise HistoryError(f"unsafe twin snapshot name: {name!r}")
+    return name
 
 
 def load_twin_snapshot(root: Path, ref: str) -> dict[str, object]:
     """Resolve a twin snapshot by file path or recorded name."""
     import json
-    from pathlib import Path
 
-    path = root / ref
+    root = root.resolve()
+    candidate = Path(ref)
+    path = (candidate if candidate.is_absolute() else root / candidate).resolve()
+    try:
+        path.relative_to(root)
+    except ValueError:
+        path = Path()
     if not path.is_file():
-        path = Path(ref) if Path(ref).is_file() else twin_history_dir(root) / f"{ref}.json"
+        name = _safe_snapshot_name(ref)
+        path = (twin_history_dir(root) / f"{name}.json").resolve()
     if not path.is_file():
         from forge_doctor_data.core.history import HistoryError
 
