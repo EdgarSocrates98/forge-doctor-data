@@ -42,10 +42,10 @@ forge-doctor-data = "forge_doctor_data.cli:app"
 
 [dependency-groups]
 dev = [
-    "pytest>=8",
+    "pytest>=9.2.0",
     "pytest-cov>=5",
-    "ruff>=0.9",
-    "mypy>=1.13",
+    "ruff>=0.17.3",
+    "mypy>=2.4.1",
     "sqlglot>=26,<29",
     # Sem isto `.[dev]` nao traz `python -m build` e o teste de conteudo
     # de artefato pula as assercoes de `_data` (paridade api-forge R7).
