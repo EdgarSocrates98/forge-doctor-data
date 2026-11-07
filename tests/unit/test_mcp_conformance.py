@@ -52,8 +52,15 @@ def _call(
 def test_initialize_result_matches_official_model(version: str) -> None:
     out = _call("initialize", {"protocolVersion": version})
     parsed = mcp_types.InitializeResult.model_validate(out["result"])
-    assert parsed.protocol_version == version
-    assert parsed.server_info.name == "forge-doctor-data"
+    # The official SDK exposed this field as snake_case in older releases and
+    # as its wire alias in newer Pydantic models.  Validate the model contract
+    # across both without weakening the protocol assertion.
+    protocol_version = getattr(parsed, "protocol_version", None) or getattr(
+        parsed, "protocolVersion", None
+    )
+    server_info = getattr(parsed, "server_info", None) or getattr(parsed, "serverInfo", None)
+    assert protocol_version == version
+    assert server_info.name == "forge-doctor-data"
 
 
 def test_unknown_version_negotiates_to_newest() -> None:
