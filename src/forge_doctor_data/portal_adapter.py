@@ -504,18 +504,20 @@ class ForgeDoctorDataPortal(fp.PortalAdapter):
                     key, value = line.split(":", 1)
                     fields[key.strip()] = value.strip().strip('"')
             aid = path.stem
-            out.append({
-                "id": aid,
-                "name": fields.get("name", aid),
-                "role": "specialist",
-                "description": fields.get("description", ""),
-                "authority": None,
-                "domains": ["data-diagnostics"],
-                "skills": [],
-                "hosts": [],
-                "state": "available",
-                "source": "catalog",
-            })
+            out.append(
+                {
+                    "id": aid,
+                    "name": fields.get("name", aid),
+                    "role": "specialist",
+                    "description": fields.get("description", ""),
+                    "authority": None,
+                    "domains": ["data-diagnostics"],
+                    "skills": [],
+                    "hosts": [],
+                    "state": "available",
+                    "source": "catalog",
+                }
+            )
         return out
 
     # ------------------------------------------------------------------
