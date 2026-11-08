@@ -209,10 +209,16 @@ def test_mcp_verify_named_status(target: Path) -> None:
 # --- skills / agents: honest unsupported catalog ----------------------------
 
 
-def test_skills_agents_empty_by_design(target: Path) -> None:
+def test_skills_empty_and_agents_load_from_canonical_roster(target: Path) -> None:
     a = ForgeDoctorDataPortal(target)
     assert a._skills() == []
-    assert a._agents() == []
+    agents = a._agents()
+    assert {agent["id"] for agent in agents} == {
+        "data-diagnostic-investigator",
+        "data-platform-reviewer",
+        "data-quality-reviewer",
+    }
+    assert all(agent["state"] == "available" for agent in agents)
 
 
 # --- tasks --------------------------------------------------------------------

@@ -64,6 +64,7 @@ packages = [
     { include = "golden", to = "forge_doctor_data/_data" },
 ]
 include = [
+    { path = "src/forge_doctor_data/installation/assets/agents", format = ["sdist", "wheel"] },
     { path = "src/forge_doctor_data/knowledge", format = ["sdist", "wheel"] },
     { path = "src/forge_doctor_data/contracts/fixtures", format = ["sdist", "wheel"] },
     { path = "src/forge_doctor_data/portal_assets", format = ["sdist", "wheel"] },
