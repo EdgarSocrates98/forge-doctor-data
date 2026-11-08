@@ -29,7 +29,12 @@
     }
   ],
   "skills": [],
-  "agents": [],
+  "agents": [
+    "data-diagnostic-investigator",
+    "data-quality-reviewer",
+    "data-platform-reviewer"
+  ],
+  "agent_roster_paths": ["src/forge_doctor_data/installation/assets/agents"],
   "coordinators": [],
   "mcp_command": [
     "{cli}",
