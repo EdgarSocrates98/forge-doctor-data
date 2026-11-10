@@ -1,0 +1,9 @@
+{
+  "cycle": "2.7",
+  "repository": "forge-doctor-data",
+  "version": "1.1.1",
+  "tag": "v1.1.1",
+  "source_commit": "2fc30f4127b1b456e2b1da2227c599723f347d3d",
+  "version_source": "pyproject.toml and forge.agentic.json",
+  "verified_at": "2026-11-10"
+}
