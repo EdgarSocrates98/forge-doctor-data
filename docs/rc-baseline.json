@@ -29,8 +29,8 @@
   },
   "git": {
     "branch": "release/cycle-2.7-patch-version",
-    "dirty": true,
-    "head": "24c7101ad92b4e3353f1b8ea3f083f37f1664202"
+    "dirty": false,
+    "head": "86dcf93c7c797bf8f65d443b4f7f68b74a7c8829"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -50,7 +50,7 @@
   "rc_target": "1.0.0-rc1",
   "schema_version": "1",
   "verification": {
-    "coverage_percent": null,
-    "test_count": null
+    "coverage_percent": 80.24,
+    "test_count": 2705
   }
 }
