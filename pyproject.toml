@@ -98,9 +98,26 @@ omit = [
     "src/forge_doctor_data/_graphview.py",
     "src/forge_doctor_data/_graphstudio.py",
     "src/forge_doctor_data/ui/**",
+    "src/forge_doctor_data/_forge_obsidian/**",
+    "src/forge_doctor_data/_forgecontext.py",
+    "src/forge_doctor_data/_forge_portal.py",
+    "src/forge_doctor_data/_portal_telemetry.py",
+    "src/forge_doctor_data/_installkit.py",
 ]
 
 [tool.coverage.report]
+omit = [
+    # Vendored code — measured/tested at canonical sources; report-only mirror
+    # of the [tool.coverage.run] omit list so existing data files stay honest.
+    "src/forge_doctor_data/_graphview.py",
+    "src/forge_doctor_data/_graphstudio.py",
+    "src/forge_doctor_data/ui/**",
+    "src/forge_doctor_data/_forge_obsidian/**",
+    "src/forge_doctor_data/_forgecontext.py",
+    "src/forge_doctor_data/_forge_portal.py",
+    "src/forge_doctor_data/_portal_telemetry.py",
+    "src/forge_doctor_data/_installkit.py",
+]
 fail_under = 80
 exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "@overload"]
 
