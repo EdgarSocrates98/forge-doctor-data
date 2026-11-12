@@ -77,14 +77,11 @@ def test_apply_writes_mcp_and_markers(target: Path) -> None:
     agents = (target / "AGENTS.md").read_text(encoding="utf-8")
     assert "forge:forge-doctor-data:begin" in agents
     assert "forge:ecosystem:begin" in agents
-    reg = json.loads(
-        (target / ".forge" / "context" / "registry.json").read_text())
+    reg = json.loads((target / ".forge" / "context" / "registry.json").read_text())
     assert reg["schema"] == "forge/context-registry/v1"
-    entry = next(e for e in reg["forges"]
-                 if e["forge_id"] == "forge-doctor-data")
+    entry = next(e for e in reg["forges"] if e["forge_id"] == "forge-doctor-data")
     assert entry["kind"] == "diagnostic-provider"
-    assert {c["id"] for c in doc["checks"]} >= {
-        "context-registry", "consumer-docs"}
+    assert {c["id"] for c in doc["checks"]} >= {"context-registry", "consumer-docs"}
 
 
 def test_apply_preserves_existing_mcp_servers(target: Path) -> None:
