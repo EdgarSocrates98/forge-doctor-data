@@ -1,7 +1,7 @@
 {
   "schema": "forge/SpecialistAgenticManifest/v1",
   "provider": "forge-doctor-data",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "cli": "forge-doctor-data",
   "cli_entry": "forge_doctor_data.cli:app",
   "workflows": [
