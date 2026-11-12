@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 # Bootstrap order (deterministic, no circular dependency):
 #   setup-python  →  install Poetry  →  manual .venv cache  →  poetry install
