@@ -34,7 +34,9 @@
     "data-quality-reviewer",
     "data-platform-reviewer"
   ],
-  "agent_roster_paths": ["src/forge_doctor_data/installation/assets/agents"],
+  "agent_roster_paths": [
+    "src/forge_doctor_data/installation/assets/agents"
+  ],
   "coordinators": [],
   "mcp_command": [
     "{cli}",
@@ -48,5 +50,31 @@
   ],
   "requires_network": false,
   "requires_credentials": false,
-  "read_only_default": true
+  "read_only_default": true,
+  "resources": [
+    {
+      "id": "data-diagnostic-investigator",
+      "kind": "agent",
+      "location": "src/forge_doctor_data/installation/assets/agents/data-diagnostic-investigator.md",
+      "resource_class": "agentic"
+    },
+    {
+      "id": "data-platform-reviewer",
+      "kind": "agent",
+      "location": "src/forge_doctor_data/installation/assets/agents/data-platform-reviewer.md",
+      "resource_class": "agentic"
+    },
+    {
+      "id": "data-quality-reviewer",
+      "kind": "agent",
+      "location": "src/forge_doctor_data/installation/assets/agents/data-quality-reviewer.md",
+      "resource_class": "agentic"
+    },
+    {
+      "id": "examples/plugin",
+      "kind": "example",
+      "location": "examples/plugin",
+      "resource_class": "read-only"
+    }
+  ]
 }
