@@ -6,7 +6,7 @@ Package version: `1.1.2`
 
 ## Surface
 
-- CLI commands: 233
+- CLI commands: 240
 - Built-in checks: 342 across 42 categories
 - Contracts: 10
 - MCP tools: 14
@@ -176,6 +176,13 @@ Package version: `1.1.2`
 - `neptune inspect`
 - `neptune queries`
 - `neptune schema`
+- `obsidian export`
+- `obsidian export-note`
+- `obsidian history`
+- `obsidian preview`
+- `obsidian scan`
+- `obsidian status`
+- `obsidian sync-plan`
 - `ontology access-patterns`
 - `ontology platform`
 - `ontology validate`
