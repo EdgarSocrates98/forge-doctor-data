@@ -56,19 +56,830 @@
       "id": "data-diagnostic-investigator",
       "kind": "agent",
       "location": "src/forge_doctor_data/installation/assets/agents/data-diagnostic-investigator.md",
-      "resource_class": "agentic"
+      "resource_class": "agentic",
+      "packaged_location": "installation/assets/agents/data-diagnostic-investigator.md"
     },
     {
       "id": "data-platform-reviewer",
       "kind": "agent",
       "location": "src/forge_doctor_data/installation/assets/agents/data-platform-reviewer.md",
-      "resource_class": "agentic"
+      "resource_class": "agentic",
+      "packaged_location": "installation/assets/agents/data-platform-reviewer.md"
     },
     {
       "id": "data-quality-reviewer",
       "kind": "agent",
       "location": "src/forge_doctor_data/installation/assets/agents/data-quality-reviewer.md",
-      "resource_class": "agentic"
+      "resource_class": "agentic",
+      "packaged_location": "installation/assets/agents/data-quality-reviewer.md"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/airflow/objects.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/airflow/objects.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/airflow/objects.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/athena/engines.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/athena/engines.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/athena/engines.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/adls.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/adls.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/adls.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/athena.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/athena.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/athena.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/azure_fabric.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/azure_fabric.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/azure_fabric.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/bigquery.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/bigquery.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/bigquery.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/cloud.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/cloud.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/cloud.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/databricks.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/databricks.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/databricks.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/dataflow.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/dataflow.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/dataflow.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/dataplex.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/dataplex.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/dataplex.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/dataproc.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/dataproc.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/dataproc.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/delta.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/delta.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/delta.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/dynamodb.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/dynamodb.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/dynamodb.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/emr.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/emr.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/emr.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/eventhubs.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/eventhubs.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/eventhubs.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/flink.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/flink.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/flink.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/glue.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/glue.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/glue.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/graph.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/graph.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/graph.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/iceberg.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/iceberg.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/iceberg.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/kafka.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/kafka.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/kafka.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/kinesis.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/kinesis.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/kinesis.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/lakeformation.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/lakeformation.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/lakeformation.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/lambda.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/lambda.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/lambda.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/neptune.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/neptune.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/neptune.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/pubsub.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/pubsub.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/pubsub.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/purview.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/purview.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/purview.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/redshift.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/redshift.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/redshift.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/search.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/search.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/search.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/snowflake.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/snowflake.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/snowflake.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/synapse.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/synapse.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/synapse.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/trino.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/trino.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/trino.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capabilities/warehouse.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capabilities/warehouse.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capabilities/warehouse.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capacity/bigquery.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capacity/bigquery.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capacity/bigquery.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capacity/redshift.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capacity/redshift.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capacity/redshift.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capacity/snowflake.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capacity/snowflake.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capacity/snowflake.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/capacity/trino.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/capacity/trino.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/capacity/trino.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/controlm/objects.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/controlm/objects.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/controlm/objects.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/cost_drivers/drivers.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/cost_drivers/drivers.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/cost_drivers/drivers.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/cost_drivers/thresholds.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/cost_drivers/thresholds.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/cost_drivers/thresholds.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/databricks/runtime.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/databricks/runtime.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/databricks/runtime.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/delta/features.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/delta/features.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/delta/features.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/dynamodb/global-tables.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/dynamodb/global-tables.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/dynamodb/global-tables.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/dynamodb/indexes.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/dynamodb/indexes.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/dynamodb/indexes.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/dynamodb/limits.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/dynamodb/limits.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/dynamodb/limits.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/dynamodb/modeling.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/dynamodb/modeling.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/dynamodb/modeling.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/dynamodb/streams.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/dynamodb/streams.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/dynamodb/streams.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/dynamodb/transactions.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/dynamodb/transactions.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/dynamodb/transactions.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/emr/releases.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/emr/releases.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/emr/releases.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/errors/airflow.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/errors/airflow.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/errors/airflow.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/errors/controlm.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/errors/controlm.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/errors/controlm.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/errors/databricks.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/errors/databricks.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/errors/databricks.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/errors/glue.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/errors/glue.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/errors/glue.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/errors/iceberg.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/errors/iceberg.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/errors/iceberg.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/errors/python.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/errors/python.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/errors/python.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/errors/spark.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/errors/spark.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/errors/spark.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/flink/config.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/flink/config.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/flink/config.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/glue/compatibility.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/glue/compatibility.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/glue/compatibility.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/glue/versions.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/glue/versions.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/glue/versions.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/graph/algorithms.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/graph/algorithms.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/graph/algorithms.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/graph/modeling.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/graph/modeling.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/graph/modeling.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/graph/property-graph.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/graph/property-graph.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/graph/property-graph.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/graph/rdf.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/graph/rdf.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/graph/rdf.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/iceberg/compatibility.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/iceberg/compatibility.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/iceberg/compatibility.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/iceberg/spec.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/iceberg/spec.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/iceberg/spec.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/iceberg/versions.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/iceberg/versions.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/iceberg/versions.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/kafka/config.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/kafka/config.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/kafka/config.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/kinesis/config.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/kinesis/config.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/kinesis/config.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/lakeformation/cross-account.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/lakeformation/cross-account.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/lakeformation/cross-account.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/lakeformation/errors.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/lakeformation/errors.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/lakeformation/errors.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/lakeformation/hybrid.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/lakeformation/hybrid.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/lakeformation/hybrid.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/lakeformation/permissions.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/lakeformation/permissions.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/lakeformation/permissions.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/lambda/runtimes.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/lambda/runtimes.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/lambda/runtimes.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/neptune/analytics.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/neptune/analytics.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/neptune/analytics.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/neptune/bulk-loader.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/neptune/bulk-loader.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/neptune/bulk-loader.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/neptune/compatibility.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/neptune/compatibility.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/neptune/compatibility.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/neptune/engines.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/neptune/engines.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/neptune/engines.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/neptune/explain.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/neptune/explain.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/neptune/explain.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/neptune/features.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/neptune/features.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/neptune/features.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/neptune/global-database.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/neptune/global-database.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/neptune/global-database.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/neptune/ingestion.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/neptune/ingestion.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/neptune/ingestion.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/neptune/products.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/neptune/products.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/neptune/products.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/neptune/query-languages.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/neptune/query-languages.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/neptune/query-languages.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/parquet/format.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/parquet/format.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/parquet/format.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/performance/engines.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/performance/engines.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/performance/engines.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/performance/regression.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/performance/regression.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/performance/regression.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/performance/thresholds.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/performance/thresholds.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/performance/thresholds.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/python/compatibility.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/python/compatibility.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/python/compatibility.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/reliability/engines.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/reliability/engines.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/reliability/engines.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/remediation/chains.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/remediation/chains.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/remediation/chains.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/remediation/iceberg.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/remediation/iceberg.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/remediation/iceberg.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/remediation/parquet.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/remediation/parquet.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/remediation/parquet.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/remediation/platform.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/remediation/platform.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/remediation/platform.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/remediation/spark.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/remediation/spark.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/remediation/spark.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/remediation/streaming.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/remediation/streaming.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/remediation/streaming.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/spark/versions.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/spark/versions.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/spark/versions.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/stepfunctions/integrations.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/stepfunctions/integrations.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/stepfunctions/integrations.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/stepfunctions/query-languages.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/stepfunctions/query-languages.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/stepfunctions/query-languages.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/streaming/delivery.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/streaming/delivery.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/streaming/delivery.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/streaming/spark/stateful_ops.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/streaming/spark/stateful_ops.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/streaming/spark/stateful_ops.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/terraform/language.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/terraform/language.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/terraform/language.json"
+    },
+    {
+      "id": "src/forge_doctor_data/knowledge/terraform/providers.json",
+      "kind": "knowledge",
+      "location": "src/forge_doctor_data/knowledge/terraform/providers.json",
+      "format": "json",
+      "resource_class": "read-only",
+      "packaged_location": "knowledge/terraform/providers.json"
     },
     {
       "id": "examples/plugin",
