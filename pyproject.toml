@@ -128,6 +128,9 @@ ignore = ["RUF001"]  # severity icons (ℹ ⚠) are deliberate
 "src/forge_doctor_data/_graphstudio.py" = ["ALL"]
 # Vendored Forge UI kit (canonical: the-forge/src/theforge/ui)
 "src/forge_doctor_data/ui/**/*.py" = ["ALL"]
+# Vendored canonical engines (byte-parity — lint owned upstream)
+"src/forge_doctor_data/_forgecontext.py" = ["ALL"]
+"src/forge_doctor_data/_forge_obsidian/**/*.py" = ["ALL"]
 "tests/**" = ["S101"]
 "src/forge_doctor_data/cli/**" = ["B006"]  # Typer list-valued options use [] defaults
 "src/forge_doctor_data/_installkit.py" = ["ALL"]  # vendored shared source — canonical copy is the lint target

@@ -207,10 +207,12 @@ def _field_types(mappings: Any) -> tuple[list[str], list[str], str]:
                     types.append(str(t))
                     if t in ("object", "nested") and spec.get("enabled") is not False:
                         objects.append(child_path)
-                elif "properties" in spec or "fields" in spec:
+                elif (
+                    ("properties" in spec or "fields" in spec)
+                    and spec.get("enabled") is not False
+                ):
                     # untyped object (implicit object) — same risk class
-                    if spec.get("enabled") is not False:
-                        objects.append(child_path)
+                    objects.append(child_path)
                 walk(spec, child_path)
 
     walk(mappings, "")
