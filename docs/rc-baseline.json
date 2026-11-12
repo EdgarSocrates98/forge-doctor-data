@@ -28,9 +28,9 @@
     "scan_validated_envelope": 250
   },
   "git": {
-    "branch": "release/cycle-2.7-patch-version",
+    "branch": "feat/forge-unified-workspace-closure",
     "dirty": false,
-    "head": "94bafc5d75891ef7df322f1a3bc4d676c837928c"
+    "head": "a7a60a60468d410c6fd3ecd6ae56acc6bc3a1574"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -44,13 +44,13 @@
     "version": "1.1.2"
   },
   "public_api": {
-    "public_api_sha256": "4ecf17d876e7d974e09f30caf38b0804d1617a4a6636d4072f9e0682dec69fb2",
+    "public_api_sha256": "6994e991b1712b91084510a2e8a24b5c03213556ad9c16392185e83b0fa7395f",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
   "schema_version": "1",
   "verification": {
     "coverage_percent": 80.89,
-    "test_count": 2701
+    "test_count": 2705
   }
 }
