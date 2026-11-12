@@ -193,6 +193,18 @@ ignore_errors = true
 module = ["forge_doctor_data._graphview", "forge_doctor_data.ui.*"]
 ignore_errors = true
 
+# Vendored Obsidian engine — byte-parity with the canonical copy;
+# typecheck owned upstream (msvcrt attrs, Any returns).
+[[tool.mypy.overrides]]
+module = ["forge_doctor_data._forge_obsidian", "forge_doctor_data._forge_obsidian.*"]
+ignore_errors = true
+
+# Vendored forge-context engine — byte-parity canonical copy; typecheck
+# owned upstream (platform-conditional unreachable branch).
+[[tool.mypy.overrides]]
+module = ["forge_doctor_data._forgecontext"]
+ignore_errors = true
+
 [build-system]
 requires = ["poetry-core>=2.0"]
 build-backend = "poetry.core.masonry.api"
