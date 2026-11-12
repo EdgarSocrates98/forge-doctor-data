@@ -11,10 +11,10 @@ forge-doctor-data install --profile full     # skills + agents + todos os hosts
 forge-doctor-data install --gateway-profile economy  # menor custo de execução
 ```
 
-O que acontece: assets gerenciados vão para `.agents/`, `.claude/`,
-`.devin/`, `.codex/` conforme os hosts detectados; `.mcp.json` ganha uma
-entrada gerenciada; `AGENTS.md` recebe um bloco delimitado
-`<!-- forge-doctor-data:managed -->` — conteúdo seu nunca é sobrescrito.
+O que acontece: `.mcp.json` ganha uma entrada gerenciada; `.forge/context/`
+recebe o manifesto `forge/context/v1` + entrada no registry compartilhado;
+`AGENTS.md`/`CLAUDE.md` recebem blocos `<!-- forge:forge-doctor-data -->`
+e `AGENT_PROTOCOL.md` é gerado — conteúdo seu nunca é sobrescrito.
 
 Perfis: `minimal` (essencial) · `recommended` (workflow completo, padrão)
 · `full` (teto de disclosure — não é autorização extra).

@@ -25,6 +25,10 @@ app = typer.Typer(
     context_settings={"help_option_names": ["-h", "--help"]},
 )
 
+from forge_doctor_data._forge_obsidian.cli import obsidian_app as _obsidian_app  # noqa: E402
+
+app.add_typer(_obsidian_app("forge-doctor-data"), name="obsidian")
+
 
 def _version_callback(value: bool) -> None:
     if value:
