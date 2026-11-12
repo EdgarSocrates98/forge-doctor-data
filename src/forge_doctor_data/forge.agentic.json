@@ -42,6 +42,7 @@
     "{cli}",
     "mcp"
   ],
+  "mcp_verify_tool": "get_execution_baseline",
   "host_adapters": [
     "claude",
     "devin",
