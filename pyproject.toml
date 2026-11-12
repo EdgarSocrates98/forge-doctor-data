@@ -22,6 +22,8 @@ dependencies = [
     "typer>=0.15",
     "rich>=13",
     "packaging>=24",
+    # vendored _forge_obsidian imports yaml unconditionally at module load
+    "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
@@ -96,9 +98,26 @@ omit = [
     "src/forge_doctor_data/_graphview.py",
     "src/forge_doctor_data/_graphstudio.py",
     "src/forge_doctor_data/ui/**",
+    "src/forge_doctor_data/_forge_obsidian/**",
+    "src/forge_doctor_data/_forgecontext.py",
+    "src/forge_doctor_data/_forge_portal.py",
+    "src/forge_doctor_data/_portal_telemetry.py",
+    "src/forge_doctor_data/_installkit.py",
 ]
 
 [tool.coverage.report]
+omit = [
+    # Vendored code — measured/tested at canonical sources; report-only mirror
+    # of the [tool.coverage.run] omit list so existing data files stay honest.
+    "src/forge_doctor_data/_graphview.py",
+    "src/forge_doctor_data/_graphstudio.py",
+    "src/forge_doctor_data/ui/**",
+    "src/forge_doctor_data/_forge_obsidian/**",
+    "src/forge_doctor_data/_forgecontext.py",
+    "src/forge_doctor_data/_forge_portal.py",
+    "src/forge_doctor_data/_portal_telemetry.py",
+    "src/forge_doctor_data/_installkit.py",
+]
 fail_under = 80
 exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "@overload"]
 
@@ -126,10 +145,14 @@ ignore = ["RUF001"]  # severity icons (ℹ ⚠) are deliberate
 "src/forge_doctor_data/_graphstudio.py" = ["ALL"]
 # Vendored Forge UI kit (canonical: the-forge/src/theforge/ui)
 "src/forge_doctor_data/ui/**/*.py" = ["ALL"]
+# Vendored canonical engines (byte-parity — lint owned upstream)
+"src/forge_doctor_data/_forgecontext.py" = ["ALL"]
+"src/forge_doctor_data/_forge_obsidian/**/*.py" = ["ALL"]
 "tests/**" = ["S101"]
 "src/forge_doctor_data/cli/**" = ["B006"]  # Typer list-valued options use [] defaults
 "src/forge_doctor_data/_installkit.py" = ["ALL"]  # vendored shared source — canonical copy is the lint target
 "src/forge_doctor_data/_forge_portal.py" = ["ALL"]  # vendored portal server — canonical copy is the lint target
+"src/forge_doctor_data/_forge_obsidian/*" = ["ALL"]  # vendored obsidian engine — canonical copy is the lint target
 "src/forge_doctor_data/_portal_telemetry.py" = ["ALL"]  # vendored portal telemetry — canonical copy is the lint target
 "scripts/forge_installkit.py" = ["ALL"]
 "scripts/forge_bootstrap.py" = ["ALL"]
@@ -140,6 +163,7 @@ ignore = ["RUF001"]  # severity icons (ℹ ⚠) are deliberate
 # vendored exemptions above).
 exclude = [
     "src/forge_doctor_data/_forge_portal.py",
+    "src/forge_doctor_data/_forge_obsidian",
     "src/forge_doctor_data/_portal_telemetry.py",
     "src/forge_doctor_data/_graphview.py",
     "src/forge_doctor_data/_graphstudio.py",
@@ -184,6 +208,18 @@ ignore_errors = true
 # the-forge are the typecheck target; keep byte-parity copies untouched.
 [[tool.mypy.overrides]]
 module = ["forge_doctor_data._graphview", "forge_doctor_data.ui.*"]
+ignore_errors = true
+
+# Vendored Obsidian engine — byte-parity with the canonical copy;
+# typecheck owned upstream (msvcrt attrs, Any returns).
+[[tool.mypy.overrides]]
+module = ["forge_doctor_data._forge_obsidian", "forge_doctor_data._forge_obsidian.*"]
+ignore_errors = true
+
+# Vendored forge-context engine — byte-parity canonical copy; typecheck
+# owned upstream (platform-conditional unreachable branch).
+[[tool.mypy.overrides]]
+module = ["forge_doctor_data._forgecontext"]
 ignore_errors = true
 
 [build-system]

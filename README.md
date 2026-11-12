@@ -408,6 +408,13 @@ makes unapproved suppressions emit `POLICY011` findings — and packs can
 projects; `workspace scan` runs each and aggregates with a project prefix;
 `workspace diff base...head` compares findings per subproject.
 
+## Obsidian
+
+`forge-doctor-data obsidian status|scan|preview|sync-plan|export|export-note|history`
+runs the shared authorized-vault engine: writes stay scoped to the configured
+vault, `preview`/`history` never expose note bodies, and `export` captures
+findings as vault notes with redacted metadata.
+
 ## Agent bundle
 
 `--format agent` emits a minimal `{id, sev, loc, fp}` per finding —

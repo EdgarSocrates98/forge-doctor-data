@@ -30,7 +30,7 @@
   "git": {
     "branch": "release/cycle-2.7-patch-version",
     "dirty": false,
-    "head": "86dcf93c7c797bf8f65d443b4f7f68b74a7c8829"
+    "head": "94bafc5d75891ef7df322f1a3bc4d676c837928c"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -44,13 +44,13 @@
     "version": "1.1.2"
   },
   "public_api": {
-    "public_api_sha256": "ede7838de5e8ece9f728abf8842bad8659eeea459e4f9bd4c2dccc84c9d23a50",
+    "public_api_sha256": "4ecf17d876e7d974e09f30caf38b0804d1617a4a6636d4072f9e0682dec69fb2",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
   "schema_version": "1",
   "verification": {
-    "coverage_percent": 80.24,
-    "test_count": 2705
+    "coverage_percent": 80.89,
+    "test_count": 2701
   }
 }

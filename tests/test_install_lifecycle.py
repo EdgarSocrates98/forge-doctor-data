@@ -72,7 +72,16 @@ def test_apply_writes_mcp_and_markers(target: Path) -> None:
     entry = mcp["mcpServers"]["forge-doctor-data"]
     assert entry["command"] == "forge-doctor-data"
     assert entry["args"] == ["mcp"]
-    assert "forge-doctor-data:managed:begin" in (target / "AGENTS.md").read_text(encoding="utf-8")
+    # Consumer docs moved to the forge_context layer: `forge:*` blocks +
+    # the shared workspace registry, not `forge-doctor-data:managed`.
+    agents = (target / "AGENTS.md").read_text(encoding="utf-8")
+    assert "forge:forge-doctor-data:begin" in agents
+    assert "forge:ecosystem:begin" in agents
+    reg = json.loads((target / ".forge" / "context" / "registry.json").read_text())
+    assert reg["schema"] == "forge/context-registry/v1"
+    entry = next(e for e in reg["forges"] if e["forge_id"] == "forge-doctor-data")
+    assert entry["kind"] == "diagnostic-provider"
+    assert {c["id"] for c in doc["checks"]} >= {"context-registry", "consumer-docs"}
 
 
 def test_apply_preserves_existing_mcp_servers(target: Path) -> None:
@@ -102,7 +111,10 @@ def test_status_healthy_then_missing(target: Path) -> None:
     assert service.status(scope="project", root=target)["status"] == "healthy"
     (target / ".mcp.json").unlink()
     st = service.status(scope="project", root=target)
-    assert st["status"] == "degraded"
+    # `.mcp.json` is the only file the installkit ledger owns — the
+    # consumer docs live in the forge_context layer — so losing it is
+    # "broken" (every owned file missing), not "degraded".
+    assert st["status"] == "broken"
     assert ".mcp.json" in [d["path"] for d in st["drift"]["missing"]]
 
 
@@ -140,10 +152,11 @@ def test_repair_heals_damaged_marker_block(target: Path) -> None:
     ag = target / "AGENTS.md"
     ag.write_text("# user\n\n(corrupted)\n", encoding="utf-8")
     out = service.repair(scope="project", root=target)
-    assert "AGENTS.md" in out["repaired"]
+    # Doc blocks are re-asserted by the forge_context layer (`docs:` prefix).
+    assert "docs:AGENTS.md" in out["repaired"]
     txt = ag.read_text(encoding="utf-8")
     assert "# user" in txt
-    assert "forge-doctor-data:managed:begin" in txt
+    assert "forge:forge-doctor-data:begin" in txt
     assert service.status(scope="project", root=target)["status"] == "healthy"
 
 
@@ -181,7 +194,11 @@ def test_user_scope_installs_home(tmp_path: Path) -> None:
     doc = service.install(scope="user", yes=True)
     assert doc["status"] == "completed"
     assert (home / ".mcp.json").exists()
-    assert "forge-doctor-data:managed:begin" in (home / "AGENTS.md").read_text(encoding="utf-8")
+    # Account scope has no workspace — consumer docs and the context
+    # registry are never written there (same rule as sibling forges).
+    assert not (home / "AGENTS.md").exists()
+    assert not (home / ".forge" / "context").exists()
+    assert (home / ".forge" / "installations" / "forge-doctor-data.json").exists()
 
 
 # --- update / mcp-verify -------------------------------------------------------

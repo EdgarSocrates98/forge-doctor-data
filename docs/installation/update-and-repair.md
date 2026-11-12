@@ -16,7 +16,8 @@ forge-doctor-data doctor   # mostra o drift
 forge-doctor-data install repair   # reassegura regiões gerenciadas
 ```
 
-Repair restaura arquivos gerenciados removidos e cura blocos
-`forge-doctor-data:managed` dentro de arquivos seus — conteúdo fora do bloco nunca
+Repair restaura arquivos gerenciados removidos, reassegura o registry
+`.forge/context/` (journal, locks velhos, ROUTING.md) e cura blocos
+`forge:forge-doctor-data` dentro de arquivos seus — conteúdo fora do bloco nunca
 é tocado. Antes de sobrescrever, um snapshot vai para
 `<state_dir>/backups/`.
