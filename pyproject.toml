@@ -22,6 +22,8 @@ dependencies = [
     "typer>=0.15",
     "rich>=13",
     "packaging>=24",
+    # vendored _forge_obsidian imports yaml unconditionally at module load
+    "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
