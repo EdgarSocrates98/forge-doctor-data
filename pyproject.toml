@@ -168,7 +168,9 @@ exclude = [
     "src/forge_doctor_data/_graphview.py",
     "src/forge_doctor_data/_graphstudio.py",
     "src/forge_doctor_data/_installkit.py",
+    "src/forge_doctor_data/_forgecontext.py",
     "scripts/forge_installkit.py",
+    "scripts/forge_bootstrap.py",
     "src/forge_doctor_data/ui/**",
 ]
 
