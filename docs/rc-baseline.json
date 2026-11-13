@@ -28,9 +28,9 @@
     "scan_validated_envelope": 250
   },
   "git": {
-    "branch": "feat/forge-unified-workspace-closure",
-    "dirty": false,
-    "head": "a7a60a60468d410c6fd3ecd6ae56acc6bc3a1574"
+    "branch": "release/v1.1.4",
+    "dirty": true,
+    "head": "c8ac757777a737e948b9512e80641d0df650c5b8"
   },
   "kind": "forge-doctor-data/rc-baseline",
   "labs": {
@@ -41,10 +41,10 @@
   },
   "package": {
     "name": "forge-doctor-data",
-    "version": "1.1.2"
+    "version": "1.1.4"
   },
   "public_api": {
-    "public_api_sha256": "6994e991b1712b91084510a2e8a24b5c03213556ad9c16392185e83b0fa7395f",
+    "public_api_sha256": "53a797cdeff492f9c277e469250ea7fec1eff813b0d3dd7b36ec8534563abf93",
     "surface_file": "docs/api-surface.json"
   },
   "rc_target": "1.0.0-rc1",
