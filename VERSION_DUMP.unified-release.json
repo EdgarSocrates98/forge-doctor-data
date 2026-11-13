@@ -1,0 +1,9 @@
+{
+  "cycle": "unified-release",
+  "repository": "forge-doctor-data",
+  "version": "1.1.4",
+  "tag": "v1.1.4",
+  "source_commit": "0b2c6771e1f1adc422e2b9ea9ff09c1201e60335",
+  "version_source": "pyproject.toml|package.json|__init__",
+  "verified_at": "2026-11-12"
+}
