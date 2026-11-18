@@ -8,10 +8,12 @@ A instalação registra uma entrada gerenciada em `.mcp.json` (chave
 Verificar de verdade (handshake real + tools/list + invocação segura):
 
 ```bash
-forge-doctor-data doctor
+forge-doctor-data install doctor       # saúde da instalação, inclui mcp-handshake
+forge-doctor-data install mcp-verify   # só o handshake MCP (PASS/BLOCKED/FAIL)
 ```
 
-O doctor executa `initialize` → `tools/list` → `tools/call` de leitura
-quando o forge declara uma ferramenta de verificação, e reporta PASS /
-BLOCKED / FAIL / UNVERIFIED com evidência de processo (exit, stderr).
-Nunca infere sucesso de presença de arquivo.
+O `install doctor` executa `initialize` → `tools/list` → `tools/call` de
+leitura da ferramenta de verificação declarada (`get_execution_baseline`)
+e reporta PASS / BLOCKED / FAIL / UNVERIFIED com evidência de processo
+(exit, stderr). Nunca infere sucesso de presença de arquivo. O servidor é
+stdlib-only — nenhum extra opcional precisa ser instalado.

@@ -34,9 +34,11 @@ _Task-oriented guides and workflows._
 ### ./
 
 - [Changelog](../CHANGELOG.md)
+- [Código de Conduta — Contributor Covenant 2.1](../CODE_OF_CONDUCT.md)
 - [Forge Doctor Data](../README.md)
 - [Security policy](../SECURITY.md)
 - [SPEC — forge-doctor-data v0.7](../SPEC.md)
+- [Suporte](../SUPPORT.md)
 
 ### experience/
 
@@ -44,6 +46,7 @@ _Task-oriented guides and workflows._
 
 ### installation/
 
+- [Account-scoped installation](installation/account-installation.md)
 - [forge-doctor-data + Claude Code](installation/claude-code.md)
 - [forge-doctor-data + Codex CLI](installation/codex-cli.md)
 - [forge-doctor-data + GitHub Copilot CLI](installation/copilot-cli.md)
@@ -76,6 +79,10 @@ _Command, contract, schema and tool references._
 
 - [Forge Ecosystem Contracts](contracts.md)
 - [forge-contracts — the shared wire vocabulary](forge-contracts.md)
+
+### engineering-excellence/
+
+- [Engineering Excellence — Doctor Data Diagnostics](engineering-excellence/diagnostic-contract.md)
 
 ### factory/
 
@@ -128,6 +135,12 @@ _Troubleshooting, doctor/repair, observability._
 
 - [Receita — instalar o Doctor num projeto](learn/recipes/instalar-doctor.md)
 
+### src/
+
+- [Data Diagnostic Investigator](../src/forge_doctor_data/installation/assets/agents/data-diagnostic-investigator.md)
+- [Data Platform Reviewer](../src/forge_doctor_data/installation/assets/agents/data-platform-reviewer.md)
+- [Data Quality Reviewer](../src/forge_doctor_data/installation/assets/agents/data-quality-reviewer.md)
+
 ### superpowers/
 
 - [Forge Doctor Data v0.1 Implementation Plan](superpowers/plans/2026-09-28-forge-doctor-v0.1.md)
@@ -141,6 +154,12 @@ _Agent instructions, skills and internal process._
 ## Archive
 
 _Historical, deprecated, generated and evidence docs (preserved, not entry points)._
+
+### .github/
+
+- [bug_report](../.github/ISSUE_TEMPLATE/bug_report.md) `UNKNOWN`
+- [feature_request](../.github/ISSUE_TEMPLATE/feature_request.md) `UNKNOWN`
+- [PULL_REQUEST_TEMPLATE](../.github/PULL_REQUEST_TEMPLATE.md) `UNKNOWN`
 
 ### docs/
 
@@ -257,6 +276,7 @@ _Historical, deprecated, generated and evidence docs (preserved, not entry point
 - [Consolidation Wave — v1 Readiness Run Record (specs 265–273 + sections 5–14)](../factory/runs/2026-10-04-consolidation-v1-readiness.md) `UNKNOWN`
 - [Program V1 — Step-10 Wave Run Record (specs 248–264)](../factory/runs/2026-10-04-program-v1-wave.md) `UNKNOWN`
 - [RC Hardening Program — run record](../factory/runs/2026-10-05-rc-hardening-program.md) `UNKNOWN`
+- [Run — cyc9-08 Forge Lab emitter (forge-doctor-data)](../factory/runs/2026-10-15.cyc9-08.md) `UNKNOWN`
 - [Program Q — Phase 1: Execution History & Baselines (prompt_evo_step9 §PHASE 1, §8–9, §40–43, §56–59, §81)](../factory/specs/active/241-execution-history-baselines.md) `UNKNOWN`
 - [Program Q — Phase 2: Performance Regression Intelligence (prompt_evo_step9 §PHASE 2, §78–80, §91)](../factory/specs/active/242-performance-regression-intelligence.md) `UNKNOWN`
 - [Program Q — Phase 3: Change → Runtime Correlation (prompt_evo_step9 §PHASE 3, §11–12, §61, §67, §92)](../factory/specs/active/243-change-runtime-correlation.md) `UNKNOWN`
@@ -273,6 +293,7 @@ _Historical, deprecated, generated and evidence docs (preserved, not entry point
 - [Program V1 - Phase 11: Execution Store (prompt_evo_step10 §14, P10)](../factory/specs/active/258-evidence-store.md) `TEST_EVIDENCE`
 - [Program V1 - Phase 12: Collector SDK (prompt_evo_step10 §13, P9)](../factory/specs/active/259-collector-sdk.md) `UNKNOWN`
 - [Program V1 - Phase 13: AWS Evidence Collector (prompt_evo_step10 §13.3, P9)](../factory/specs/active/260-aws-evidence-collector.md) `TEST_EVIDENCE`
+- [Forge Portal — `forge-doctor-data portal` (prompt_evo_portal §FASE 6)](../factory/specs/active/260-forge-portal.md) `UNKNOWN`
 - [Program V1 - Phase 15: Ecosystem Conformance (prompt_evo_step10 §32, P16)](../factory/specs/active/262-ecosystem-conformance.md) `UNKNOWN`
 - [Program V1 - Phase 16: v1 Release Candidate (prompt_evo_step10 §8,§32, P4)](../factory/specs/active/263-v1-release-candidate.md) `RELEASE_REPORT`
 - [Program V1 - Phase 17: v1.0 Release (prompt_evo_step10 §8.2,§32, P4)](../factory/specs/active/264-v1-release.md) `RELEASE_REPORT`
@@ -354,6 +375,7 @@ _Historical, deprecated, generated and evidence docs (preserved, not entry point
 - [Roadmap-2 Phase 9 - Documentation + Onboarding Completeness](../factory/specs/archive/200-docs-onboarding.md) `HISTORICAL`
 - [Roadmap-2 Phase 10 - v1.0 Release Hardening](../factory/specs/archive/201-v1-release-hardening.md) `HISTORICAL`
 - [Roadmap-3 Phase 1 - Plugin SDK & Ecosystem](../factory/specs/archive/202-plugin-sdk-ecosystem.md) `HISTORICAL`
+- [Cenários Forge Lab — Forge Doctor Data](../factory/specs/archive/2026/cyc9-08-scenarios-doctor-data.md) `HISTORICAL`
 - [Roadmap-3 Phase 2 - Enterprise Governance](../factory/specs/archive/203-enterprise-governance.md) `HISTORICAL`
 - [Roadmap-3 Phase 3 - Fleet / Estate Intelligence](../factory/specs/archive/204-fleet-intelligence.md) `HISTORICAL`
 - [Roadmap-3 Phase 4 - Historical Intelligence](../factory/specs/archive/205-historical-intelligence.md) `HISTORICAL`
@@ -470,6 +492,10 @@ _Historical, deprecated, generated and evidence docs (preserved, not entry point
 
 - [RC Hardening Program — Final Report (§32)](releases/1.0.0-rc1-hardening-report.md) `RELEASE_REPORT`
 - [forge-doctor-data 1.0.0-rc1](releases/1.0.0-rc1.md) `RELEASE_REPORT`
+
+### releasing/
+
+- [PyPI patch plan — forge-doctor-data](releasing/pypi-patch-plan.md) `UNKNOWN`
 
 ### reports/
 

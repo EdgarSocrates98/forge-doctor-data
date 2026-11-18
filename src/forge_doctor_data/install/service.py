@@ -17,7 +17,6 @@ scan path (the offline guarantee of the engine is unchanged).
 
 from __future__ import annotations
 
-import importlib.util
 import subprocess  # install lifecycle only — never on the scan path
 import sys
 from pathlib import Path
@@ -155,22 +154,11 @@ def status(*, scope: str = "project", root: Path | None = None) -> dict[str, Any
 
 
 def doctor(*, scope: str = "project", root: Path | None = None) -> dict[str, Any]:
+    # The MCP server is stdlib-only (the ``mcp`` SDK is a dev-only
+    # conformance dep) — there is no optional extra to gate on, so the
+    # real handshake result from ``kit.doctor`` is reported as-is.
     ctx = _ctx(scope, root, (), "recommended", dry_run=True)
-    doc = kit.doctor(ctx)
-    if importlib.util.find_spec("mcp") is None:
-        doc["checks"] = [
-            c
-            if c["id"] != "mcp-handshake"
-            else {
-                **c,
-                "status": "UNVERIFIED",
-                "detail": "extra 'mcp' not installed — handshake not tested",
-            }
-            for c in doc["checks"]
-        ]
-        if not any(c["status"] == "FAIL" for c in doc["checks"]):
-            doc["status"] = "healthy" if doc["status"] != "broken" else doc["status"]
-    return doc
+    return kit.doctor(ctx)
 
 
 def repair(
@@ -313,7 +301,22 @@ def update(
 
 
 def mcp_verify() -> dict[str, Any]:
-    return kit.mcp_verify(_spec())
+    """Health doc for the MCP handshake check — same shape the script emits."""
+    check = kit.mcp_verify(_spec())
+    return {
+        "schema": kit.SCHEMA_HEALTH,
+        "forge_id": FORGE_ID,
+        "status": (
+            "healthy"
+            if check["status"] == "PASS"
+            else "degraded"
+            if check["status"] == "FAIL"
+            else "unverified"
+        ),
+        "checks": [check],
+        "checked_at": kit._utc_now(),
+        "repair_hint": None,
+    }
 
 
 # --------------------------------------------------------------------------
@@ -381,6 +384,14 @@ def _register(ctx: kit.InstallContext) -> None:
             "verified": False,
         },
     )
+    mcp_doc = doc.get("mcp")
+    if isinstance(mcp_doc, dict):
+        # The orchestrator discovers the verify tool here — setdefault
+        # preserves a verify_tool already registered by the bootstrap.
+        verify_tool = _spec().mcp_verify_tool
+        if verify_tool:
+            mcp_doc.setdefault("verify_tool", verify_tool)
+    doc.update(_declared_install_fields())
     kit.register_installation(doc)
 
 
@@ -418,6 +429,55 @@ def _mds(base: Path) -> list[str]:
     return sorted(p.stem for p in base.glob("*.md")) if base.is_dir() else []
 
 
+def _bundled_json(name: str) -> dict[str, Any] | None:
+    """Declarative JSON packaged with this forge: first the copy bundled
+    inside the package (``src/forge_doctor_data/<name>`` — shipped in the
+    wheel), then the checkout root (editable/source installs)."""
+    for cand in (_PKG_DIR / name, _REPO_DIR / name):
+        data = kit._load_json(cand, None)
+        if isinstance(data, dict):
+            return data
+    return None
+
+
+def _declared_install_fields() -> dict[str, Any]:
+    """The install-2.1 declarations of this forge's ``forge.json`` —
+    copied verbatim into the manifest registered under
+    ``~/.forge/installations/``, never fabricated (mirrors the
+    ``register`` step of ``forge_bootstrap`` and the sibling helpers):
+
+    - ``installation_kind``: ``content``|``service``|``control-tool`` —
+      the class the consolidated plan orders on.
+    - ``install``: the declared surface (operations/flags/hosts/scopes/
+      profiles/approval) — the orchestrator's argv builder only sends
+      what is declared; absent, the manifest stays on the v1 default.
+    - ``install_command``: alternate install entrypoint (argv template;
+      ``{python}``/``{checkout}`` resolved by the delegator).
+    - ``depends_on``: forge_ids that must install first — declared even
+      when empty (``[]``): the key's presence is an explicit statement,
+      not missing data.
+    """
+    cfg = _bundled_json("forge.json")
+    if not cfg:
+        return {}
+    doc: dict[str, Any] = {}
+    if cfg.get("installation_kind"):
+        kind = str(cfg["installation_kind"])
+        if kind not in kit.INSTALLATION_KINDS:
+            raise kit.InstallError(
+                kit.E_UNSUPPORTED,
+                f"forge.json installation_kind {kind!r} — expected {kit.INSTALLATION_KINDS}",
+            )
+        doc["installation_kind"] = kind
+    if cfg.get("install"):
+        doc["install"] = dict(cfg["install"])
+    if cfg.get("install_command"):
+        doc["install_command"] = list(cfg["install_command"])
+    if "depends_on" in cfg:
+        doc["depends_on"] = [str(d) for d in cfg["depends_on"]]
+    return doc
+
+
 def _drop_stale_doc_entries(ctx: kit.InstallContext) -> None:
     """Drop old ledger entries for the consumer docs: the files are now
     managed by the forge_context layer (`forge:*` blocks), not by whole-
@@ -436,14 +496,6 @@ def _context_manifest(ctx: kit.InstallContext) -> dict[str, Any]:
     """The ``forge/context/v1`` manifest built from real sources:
     ``forge.json`` / ``forge.agentic.json`` (repo root) and the bundled
     agent specs under ``installation/assets/agents``."""
-
-    def _bundled_json(name: str) -> dict[str, Any] | None:
-        for cand in (_PKG_DIR / name, _REPO_DIR / name):
-            data = kit._load_json(cand, None)
-            if isinstance(data, dict):
-                return data
-        return None
-
     forge_json = _bundled_json("forge.json")
     agentic = _bundled_json("forge.agentic.json")
     agents = _mds(_AGENTS_DIR)

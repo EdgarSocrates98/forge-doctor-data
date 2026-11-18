@@ -6,19 +6,25 @@ Instala em qualquer diretório/repositório — sem estrutura prévia exigida.
 cd <qualquer-projeto>
 forge-doctor-data install                    # escopo projeto (padrão)
 forge-doctor-data install --dry-run          # planeja sem escrever
-forge-doctor-data install --profile minimal  # só CLI+MCP+marker
-forge-doctor-data install --profile full     # skills + agents + todos os hosts
+forge-doctor-data install --profile minimal  # perfil registrado no recibo
 forge-doctor-data install --gateway-profile economy  # menor custo de execução
 ```
 
 O que acontece: `.mcp.json` ganha uma entrada gerenciada; `.forge/context/`
 recebe o manifesto `forge/context/v1` + entrada no registry compartilhado;
 `AGENTS.md`/`CLAUDE.md` recebem blocos `<!-- forge:forge-doctor-data -->`
-e `AGENT_PROTOCOL.md` é gerado — conteúdo seu nunca é sobrescrito.
+quando já existem e `AGENT_PROTOCOL.md` é gerado — conteúdo seu nunca é
+sobrescrito.
 
-Perfis: `minimal` (essencial) · `recommended` (workflow completo, padrão)
-· `full` (teto de disclosure — não é autorização extra).
+Perfis: `minimal` · `recommended` (padrão) · `full`. Hoje os três perfis
+são **equivalentes em superfície escrita** — este forge não espelha
+assets de host; o perfil é declarado no recibo e no manifesto
+`forge/context/v1` para o orquestrador ordenar e auditar.
 
 Perfil de execução: `economy` reduz custo e contexto mantendo roteamento
 seguro; `balanced` é padrão; `deep` amplia capacidade para tarefas difíceis.
 A escolha fica no recibo e é preservada quando o The Forge delega instalação.
+
+Automação: saída JSON é automática fora de TTY (pipes/CI) — não há flags
+`--json`/`--no-input` nesta superfície; mutações exigem `--yes` e nunca
+pedem confirmação fora de terminal interativo.

@@ -3,14 +3,14 @@
 | Campo | Valor |
 |---|---|
 | repository | `forge-doctor-data` |
-| branch | `feat/ultimate-completion` |
-| commit | `b1929a4` |
-| docs inventoried | 379 (excl. GENERATED mirrors: 372; vendored upstream: 0) |
+| branch | `feat/install-2-1-workspace` |
+| commit | `6ca0a71` |
+| docs inventoried | 394 (excl. GENERATED mirrors: 386; vendored upstream: 0) |
 
 ## Review levels (honest)
 
 - `INVENTORIED`: 0
-- `AUTOMATICALLY_CHECKED`: 379
+- `AUTOMATICALLY_CHECKED`: 394
 - `TECHNICALLY_VERIFIED`: 0
 - `SEMANTICALLY_REVIEWED`: 0
 - `USER_JOURNEY_VALIDATED`: 0
@@ -19,13 +19,13 @@ Automatic checks ran on every row; semantic review is recorded only where a huma
 
 ## Category counts
 
-- `UNKNOWN`: 168
-- `HISTORICAL`: 136
-- `USER_GUIDE`: 23
+- `UNKNOWN`: 174
+- `HISTORICAL`: 137
+- `USER_GUIDE`: 29
 - `HOW_TO`: 12
+- `GENERATED`: 8
 - `RELEASE_REPORT`: 8
-- `GENERATED`: 7
-- `CONTRACT`: 6
+- `CONTRACT`: 7
 - `TEST_EVIDENCE`: 6
 - `ARCHITECTURE`: 5
 - `GETTING_STARTED`: 4

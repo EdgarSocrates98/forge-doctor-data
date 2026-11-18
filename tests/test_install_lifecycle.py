@@ -133,6 +133,31 @@ def test_doctor_schema_and_checks(target: Path) -> None:
     assert doc["status"] in ("healthy", "degraded")
 
 
+def test_doctor_mcp_handshake_is_not_masked(target: Path) -> None:
+    """The MCP server is stdlib-only — the removed ``find_spec('mcp')``
+    guard used to overwrite the real handshake check with a fake
+    'extra not installed' UNVERIFIED. Whatever the env reports, it must
+    be the kit's own result."""
+    service.install(scope="project", root=target, yes=True)
+    doc = service.doctor(scope="project", root=target)
+    handshake = next(c for c in doc["checks"] if c["id"] == "mcp-handshake")
+    assert handshake["status"] in ("PASS", "FAIL", "BLOCKED", "UNVERIFIED")
+    assert "extra 'mcp' not installed" not in str(handshake.get("detail", ""))
+
+
+def test_register_writes_install21_declared_fields(target: Path) -> None:
+    """``_register`` copies the forge.json install-2.1 declarations into
+    ``~/.forge/installations/`` verbatim (bootstrap register() parity)."""
+    service.install(scope="project", root=target, yes=True)
+    manifest = service._installation_manifest()
+    assert manifest["installation_kind"] == "content"
+    assert manifest["install"]["approval"] == "--yes"
+    assert "--gateway-profile" in manifest["install"]["flags"]
+    assert manifest["depends_on"] == []
+    assert manifest["install_command"] == ["{python}", "-m", "forge_doctor_data", "install"]
+    assert manifest["mcp"]["verify_tool"] == "get_execution_baseline"
+
+
 def test_repair_restores_missing_mcp_keeps_user_keys(target: Path) -> None:
     service.install(scope="project", root=target, yes=True)
     mcp = target / ".mcp.json"
@@ -216,9 +241,19 @@ def test_update_without_manifest_blocked() -> None:
 
 
 def test_mcp_verify_reports_env_independently() -> None:
-    check = service.mcp_verify()
+    doc = service.mcp_verify()
+    # forge/InstallationHealth/v1 envelope — the same shape the script emits.
+    assert doc["schema"] == "forge/InstallationHealth/v1"
+    assert doc["forge_id"] == "forge-doctor-data"
+    assert doc["status"] in ("healthy", "degraded", "unverified")
+    (check,) = doc["checks"]
     assert check["id"] == "mcp-handshake"
     assert check["status"] in ("PASS", "FAIL", "BLOCKED")
+    # status tracks the check honestly: FAIL -> degraded, else healthy.
+    if check["status"] == "FAIL":
+        assert doc["status"] == "degraded"
+    elif check["status"] == "PASS":
+        assert doc["status"] == "healthy"
 
 
 # --- CLI dispatch --------------------------------------------------------------

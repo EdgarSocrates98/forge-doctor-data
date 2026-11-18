@@ -47,6 +47,7 @@ EXCLUDE_DIRS = {
     ".forge-doctor-api",
     ".pytest-tmp",
     ".pytest_tmp",
+    "graphify-out",
     "site",
 }
 _EXCLUDE_PREFIXES = (".venv", ".pytest_tmp", ".pytest-tmp")  # .venv, .venv-verify, .venv-*

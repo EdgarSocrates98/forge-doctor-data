@@ -2,9 +2,9 @@
   "schema": "forge/CommandInventory/v1",
   "forge_id": "forge-doctor-data",
   "cli": "forge-doctor-data",
-  "generated_at": "2026-10-11T05:25:41Z",
+  "generated_at": "2026-11-18T10:25:57Z",
   "generated_by": "doc_inventory.py/1",
-  "command_count": 293,
+  "command_count": 301,
   "commands": [
     {
       "path": "advise",
@@ -5588,6 +5588,273 @@
       ]
     },
     {
+      "path": "obsidian",
+      "help": "Authorized Obsidian vault operations",
+      "arguments": [],
+      "group": true
+    },
+    {
+      "path": "obsidian export",
+      "help": "Apply a reviewed sync plan and emit the real vault receipt.",
+      "arguments": [
+        {
+          "name": "path",
+          "flags": [
+            "path"
+          ],
+          "required": true,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": null
+        },
+        {
+          "name": "file",
+          "flags": [
+            "file"
+          ],
+          "required": true,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": null
+        },
+        {
+          "name": "baseline_hash",
+          "flags": [
+            "--baseline-hash"
+          ],
+          "required": false,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": null
+        },
+        {
+          "name": "classification",
+          "flags": [
+            "--classification"
+          ],
+          "required": false,
+          "default": "internal",
+          "choices": null,
+          "positional": false,
+          "help": null
+        },
+        {
+          "name": "yes",
+          "flags": [
+            "--yes"
+          ],
+          "required": false,
+          "default": "False",
+          "choices": null,
+          "positional": false,
+          "help": "Confirm the reviewed sync plan"
+        },
+        {
+          "name": "no_moc",
+          "flags": [
+            "--no-moc"
+          ],
+          "required": false,
+          "default": "False",
+          "choices": null,
+          "positional": false,
+          "help": "Do not refresh forges/index.md"
+        }
+      ]
+    },
+    {
+      "path": "obsidian export-note",
+      "help": "Export FILE as ``forges/<forge-id>/<name>.md`` — canonical layout.",
+      "arguments": [
+        {
+          "name": "name",
+          "flags": [
+            "name"
+          ],
+          "required": true,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": null
+        },
+        {
+          "name": "file",
+          "flags": [
+            "file"
+          ],
+          "required": true,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": null
+        },
+        {
+          "name": "baseline_hash",
+          "flags": [
+            "--baseline-hash"
+          ],
+          "required": false,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": null
+        },
+        {
+          "name": "classification",
+          "flags": [
+            "--classification"
+          ],
+          "required": false,
+          "default": "internal",
+          "choices": null,
+          "positional": false,
+          "help": null
+        },
+        {
+          "name": "yes",
+          "flags": [
+            "--yes"
+          ],
+          "required": false,
+          "default": "False",
+          "choices": null,
+          "positional": false,
+          "help": "Confirm the reviewed sync plan"
+        },
+        {
+          "name": "no_moc",
+          "flags": [
+            "--no-moc"
+          ],
+          "required": false,
+          "default": "False",
+          "choices": null,
+          "positional": false,
+          "help": null
+        }
+      ]
+    },
+    {
+      "path": "obsidian history",
+      "help": "List the vault's Forge sync receipts (body-free ledger).",
+      "arguments": [
+        {
+          "name": "limit",
+          "flags": [
+            "--limit"
+          ],
+          "required": false,
+          "default": "50",
+          "choices": null,
+          "positional": false,
+          "help": null
+        }
+      ]
+    },
+    {
+      "path": "obsidian preview",
+      "help": "Preview one vault note: metadata + projection, never the body.",
+      "arguments": [
+        {
+          "name": "path",
+          "flags": [
+            "path"
+          ],
+          "required": true,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": null
+        }
+      ]
+    },
+    {
+      "path": "obsidian scan",
+      "help": "List Markdown paths in the vault without reading bodies.",
+      "arguments": [
+        {
+          "name": "prefix",
+          "flags": [
+            "--prefix"
+          ],
+          "required": false,
+          "default": "",
+          "choices": null,
+          "positional": false,
+          "help": "Vault subdirectory to list"
+        },
+        {
+          "name": "limit",
+          "flags": [
+            "--limit"
+          ],
+          "required": false,
+          "default": "200",
+          "choices": null,
+          "positional": false,
+          "help": null
+        }
+      ]
+    },
+    {
+      "path": "obsidian status",
+      "help": "Report configured/detected vault state (never fabricates).",
+      "arguments": []
+    },
+    {
+      "path": "obsidian sync-plan",
+      "help": "Dry-run a sync of local FILE into the vault at PATH.",
+      "arguments": [
+        {
+          "name": "path",
+          "flags": [
+            "path"
+          ],
+          "required": true,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": null
+        },
+        {
+          "name": "file",
+          "flags": [
+            "file"
+          ],
+          "required": true,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": null
+        },
+        {
+          "name": "baseline_hash",
+          "flags": [
+            "--baseline-hash"
+          ],
+          "required": false,
+          "default": null,
+          "choices": null,
+          "positional": false,
+          "help": null
+        },
+        {
+          "name": "classification",
+          "flags": [
+            "--classification"
+          ],
+          "required": false,
+          "default": "internal",
+          "choices": null,
+          "positional": false,
+          "help": null
+        }
+      ]
+    },
+    {
       "path": "ontology",
       "help": "Canonical platform vocabulary (entity/rel kinds, planes, domains). Bare: Print the canonical vocabulary (entity kinds, rel kinds, evidence",
       "arguments": [
@@ -6219,7 +6486,7 @@
           "default": "False",
           "choices": null,
           "positional": false,
-          "help": "Regenerate docs\\project-status.md (commit the diff)."
+          "help": "Regenerate docs/project-status.md (commit the diff)."
         },
         {
           "name": "check",
@@ -6230,7 +6497,7 @@
           "default": "False",
           "choices": null,
           "positional": false,
-          "help": "Verify docs\\project-status.md matches the live registries; exit 1 on drift."
+          "help": "Verify docs/project-status.md matches the live registries; exit 1 on drift."
         }
       ]
     },

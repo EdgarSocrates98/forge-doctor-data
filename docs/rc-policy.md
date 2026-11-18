@@ -16,7 +16,7 @@ During the RC cycle the following are **frozen**:
 - `forge-contracts/1` (the wire contract family)
 - Public Python API (`forge_doctor_data.api.__all__`)
 - Plugin SDK v2
-- MCP stable tools (the 13 tools listed in `rc-baseline.json`)
+- MCP stable tools (the 14 tools listed in `rc-baseline.json`)
 - CLI stable commands and groups (`docs/api-surface.json`, `cli`)
 - JSON/SARIF output schemas (`SCAN_SCHEMA_VERSION`, `JSON_SCHEMA_VERSION`)
 - `HandoffBundle` wire shape
