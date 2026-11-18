@@ -270,7 +270,8 @@ def install_mcp_verify() -> None:
     """Handshake the configured MCP server (PASS/BLOCKED/FAIL)."""
     doc = _call(service.mcp_verify)
     _emit(doc)
-    if doc.get("status") == "FAIL":
+    checks = doc.get("checks") or []
+    if any(c.get("status") == "FAIL" for c in checks):
         raise typer.Exit(1)
 
 
