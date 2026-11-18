@@ -479,20 +479,6 @@ _Historical, deprecated, generated and evidence docs (preserved, not entry point
 - [Context](../factory/specs/inbox/167-streaming-runtime.md) `UNKNOWN`
 - [Context](../factory/specs/inbox/168-streaming-graph-migration.md) `UNKNOWN`
 
-### graphify-out/
-
-- [Graph Report - forge-doctor-data  (2026-10-15)](../graphify-out/2026-10-15/GRAPH_REPORT.md) `UNKNOWN`
-- [Graph Report - forge-doctor-data  (2026-10-16)](../graphify-out/2026-10-16/GRAPH_REPORT.md) `UNKNOWN`
-- [Graph Report - forge-doctor-data  (2026-10-17)](../graphify-out/2026-10-17/GRAPH_REPORT.md) `UNKNOWN`
-- [Graph Report - forge-doctor-data  (2026-10-18)](../graphify-out/2026-10-18/GRAPH_REPORT.md) `UNKNOWN`
-- [Graph Report - forge-doctor-data  (2026-10-19)](../graphify-out/2026-10-19/GRAPH_REPORT.md) `UNKNOWN`
-- [Graph Report - forge-doctor-data  (2026-10-20)](../graphify-out/2026-10-20/GRAPH_REPORT.md) `UNKNOWN`
-- [Graph Report - forge-doctor-data  (2026-10-21)](../graphify-out/2026-10-21/GRAPH_REPORT.md) `UNKNOWN`
-- [Graph Report - forge-doctor-data  (2026-10-22)](../graphify-out/2026-10-22/GRAPH_REPORT.md) `UNKNOWN`
-- [Graph Report - forge-doctor-data  (2026-10-23)](../graphify-out/2026-10-23/GRAPH_REPORT.md) `UNKNOWN`
-- [Graph Report - forge-doctor-data  (2026-11-18)](../graphify-out/2026-11-18/GRAPH_REPORT.md) `UNKNOWN`
-- [Graph Report - forge-doctor-data  (2026-11-18)](../graphify-out/GRAPH_REPORT.md) `UNKNOWN`
-
 ### knowledge-program/
 
 - [Broken link report](knowledge-program/broken-link-report.md) `UNKNOWN`

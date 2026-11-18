@@ -4,13 +4,13 @@
 |---|---|
 | repository | `forge-doctor-data` |
 | branch | `feat/install-2-1-workspace` |
-| commit | `72c7c62` |
-| docs inventoried | 405 (excl. GENERATED mirrors: 397; vendored upstream: 0) |
+| commit | `6ca0a71` |
+| docs inventoried | 394 (excl. GENERATED mirrors: 386; vendored upstream: 0) |
 
 ## Review levels (honest)
 
 - `INVENTORIED`: 0
-- `AUTOMATICALLY_CHECKED`: 405
+- `AUTOMATICALLY_CHECKED`: 394
 - `TECHNICALLY_VERIFIED`: 0
 - `SEMANTICALLY_REVIEWED`: 0
 - `USER_JOURNEY_VALIDATED`: 0
@@ -19,7 +19,7 @@ Automatic checks ran on every row; semantic review is recorded only where a huma
 
 ## Category counts
 
-- `UNKNOWN`: 185
+- `UNKNOWN`: 174
 - `HISTORICAL`: 137
 - `USER_GUIDE`: 29
 - `HOW_TO`: 12

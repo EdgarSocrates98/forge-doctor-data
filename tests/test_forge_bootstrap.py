@@ -98,9 +98,7 @@ def test_register_writes_sorted_manifest(fb: Any, forge_home: Path, tmp_path: Pa
     assert doc["cli"]["version_cmd"] == ["forge-doctor-data", "--version"]
 
 
-def test_register_propagates_install21_fields(
-    fb: Any, forge_home: Path, tmp_path: Path
-) -> None:
+def test_register_propagates_install21_fields(fb: Any, forge_home: Path, tmp_path: Path) -> None:
     """forge.json install-2.1 declarations land verbatim in
     ``~/.forge/installations/<id>.json`` — the surface the orchestrator's
     typed delegation reads."""
@@ -129,9 +127,7 @@ def test_register_propagates_install21_fields(
     assert manifest["depends_on"] == ["the-forge"]
 
 
-def test_register_rejects_bad_installation_kind(
-    fb: Any, forge_home: Path, tmp_path: Path
-) -> None:
+def test_register_rejects_bad_installation_kind(fb: Any, forge_home: Path, tmp_path: Path) -> None:
     """An undeclared/invalid installation_kind is a typed refusal
     (FORGE-INSTALL-BAD-CONFIG), never a registered bad manifest."""
     cfg = dict(_CFG, installation_kind="widget")
@@ -139,14 +135,10 @@ def test_register_rejects_bad_installation_kind(
         fb.register(**_register_kwargs(cfg, tmp_path))
     assert exc.value.kind == "FORGE-INSTALL-BAD-CONFIG"
     assert "widget" in exc.value.detail
-    assert not (
-        forge_home / ".forge" / "installations" / "forge-doctor-data.json"
-    ).exists()
+    assert not (forge_home / ".forge" / "installations" / "forge-doctor-data.json").exists()
 
 
-def test_register_omits_empty_declared_fields(
-    fb: Any, forge_home: Path, tmp_path: Path
-) -> None:
+def test_register_omits_empty_declared_fields(fb: Any, forge_home: Path, tmp_path: Path) -> None:
     """Absent/empty declarations stay absent — ``depends_on: []`` is not
     fabricated into the doc (the wheel `_register` declares it
     explicitly; the bootstrap copies only real values)."""
