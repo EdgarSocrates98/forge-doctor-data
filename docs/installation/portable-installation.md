@@ -24,3 +24,7 @@ assets de host; o perfil é declarado no recibo e no manifesto
 Perfil de execução: `economy` reduz custo e contexto mantendo roteamento
 seguro; `balanced` é padrão; `deep` amplia capacidade para tarefas difíceis.
 A escolha fica no recibo e é preservada quando o The Forge delega instalação.
+
+Automação: saída JSON é automática fora de TTY (pipes/CI) — não há flags
+`--json`/`--no-input` nesta superfície; mutações exigem `--yes` e nunca
+pedem confirmação fora de terminal interativo.

@@ -2,7 +2,7 @@
 
 Generated from the real CLI parser by `doc_inventory.py` + `doc_reference.py`. Do not hand-edit generated sections — write between `keep:start`/`keep:end` markers. `por que`/`quando` lines come from the curated `command-rationale.json` — edit rationale there, never here. Status vocabulary: `available` unless marked otherwise.
 
-Rationale coverage: **92/93** first-level groups curated in `command-rationale.json`.
+Rationale coverage: **93/93** first-level groups curated in `command-rationale.json`.
 
 ## Groups
 
@@ -4494,6 +4494,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 **para que:** Authorized Obsidian vault operations
 
+- **por que:** operações autorizadas no vault Obsidian (status/scan/sync/export, body-free)
+- **quando usar:** sincronizar docs do forge com o vault sem vazar corpos de notas
+
 **Syntax**
 
 ```text
@@ -4507,6 +4510,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 ### `obsidian export`
 
 **para que:** Apply a reviewed sync plan and emit the real vault receipt.
+
+- **por que:** operações autorizadas no vault Obsidian (status/scan/sync/export, body-free)
+- **quando usar:** sincronizar docs do forge com o vault sem vazar corpos de notas
 
 **Syntax**
 
@@ -4531,6 +4537,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 **para que:** Export FILE as ``forges/<forge-id>/<name>.md`` — canonical layout.
 
+- **por que:** operações autorizadas no vault Obsidian (status/scan/sync/export, body-free)
+- **quando usar:** sincronizar docs do forge com o vault sem vazar corpos de notas
+
 **Syntax**
 
 ```text
@@ -4554,6 +4563,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 **para que:** List the vault's Forge sync receipts (body-free ledger).
 
+- **por que:** operações autorizadas no vault Obsidian (status/scan/sync/export, body-free)
+- **quando usar:** sincronizar docs do forge com o vault sem vazar corpos de notas
+
 **Syntax**
 
 ```text
@@ -4572,6 +4584,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 **para que:** Preview one vault note: metadata + projection, never the body.
 
+- **por que:** operações autorizadas no vault Obsidian (status/scan/sync/export, body-free)
+- **quando usar:** sincronizar docs do forge com o vault sem vazar corpos de notas
+
 **Syntax**
 
 ```text
@@ -4589,6 +4604,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 ### `obsidian scan`
 
 **para que:** List Markdown paths in the vault without reading bodies.
+
+- **por que:** operações autorizadas no vault Obsidian (status/scan/sync/export, body-free)
+- **quando usar:** sincronizar docs do forge com o vault sem vazar corpos de notas
 
 **Syntax**
 
@@ -4609,6 +4627,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 
 **para que:** Report configured/detected vault state (never fabricates).
 
+- **por que:** operações autorizadas no vault Obsidian (status/scan/sync/export, body-free)
+- **quando usar:** sincronizar docs do forge com o vault sem vazar corpos de notas
+
 **Syntax**
 
 ```text
@@ -4622,6 +4643,9 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 ### `obsidian sync-plan`
 
 **para que:** Dry-run a sync of local FILE into the vault at PATH.
+
+- **por que:** operações autorizadas no vault Obsidian (status/scan/sync/export, body-free)
+- **quando usar:** sincronizar docs do forge com o vault sem vazar corpos de notas
 
 **Syntax**
 

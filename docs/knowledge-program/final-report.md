@@ -4,7 +4,7 @@
 |---|---|
 | repository | `forge-doctor-data` |
 | branch | `feat/install-2-1-workspace` |
-| commit | `1d0b814` |
+| commit | `72c7c62` |
 | docs inventoried | 405 (excl. GENERATED mirrors: 397; vendored upstream: 0) |
 
 ## Review levels (honest)
@@ -39,7 +39,7 @@ Automatic checks ran on every row; semantic review is recorded only where a huma
 - duplicate groups (non-generated): 0
 - broken internal links total: 0 (active docs: 0; remainder in frozen/historical trees)
 - documented-but-missing commands: 0 (active docs: 0)
-- undocumented public commands: 1
+- undocumented public commands: 0
 
 ## Educational layer delivered
 

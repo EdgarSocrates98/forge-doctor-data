@@ -12,6 +12,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed — cycle16 wave-13 (install-2.1 workspace)
+
+- Vendored `_installkit` re-synced to 1.0.6 (`_SOURCE_SHA256
+  dd279c639576d015`, byte-identical in `src/` and `scripts/`):
+  `InstallContext.exclude` consolidated-plan conflict skips, gitless
+  `discover_projects` (member manifests, symlink/junction refusal,
+  `IGNORED_DIRS`), `manifest_for` install-2.1 kwargs with
+  `INSTALLATION_KINDS` validation, explicit `--root` precedence over
+  workspace ancestor markers.
+- `scripts/forge_bootstrap.py` re-vendored to canonical 1.2.0 — the
+  `register()` step now propagates `installation_kind`/`install`/
+  `depends_on`/`install_command` from `forge.json` into
+  `~/.forge/installations/` (typed `FORGE-INSTALL-BAD-CONFIG` refusal on
+  invalid kinds).
+- `forge.json` declares the real install-2.1 surface: `version`,
+  `mcp_verify_tool` (`get_execution_baseline`),
+  `installation_kind: "content"`, `install{}` (operations/flags/hosts/
+  scopes/profiles/gateway_profiles/approval), `install_command`,
+  `depends_on: []`, `extras: []` (stdlib-only MCP server). A bundled
+  copy ships in the wheel (`src/forge_doctor_data/forge.json`).
+- `install/service.py::_register()` copies the declared fields into the
+  registered manifest via `_declared_install_fields()` and sets
+  `mcp.verify_tool`.
+- `install doctor` no longer masks the MCP handshake: the ported
+  `find_spec("mcp")` guard assumed an optional `mcp` extra that this
+  forge does not have (the server is stdlib-only) — it rewrote both
+  PASS and FAIL results to a fake "extra not installed" UNVERIFIED.
+- `install mcp-verify` emits `forge/InstallationHealth/v1`
+  (`schema`/`forge_id`/`status`/`checks`/`checked_at`/`repair_hint`);
+  the CLI exits non-zero on check-level FAIL and the portal adapter
+  unwraps the envelope for its verbs.
+- Install wizard/status doc render the consolidated
+  `forge/WorkspaceInstall/v2` plan (order, per-forge classification,
+  cross-forge conflicts); apply confirmation defaults to No.
+- `docs/installation/*`: real lifecycle verbs (`install doctor`,
+  `install mcp-verify`), the actual written surface (managed `.mcp.json`
+  key, `.forge/context/` registration, `forge:*` doc blocks,
+  bundled-agent manifest — no `.claude/skills`-style host mirrors),
+  profile equivalence declared, fake `FORGE-INSTALL-OWNERSHIP`/`--force`
+  row removed, own-CLI workspace route documented.
+- `docs/reference/commands*.json|.md` regenerated from the real parser
+  (adds `--gateway-profile` and the `obsidian` group); `rc-policy.md`
+  tool count 13 → 14 to match `rc-baseline.json`.
+- Decided against `--json`/`--no-input` flags: non-TTY auto-JSON already
+  covers the semantics and new CLI flags would touch the frozen
+  `docs/api-surface.json` inventory — parity note documented in
+  `docs/installation/portable-installation.md`.
+
 ## [1.1.3] - 2026-11-12
 
 Cycle 2.7 patch release: federated SDD contracts, forge-context kind taxonomy, Obsidian export verbs, rc-baseline restamp, doc-drift regeneration and CI hardening.

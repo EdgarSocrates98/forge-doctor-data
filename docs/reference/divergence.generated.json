@@ -2,8 +2,6 @@
   "schema": "forge/DocDivergence/v1",
   "cli": "forge-doctor-data",
   "documented_missing": [],
-  "undocumented_commands": [
-    "obsidian"
-  ],
-  "generated_at": "2026-11-18T10:05:59Z"
+  "undocumented_commands": [],
+  "generated_at": "2026-11-18T10:14:06Z"
 }
