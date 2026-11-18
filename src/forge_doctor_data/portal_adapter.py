@@ -416,12 +416,19 @@ class ForgeDoctorDataPortal(fp.PortalAdapter):
     # ------------------------------------------------------------------
     def _mcp_verify_doc(self) -> dict[str, Any]:
         try:
-            return service.mcp_verify()
+            doc = service.mcp_verify()
         except Exception as e:
             return {
                 "status": "FAIL",
                 "detail": f"mcp verify failed: {type(e).__name__}",
             }
+        # install-2.1: service.mcp_verify() returns the
+        # forge/InstallationHealth/v1 envelope; the portal verbs consume
+        # the underlying check ({id,status,detail}) — unwrap honestly.
+        checks = doc.get("checks")
+        if isinstance(checks, list) and checks and isinstance(checks[0], dict):
+            return checks[0]
+        return doc
 
     def _mcp_servers(self) -> list[dict[str, Any]]:
         doc = self._mcp_verify_doc()

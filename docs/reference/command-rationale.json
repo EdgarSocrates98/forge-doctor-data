@@ -235,6 +235,10 @@
   "why": "inteligência Neptune Database + Analytics",
   "when": "revisar clusters/queries Neptune"
  },
+ "obsidian": {
+  "why": "operações autorizadas no vault Obsidian (status/scan/sync/export, body-free)",
+  "when": "sincronizar docs do forge com o vault sem vazar corpos de notas"
+ },
  "ontology": {
   "why": "vocabulário canônico da plataforma (entity/rel kinds, planes, domains)",
   "when": "conferir o vocabulário antes de depender dele"
