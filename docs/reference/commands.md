@@ -2,7 +2,7 @@
 
 Generated from the real CLI parser by `doc_inventory.py` + `doc_reference.py`. Do not hand-edit generated sections — write between `keep:start`/`keep:end` markers. `por que`/`quando` lines come from the curated `command-rationale.json` — edit rationale there, never here. Status vocabulary: `available` unless marked otherwise.
 
-Rationale coverage: **92/92** first-level groups curated in `command-rationale.json`.
+Rationale coverage: **92/93** first-level groups curated in `command-rationale.json`.
 
 ## Groups
 
@@ -66,6 +66,7 @@ Rationale coverage: **92/92** first-level groups curated in `command-rationale.j
 - [`mcp`](#mcp) — 1 command(s)
 - [`migrate`](#migrate) — 4 command(s)
 - [`neptune`](#neptune) — 8 command(s)
+- [`obsidian`](#obsidian) — 8 command(s)
 - [`ontology`](#ontology) — 5 command(s)
 - [`optimize`](#optimize) — 3 command(s)
 - [`parquet`](#parquet) — 2 command(s)
@@ -2142,14 +2143,14 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 **Syntax**
 
 ```text
-forge-doctor-data graph project [path] [fmt] [--out FILE]
+forge-doctor-data graph project [path] [fmt] [out]
 ```
 
 | argument/flag | required | default | description |
 |---|---|---|---|
 | `path` | no | — | Project root. |
 | `fmt` | no | — | json|dot|mermaid |
-| `out` | no | `PATH/.forge-doctor-data/graph/project-graph.json` | Canonical graph JSON snapshot. |
+| `out` | no | — | Write canonical graph JSON. Defaults to PATH/.forge-doctor-data/graph/project-graph.json. |
 
 <!-- keep:start -->
 _free notes — errors, examples, next steps (hand-written, preserved)_
@@ -3360,7 +3361,7 @@ _free notes — errors, examples, next steps (hand-written, preserved)_
 **Syntax**
 
 ```text
-forge-doctor-data install [scope] [host] [profile] [root] [yes] [dry_run] [components]
+forge-doctor-data install [scope] [host] [profile] [root] [yes] [dry_run] [components] [gateway_profile]
 ```
 
 | argument/flag | required | default | description |
@@ -3372,6 +3373,7 @@ forge-doctor-data install [scope] [host] [profile] [root] [yes] [dry_run] [compo
 | `yes` | no | — | Explicit approval; without it only --dry-run is allowed. |
 | `dry_run` | no | — | Plan only — writes nothing. |
 | `components` | no | — | Optional components csv: skills,agents,mcp,tui,graph-studio. |
+| `gateway_profile` | no | — | Execution profile: economy|balanced|deep. |
 
 <!-- keep:start -->
 _free notes — errors, examples, next steps (hand-written, preserved)_
@@ -4486,6 +4488,158 @@ forge-doctor-data neptune schema [path]
 _free notes — errors, examples, next steps (hand-written, preserved)_
 <!-- keep:end -->
 
+## obsidian
+
+### `obsidian`
+
+**para que:** Authorized Obsidian vault operations
+
+**Syntax**
+
+```text
+forge-doctor-data obsidian
+```
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
+### `obsidian export`
+
+**para que:** Apply a reviewed sync plan and emit the real vault receipt.
+
+**Syntax**
+
+```text
+forge-doctor-data obsidian export <path> <file> [baseline_hash] [classification] [yes] [no_moc]
+```
+
+| argument/flag | required | default | description |
+|---|---|---|---|
+| `path` | yes | — | — |
+| `file` | yes | — | — |
+| `baseline_hash` | no | — | — |
+| `classification` | no | — | — |
+| `yes` | no | — | Confirm the reviewed sync plan |
+| `no_moc` | no | — | Do not refresh forges/index.md |
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
+### `obsidian export-note`
+
+**para que:** Export FILE as ``forges/<forge-id>/<name>.md`` — canonical layout.
+
+**Syntax**
+
+```text
+forge-doctor-data obsidian export-note <name> <file> [baseline_hash] [classification] [yes] [no_moc]
+```
+
+| argument/flag | required | default | description |
+|---|---|---|---|
+| `name` | yes | — | — |
+| `file` | yes | — | — |
+| `baseline_hash` | no | — | — |
+| `classification` | no | — | — |
+| `yes` | no | — | Confirm the reviewed sync plan |
+| `no_moc` | no | — | — |
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
+### `obsidian history`
+
+**para que:** List the vault's Forge sync receipts (body-free ledger).
+
+**Syntax**
+
+```text
+forge-doctor-data obsidian history [limit]
+```
+
+| argument/flag | required | default | description |
+|---|---|---|---|
+| `limit` | no | — | — |
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
+### `obsidian preview`
+
+**para que:** Preview one vault note: metadata + projection, never the body.
+
+**Syntax**
+
+```text
+forge-doctor-data obsidian preview <path>
+```
+
+| argument/flag | required | default | description |
+|---|---|---|---|
+| `path` | yes | — | — |
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
+### `obsidian scan`
+
+**para que:** List Markdown paths in the vault without reading bodies.
+
+**Syntax**
+
+```text
+forge-doctor-data obsidian scan [prefix] [limit]
+```
+
+| argument/flag | required | default | description |
+|---|---|---|---|
+| `prefix` | no | — | Vault subdirectory to list |
+| `limit` | no | — | — |
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
+### `obsidian status`
+
+**para que:** Report configured/detected vault state (never fabricates).
+
+**Syntax**
+
+```text
+forge-doctor-data obsidian status
+```
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
+### `obsidian sync-plan`
+
+**para que:** Dry-run a sync of local FILE into the vault at PATH.
+
+**Syntax**
+
+```text
+forge-doctor-data obsidian sync-plan <path> <file> [baseline_hash] [classification]
+```
+
+| argument/flag | required | default | description |
+|---|---|---|---|
+| `path` | yes | — | — |
+| `file` | yes | — | — |
+| `baseline_hash` | no | — | — |
+| `classification` | no | — | — |
+
+<!-- keep:start -->
+_free notes — errors, examples, next steps (hand-written, preserved)_
+<!-- keep:end -->
+
 ## ontology
 
 ### `ontology`
@@ -5122,8 +5276,8 @@ forge-doctor-data project status [fmt] [write] [check]
 | argument/flag | required | default | description |
 |---|---|---|---|
 | `fmt` | no | — | text|json|markdown |
-| `write` | no | — | Regenerate docs\project-status.md (commit the diff). |
-| `check` | no | — | Verify docs\project-status.md matches the live registries; exit 1 on drift. |
+| `write` | no | — | Regenerate docs/project-status.md (commit the diff). |
+| `check` | no | — | Verify docs/project-status.md matches the live registries; exit 1 on drift. |
 
 <!-- keep:start -->
 _free notes — errors, examples, next steps (hand-written, preserved)_
