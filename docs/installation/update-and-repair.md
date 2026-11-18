@@ -12,7 +12,7 @@ registrado o update reporta BLOCKED honestamente.
 ## Repair
 
 ```bash
-forge-doctor-data doctor   # mostra o drift
+forge-doctor-data install doctor   # mostra o drift da instalação
 forge-doctor-data install repair   # reassegura regiões gerenciadas
 ```
 

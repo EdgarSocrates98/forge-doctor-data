@@ -15,8 +15,10 @@ cd ~/meu-projeto
 forge-doctor-data install
 ```
 
-Pronto. Abra seu AI host (Devin, Claude, Codex ou Copilot) — as skills do
-forge-doctor-data já estão instaladas.
+Pronto. O que foi instalado: a entrada MCP gerenciada em `.mcp.json`, o
+registro `.forge/context/` (manifesto de capacidades + ROUTING) e blocos
+`forge:*` nos consumer docs existentes. Os agent specs do forge são
+bundled — declarados no manifesto, sem espelho em diretórios de host.
 
 Em diretório vazio, o wizard remove `Current repository` e instala pelo
 escopo `Entire workspace`, sem exigir Git ou comandos extras.
@@ -25,7 +27,7 @@ escopo `Entire workspace`, sem exigir Git ou comandos extras.
 
 ```bash
 forge-doctor-data install status
-forge-doctor-data doctor
+forge-doctor-data install doctor
 ```
 
 Detalhes: [account-installation.md](account-installation.md). Problemas? → [troubleshooting.md](troubleshooting.md)
