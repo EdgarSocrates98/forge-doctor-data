@@ -89,6 +89,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (portable-installation.md), incremental repair + argv convergence
   (update-and-repair.md).
 
+### Fixed — cycle16.1.1 wave-07g (setup.sh named refusal)
+
+- `setup.sh`: the python probe
+  `PY="$(command -v python3 || command -v python || command -v py)"`
+  aborted the script with a silent rc=1 under `set -e` when no python
+  existed — the failed command substitution killed the assignment
+  before the `FORGE-PYTHON-NOT-FOUND` branch ran. Guarded with
+  `|| true`, the script now reaches its named refusal (rc=2 +
+  `FORGE-PYTHON-NOT-FOUND` on stderr). Reproduced and verified with a
+  PATH containing only `dirname`. The same probe remains open in the
+  canonical `the-forge/setup.sh` — the canonical fix is tracked
+  upstream; this vendored copy is patched in place.
+- `docs/installation/troubleshooting.{md,en.md}`: documented
+  `FORGE-PYTHON-NOT-FOUND` (setup.sh rc=2) — install Python >=3.11 and
+  reopen the shell.
+- Regression test:
+  `tests/test_forge_bootstrap.py::test_setup_sh_sem_python_recusa_nomeada`
+  — PATH-stripped `bash setup.sh` asserting rc=2 + the named refusal.
+- Audited, no change needed: `src/forge_doctor_data/__main__.py`
+  propagates exit codes (`python -m forge_doctor_data bogus` → rc=2);
+  `ui/{kit,i18n,wizard}.py` at byte-parity with canonical
+  `the-forge/src/theforge/ui/`; `_installkit.py` header intact
+  (`_INSTALLKIT_VERSION = "1.0.6"`, `_SOURCE_SHA256` matches canonical).
+
 ## [1.1.3] - 2026-11-12
 
 Cycle 2.7 patch release: federated SDD contracts, forge-context kind taxonomy, Obsidian export verbs, rc-baseline restamp, doc-drift regeneration and CI hardening.
