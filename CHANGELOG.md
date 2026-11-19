@@ -60,6 +60,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `docs/api-surface.json` inventory — parity note documented in
   `docs/installation/portable-installation.md`.
 
+### Changed — cycle16.1 wave-14 (install lifecycle + context economy)
+
+- Vendored `_installkit` re-synced to canonical 1.0.6 (`_SOURCE_SHA256
+  b574efcfbc13c63e`; `src/` and `scripts/` byte-identical) — cycle 16.1
+  delta: `InstallContext.mcp_command_resolved`, incremental-install
+  accounting (`counts` + `written`/`written_bytes` on receipts) and
+  mcp-aware ledger drift. Vendored `_forgecontext` re-synced
+  (`_SOURCE_SHA256 ec2a7a80d2467000`): the per-forge block written into
+  `AGENTS.md` is now the compact L0 form — identity, domains and
+  pointers to the capability manifest and `AGENT_PROTOCOL.md` — CLI/MCP/
+  discovery detail is no longer duplicated into permanent context (§8.1).
+- `install/service.py` resolves the managed `.mcp.json` argv the same way
+  the orchestrator does — registered `cli.shim` first, then
+  `<sys.executable> -m forge_doctor_data mcp`: hosts never launch the
+  MCP server through a PATH lookup (§9.3). `install mcp-verify` and
+  `install doctor` probe that same resolved argv, so the `mcp-handshake`
+  check exercises the exact command a host would spawn.
+- Receipts stay `forge/InstallReceipt/v1` and now carry the `counts`
+  block; `status` + `verification.status` remain inside the closed
+  vocabulary `forge/InstallLifecycle/v1` derives from
+  (`completed` + `PASS` → `verified`; `planned` → `planned`; health
+  `healthy` → `ready`). New tests pin the derivation inputs, the
+  incremental reinstall (zero writes, unchanged mtimes), the compact L0
+  block and the honest capability manifest.
+- `docs/installation/*`: PATH-independent managed argv (mcp.md),
+  incremental reinstall + lifecycle-derivable receipt fields
+  (portable-installation.md), incremental repair + argv convergence
+  (update-and-repair.md).
+
 ## [1.1.3] - 2026-11-12
 
 Cycle 2.7 patch release: federated SDD contracts, forge-context kind taxonomy, Obsidian export verbs, rc-baseline restamp, doc-drift regeneration and CI hardening.
