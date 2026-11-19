@@ -10,11 +10,22 @@ forge-doctor-data install --profile minimal  # perfil registrado no recibo
 forge-doctor-data install --gateway-profile economy  # menor custo de execução
 ```
 
-O que acontece: `.mcp.json` ganha uma entrada gerenciada; `.forge/context/`
-recebe o manifesto `forge/context/v1` + entrada no registry compartilhado;
-`AGENTS.md`/`CLAUDE.md` recebem blocos `<!-- forge:forge-doctor-data -->`
-quando já existem e `AGENT_PROTOCOL.md` é gerado — conteúdo seu nunca é
-sobrescrito.
+O que acontece: `.mcp.json` ganha uma entrada gerenciada com argv
+absoluto (nunca depende de PATH); `.forge/context/` recebe o manifesto
+`forge/context/v1` + entrada no registry compartilhado; `AGENTS.md`
+recebe um bloco compacto `<!-- forge:forge-doctor-data -->` (identidade,
+domínios e ponteiros para o manifesto e `AGENT_PROTOCOL.md` — boot L0
+mínimo, sem duplicar detalhe de CLI/discovery), `CLAUDE.md` recebe o
+bloco `forge:ecosystem` e `AGENT_PROTOCOL.md` é gerado — conteúdo seu
+nunca é sobrescrito.
+
+Reinstalação é **incremental**: o ledger compara bytes antes de escrever
+— assets idênticos não são reescritos e o recibo reporta `counts`
+(`created`/`updated`/`unchanged`/`adopted`/`skipped`/`written` +
+`written_bytes`) com zeros honestos. Os campos `status` +
+`verification.status` do recibo `forge/InstallReceipt/v1` são deriváveis
+para `forge/InstallLifecycle/v1` pelo plano de controle
+(`completed` + `PASS` → `verified`; health `healthy` → `ready`).
 
 Perfis: `minimal` · `recommended` (padrão) · `full`. Hoje os três perfis
 são **equivalentes em superfície escrita** — este forge não espelha
