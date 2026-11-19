@@ -19,12 +19,14 @@ from __future__ import annotations
 
 import subprocess  # install lifecycle only — never on the scan path
 import sys
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
 from forge_doctor_data import __version__
 from forge_doctor_data import _forgecontext as fctx
 from forge_doctor_data import _installkit as kit
+from forge_doctor_data.install import lifecycle
 
 FORGE_ID = "forge-doctor-data"
 STATE_DIR = ".forge-doctor-data/install"
@@ -64,6 +66,28 @@ def _render_for(ctx: kit.InstallContext) -> dict[str, bytes]:
     return {}
 
 
+def _resolved_mcp_command(spec: kit.ForgeSpec) -> tuple[str, ...] | None:
+    """The PATH-independent argv for this forge's managed ``.mcp.json`` key.
+
+    A host must never launch the forge's MCP server through a PATH lookup
+    (cycle 16.1 §9.3). Resolution order — same as the sibling services:
+
+    1. the registered install manifest's ``cli.shim`` (absolute launcher
+       written by the bootstrap) → ``(shim, *mcp_command[1:])``;
+    2. ``(sys.executable, "-m", <package>, *mcp_command[1:])`` — the
+       current interpreter, absolute by construction, module-pinned.
+
+    ``None`` when the spec declares no MCP command at all.
+    """
+    if not spec.mcp_command:
+        return None
+    tail = spec.mcp_command[1:]
+    shim = (_installation_manifest().get("cli") or {}).get("shim")
+    if isinstance(shim, str) and shim and Path(shim).is_absolute():
+        return (shim, *tail)
+    return (sys.executable, "-m", spec.package, *tail)
+
+
 def _ctx(
     scope: str,
     root: Path | None,
@@ -86,6 +110,7 @@ def _ctx(
         hosts=hosts,
         dry_run=dry_run,
         options=options,
+        mcp_command_resolved=_resolved_mcp_command(spec),
     )
 
 
@@ -135,22 +160,43 @@ def install(
         gateway_profile=gateway_profile,
     )
     state = ctx.state_dir
-    with kit.acquire_lock(state):
+    if dry_run:
+        # Plan-only path: no lock, no state dir — dry-run writes nothing,
+        # not even an empty `.forge-doctor-data/install/` (contract §9).
+        plan_doc = kit.apply_install(ctx, approved=yes)
+        plan_doc["lifecycle"] = lifecycle.receipt_block(plan_doc)
+        return plan_doc
+    with kit.acquire_lock(state) as lock:
         receipt = kit.apply_install(ctx, approved=yes)
+        if lock.recovered:
+            receipt.setdefault("checks", []).append(
+                {
+                    "id": "lock",
+                    "status": "PASS",
+                    "detail": "stale lock reclaimed (interrupted install recovered)",
+                }
+            )
         # Receipt + registry writes stay inside the install lock — a
         # context-registry BLOCKED flips the receipt to "failed" before
         # it is persisted, never a silent "completed".
-        if not dry_run and receipt.get("status") == "completed":
+        if receipt.get("status") == "completed":
             _register_context(ctx, receipt)
             _drop_stale_doc_entries(ctx)
+            # Derived AFTER the context layer — it may append checks or
+            # flip the status; the lifecycle view sees the final receipt.
+            receipt["lifecycle"] = lifecycle.receipt_block(receipt)
             kit._write_receipt(state, receipt)
             _register(ctx)
+        else:
+            receipt["lifecycle"] = lifecycle.receipt_block(receipt)
     return receipt
 
 
 def status(*, scope: str = "project", root: Path | None = None) -> dict[str, Any]:
     ctx = _ctx(scope, root, (), "recommended", dry_run=True)
-    return kit.status(ctx)
+    doc = kit.status(ctx)
+    doc["lifecycle"] = lifecycle.health_block(doc)
+    return doc
 
 
 def doctor(*, scope: str = "project", root: Path | None = None) -> dict[str, Any]:
@@ -158,7 +204,9 @@ def doctor(*, scope: str = "project", root: Path | None = None) -> dict[str, Any
     # conformance dep) — there is no optional extra to gate on, so the
     # real handshake result from ``kit.doctor`` is reported as-is.
     ctx = _ctx(scope, root, (), "recommended", dry_run=True)
-    return kit.doctor(ctx)
+    doc = kit.doctor(ctx)
+    doc["lifecycle"] = lifecycle.health_block(doc)
+    return doc
 
 
 def repair(
@@ -169,7 +217,9 @@ def repair(
 ) -> dict[str, Any]:
     ctx = _ctx(scope, root, HOSTS, "full", dry_run)
     if dry_run:
-        return kit.status(ctx)
+        doc = kit.status(ctx)
+        doc["lifecycle"] = lifecycle.health_block(doc)
+        return doc
     with kit.acquire_lock(ctx.state_dir):
         receipt = kit.repair(ctx)
         # Context registry recovery: unwedge the journal, reclaim stale
@@ -219,6 +269,8 @@ def repair(
             receipt.setdefault("checks", []).append(
                 {"id": "consumer-docs", "status": "BLOCKED", "detail": f"{exc.kind}: {exc.detail}"}
             )
+        # Derived last — the context/doc appends may have added checks.
+        receipt["lifecycle"] = lifecycle.receipt_block(receipt)
         return receipt
 
 
@@ -232,7 +284,7 @@ def uninstall(
     ctx = _ctx(scope, root, (), "recommended", dry_run)
     if dry_run:
         st = kit.status(ctx)
-        return {
+        doc = {
             "schema": kit.SCHEMA_RECEIPT,
             "forge_id": FORGE_ID,
             "operation": "uninstall",
@@ -243,6 +295,8 @@ def uninstall(
             "verification": {"status": "UNVERIFIED"},
             "created_at": kit._utc_now(),
         }
+        doc["lifecycle"] = lifecycle.receipt_block(doc)
+        return doc
     with kit.acquire_lock(ctx.state_dir):
         doc = kit.uninstall(ctx, purge_state=purge)
         # The context transaction acquires its own lock and would create
@@ -253,6 +307,13 @@ def uninstall(
             doc.setdefault("checks", []).extend(checks)
             if any(c.get("status") == "BLOCKED" for c in checks):
                 doc["status"] = "failed"
+            if not purge:
+                # kit.uninstall persisted the receipt BEFORE the context
+                # layer ran — re-write so the file reflects the final
+                # checks/status (never a stale "completed").
+                doc["lifecycle"] = lifecycle.receipt_block(doc)
+                kit._write_receipt(ctx.state_dir, doc)
+        doc["lifecycle"] = lifecycle.receipt_block(doc)
     return doc
 
 
@@ -269,10 +330,19 @@ def update(
     manifest = _installation_manifest()
     src = repo or (Path(p) if (p := (manifest.get("source") or {}).get("path")) else None)
     if src is None or not src.exists():
-        return _failed(
-            "source",
-            "no checkout registered — install via scripts/forge_bootstrap.py",
-            "BLOCKED",
+        # Gate refusal: the check carries BLOCKED, the receipt status stays
+        # in the receipt vocabulary — the lifecycle derives "blocked" via
+        # the all-checks-gated rule (same shape as the sibling services).
+        return _receipt(
+            "update",
+            [
+                {
+                    "id": "source",
+                    "status": "BLOCKED",
+                    "detail": "no checkout registered — install via scripts/forge_bootstrap.py",
+                }
+            ],
+            "failed",
         )
     venv = manifest.get("venv")
     if not venv:
@@ -301,9 +371,15 @@ def update(
 
 
 def mcp_verify() -> dict[str, Any]:
-    """Health doc for the MCP handshake check — same shape the script emits."""
-    check = kit.mcp_verify(_spec())
-    return {
+    """Health doc for the MCP handshake check — same shape the script emits.
+
+    Probes the argv the managed ``.mcp.json`` key actually declares
+    (absolute path), never the PATH-dependent declared command — §9.3.
+    """
+    spec = _spec()
+    resolved = _resolved_mcp_command(spec)
+    check = kit.mcp_verify(replace(spec, mcp_command=resolved) if resolved else spec)
+    doc: dict[str, Any] = {
         "schema": kit.SCHEMA_HEALTH,
         "forge_id": FORGE_ID,
         "status": (
@@ -317,13 +393,15 @@ def mcp_verify() -> dict[str, Any]:
         "checked_at": kit._utc_now(),
         "repair_hint": None,
     }
+    doc["lifecycle"] = lifecycle.health_block(doc)
+    return doc
 
 
 # --------------------------------------------------------------------------
 
 
 def _receipt(operation: str, checks: list[dict[str, Any]], status: str) -> dict[str, Any]:
-    return {
+    doc = {
         "schema": kit.SCHEMA_RECEIPT,
         "forge_id": FORGE_ID,
         "operation": operation,
@@ -338,6 +416,8 @@ def _receipt(operation: str, checks: list[dict[str, Any]], status: str) -> dict[
         "created_at": kit._utc_now(),
         "created_by": f"forge-doctor-data/{__version__}",
     }
+    doc["lifecycle"] = lifecycle.receipt_block(doc)
+    return doc
 
 
 def _failed(check_id: str, detail: str, status: str = "failed") -> dict[str, Any]:
